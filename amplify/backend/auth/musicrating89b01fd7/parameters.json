@@ -1,0 +1,72 @@
+{
+    "identityPoolName": "musicrating89b01fd7_identitypool_89b01fd7",
+    "allowUnauthenticatedIdentities": false,
+    "lambdaLogPolicy": "musicr_89b01fd7_lambda_log_policy",
+    "openIdLambdaRoleName": "musicr_89b01fd7_openid_lambda_role",
+    "openIdRolePolicy": "musicr_89b01fd7_openid_pass_role_policy",
+    "openIdLambdaIAMPolicy": "musicr_89b01fd7_openid_lambda_iam_policy",
+    "openIdLogPolicy": "musicr_89b01fd7_openid_lambda_log_policy",
+    "userPoolName": "musicrating89b01fd7_userpool_89b01fd7",
+    "autoVerifiedAttributes": [
+        "email"
+    ],
+    "mfaConfiguration": "OFF",
+    "mfaTypes": [
+        "SMS Text Message"
+    ],
+    "roleName": "musicr89b01fd7_sns-role",
+    "roleExternalId": "musicr89b01fd7_role_external_id",
+    "policyName": "musicr89b01fd7-sns-policy",
+    "smsAuthenticationMessage": "Your authentication code is {####}",
+    "smsVerificationMessage": "Your verification code is {####}",
+    "emailVerificationSubject": "Your verification code",
+    "emailVerificationMessage": "Your verification code is {####}",
+    "defaultPasswordPolicy": false,
+    "passwordPolicyMinLength": 8,
+    "passwordPolicyCharacters": [],
+    "requiredAttributes": [
+        "email",
+        "name"
+    ],
+    "userpoolClientName": "musicr89b01fd7_app_client",
+    "userpoolClientGenerateSecret": true,
+    "userpoolClientRefreshTokenValidity": 30,
+    "userpoolClientWriteAttributes": [
+        "email"
+    ],
+    "userpoolClientReadAttributes": [
+        "email"
+    ],
+    "mfaLambdaRole": "musicr89b01fd7_totp_lambda_role",
+    "mfaLambdaLogPolicy": "musicr89b01fd7_totp_lambda_log_policy",
+    "mfaPassRolePolicy": "musicr89b01fd7_totp_pass_role_policy",
+    "mfaLambdaIAMPolicy": "musicr89b01fd7_totp_lambda_iam_policy",
+    "userpoolClientLambdaRole": "musicr89b01fd7_userpoolclient_lambda_role",
+    "userpoolClientLogPolicy": "musicr89b01fd7_userpoolclient_lambda_log_policy",
+    "userpoolClientLambdaPolicy": "musicr89b01fd7_userpoolclient_lambda_iam_policy",
+    "userpoolClientSetAttributes": false,
+    "resourceName": "musicrating89b01fd7",
+    "authSelections": "identityPoolAndUserPool",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    },
+    "unauthRoleArn": {
+        "Fn::GetAtt": [
+            "UnauthRole",
+            "Arn"
+        ]
+    },
+    "useDefault": "default",
+    "usernameAttributes": [
+        "email"
+    ]
+}

@@ -1,0 +1,19 @@
+{
+    "dev": {
+        "awscloudformation": {
+            "AuthRoleName": "music-rating-dev-20190806200152-authRole",
+            "UnauthRoleArn": "arn:aws:iam::025007687265:role/music-rating-dev-20190806200152-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::025007687265:role/music-rating-dev-20190806200152-authRole",
+            "Region": "eu-west-1",
+            "DeploymentBucketName": "music-rating-dev-20190806200152-deployment",
+            "UnauthRoleName": "music-rating-dev-20190806200152-unauthRole",
+            "StackName": "music-rating-dev-20190806200152",
+            "StackId": "arn:aws:cloudformation:eu-west-1:025007687265:stack/music-rating-dev-20190806200152/4549c390-b874-11e9-8eec-062647984902"
+        },
+        "categories": {
+            "auth": {
+                "musicrating89b01fd7": {}
+            }
+        }
+    }
+}
