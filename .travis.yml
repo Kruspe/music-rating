@@ -1,0 +1,9 @@
+language: node_js
+dist: xenial
+node_js:
+  - "10"
+
+before_install:
+  - touch src/aws-exports.js
+
+cache: yarn
