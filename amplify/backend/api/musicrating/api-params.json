@@ -1,0 +1,34 @@
+{
+    "paths": [
+        {
+            "name": "/bands",
+            "lambdaFunction": "musicrating",
+            "privacy": {
+                "open": true
+            }
+        }
+    ],
+    "resourceName": "musicrating",
+    "apiName": "musicrating",
+    "functionArns": [
+        {
+            "lambdaFunction": "musicrating"
+        }
+    ],
+    "privacy": {
+        "auth": 0,
+        "unauth": 0,
+        "authRoleName": "music-rating-dev-20190806200152-authRole",
+        "unAuthRoleName": "music-rating-dev-20190806200152-unauthRole"
+    },
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "musicrating",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
+        }
+    ]
+}
