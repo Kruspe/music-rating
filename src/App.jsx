@@ -1,5 +1,4 @@
 import React from 'react';
-import { withAuthenticator } from 'aws-amplify-react';
 import Amplify from 'aws-amplify';
 import PropTypes from 'prop-types';
 
@@ -8,11 +7,13 @@ import './App.css';
 
 Amplify.configure(awsExports);
 
-export const App = (props) => {
+const App = (props) => {
   const { authState } = props;
-  return <div>{authState}</div>;
+  return (authState === 'signedIn' && <div id="content">blub</div>);
 };
+
 App.propTypes = {
-  authState: PropTypes.string.isRequired,
+  authState: PropTypes.string,
 };
-export default withAuthenticator(App);
+
+export default App;

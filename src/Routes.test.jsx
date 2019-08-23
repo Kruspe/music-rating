@@ -3,7 +3,7 @@ import { shallow, mount } from 'enzyme';
 import toJSON from 'enzyme-to-json';
 import { MemoryRouter } from 'react-router-dom';
 import Routes from './Routes';
-import App from './App';
+import Authentication from './Authentication';
 
 describe('Routes', () => {
   it('should render correctly', () => {
@@ -11,6 +11,6 @@ describe('Routes', () => {
   });
 
   it('should render app if path is /', () => {
-    expect(mount(<MemoryRouter initialEntries={['/']}><Routes /></MemoryRouter>).find(App)).toHaveLength(1);
+    expect(mount(<MemoryRouter initialEntries={['/']}><Routes /></MemoryRouter>).find(Authentication)).toHaveLength(1);
   });
 });
