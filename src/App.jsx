@@ -4,12 +4,13 @@ import PropTypes from 'prop-types';
 
 import awsExports from './aws-exports';
 import './App.css';
+import Rating from './Rating';
 
 Amplify.configure(awsExports);
 
 const App = (props) => {
   const { authState } = props;
-  return (authState === 'signedIn' && <div id="content">blub</div>);
+  return (authState === 'signedIn' && <Rating />);
 };
 
 App.propTypes = {
