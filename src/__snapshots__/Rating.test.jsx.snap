@@ -1,8 +1,44 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Rating should render correctly 1`] = `
-<WithStyles(ForwardRef(Rating))
-  onChange={[Function]}
-  value={0}
-/>
+<WithStyles(ForwardRef(Grid))
+  alignItems="center"
+  container={true}
+  justify="center"
+>
+  <WithStyles(ForwardRef(Grid))
+    item={true}
+    xs={2}
+  >
+    <WithStyles(ForwardRef(TextField))
+      id="bandName"
+      label="Band Name"
+      onChange={[Function]}
+      value=""
+      variant="outlined"
+    />
+  </WithStyles(ForwardRef(Grid))>
+  <WithStyles(ForwardRef(Grid))
+    item={true}
+    xs={2}
+  >
+    <WithStyles(ForwardRef(Rating))
+      onChange={[Function]}
+      value={0}
+    />
+  </WithStyles(ForwardRef(Grid))>
+  <WithStyles(ForwardRef(Grid))
+    item={true}
+    xs={5}
+  >
+    <WithStyles(ForwardRef(TextField))
+      fullWidth={true}
+      id="comment"
+      label="Comment"
+      onChange={[Function]}
+      value=""
+      variant="outlined"
+    />
+  </WithStyles(ForwardRef(Grid))>
+</WithStyles(ForwardRef(Grid))>
 `;
