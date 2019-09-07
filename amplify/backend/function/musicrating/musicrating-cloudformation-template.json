@@ -71,7 +71,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "music-rating-dev-20190806200152-deployment",
-					"S3Key": "amplify-builds/musicrating-1566419981-latest-build.zip"
+					"S3Key": "amplify-builds/musicrating-1567893648-latest-build.zip"
 				}
 			}
 		},
@@ -81,12 +81,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"musicratingLambdaRole560edf32",
+						"musicratingLambdaRole4d594863",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"musicratingLambdaRole560edf32",
+									"musicratingLambdaRole4d594863",
 									"-",
 									{
 										"Ref": "env"
