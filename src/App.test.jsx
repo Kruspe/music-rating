@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { shallow } from 'enzyme';
 import toJSON from 'enzyme-to-json';
 import App from './App';
-import Rating from './Rating';
+import Rating from './rating';
 
 describe('App', () => {
   it('renders without crashing', () => {

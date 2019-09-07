@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import awsExports from './aws-exports';
 import './App.css';
-import Rating from './Rating';
+import Rating from './rating';
 
 Amplify.configure(awsExports);
 

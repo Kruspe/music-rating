@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import toJSON from 'enzyme-to-json';
 import { Rating as RatingMaterialUI } from '@material-ui/lab';
-import Rating from './Rating';
+import Rating from './index';
 
 let wrapper;
 describe('Rating', () => {
