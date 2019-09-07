@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { Rating as RatingMaterialUI } from '@material-ui/lab';
 import { Grid, TextField } from '@material-ui/core';
 
+import './rating.css';
+
 
 const Rating = () => {
   const [bandName, setBandName] = useState('');
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   return (
-    <Grid container justify="center" alignItems="center">
+    <Grid className="rating-container" container justify="center" alignItems="center">
       <Grid item xs={2}>
         <TextField
           id="bandName"
@@ -18,7 +20,7 @@ const Rating = () => {
           onChange={event => setBandName(event.target.value)}
         />
       </Grid>
-      <Grid item xs={2}>
+      <Grid item className="rating-rating">
         <RatingMaterialUI value={rating} onChange={(event, value) => setRating(value)} />
       </Grid>
       <Grid item xs={5}>

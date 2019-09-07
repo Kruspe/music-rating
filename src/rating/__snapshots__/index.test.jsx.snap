@@ -3,6 +3,7 @@
 exports[`Rating should render correctly 1`] = `
 <WithStyles(ForwardRef(Grid))
   alignItems="center"
+  className="rating-container"
   container={true}
   justify="center"
 >
@@ -19,8 +20,8 @@ exports[`Rating should render correctly 1`] = `
     />
   </WithStyles(ForwardRef(Grid))>
   <WithStyles(ForwardRef(Grid))
+    className="rating-rating"
     item={true}
-    xs={2}
   >
     <WithStyles(ForwardRef(Rating))
       onChange={[Function]}
