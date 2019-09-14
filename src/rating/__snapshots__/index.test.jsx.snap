@@ -1,45 +1,63 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Rating should render correctly 1`] = `
-<WithStyles(ForwardRef(Grid))
-  alignItems="center"
-  className="rating-container"
-  container={true}
-  justify="center"
+<form
+  id="rating-form"
+  onSubmit={[Function]}
 >
   <WithStyles(ForwardRef(Grid))
-    item={true}
-    xs={2}
+    alignItems="center"
+    className="rating-container"
+    container={true}
+    justify="center"
+    spacing={5}
   >
-    <WithStyles(ForwardRef(TextField))
-      id="bandName"
-      label="Band Name"
-      onChange={[Function]}
-      value=""
-      variant="outlined"
-    />
+    <WithStyles(ForwardRef(Grid))
+      item={true}
+      xs={2}
+    >
+      <WithStyles(ForwardRef(TextField))
+        id="bandName"
+        label="Band Name"
+        onChange={[Function]}
+        value=""
+        variant="outlined"
+      />
+    </WithStyles(ForwardRef(Grid))>
+    <WithStyles(ForwardRef(Grid))
+      className="rating-rating"
+      item={true}
+    >
+      <WithStyles(ForwardRef(Rating))
+        name="rating"
+        onChange={[Function]}
+        value={1}
+      />
+    </WithStyles(ForwardRef(Grid))>
+    <WithStyles(ForwardRef(Grid))
+      item={true}
+      xs={4}
+    >
+      <WithStyles(ForwardRef(TextField))
+        fullWidth={true}
+        id="comment"
+        label="Comment"
+        onChange={[Function]}
+        value=""
+        variant="outlined"
+      />
+    </WithStyles(ForwardRef(Grid))>
+    <WithStyles(ForwardRef(Grid))
+      item={true}
+      xs={1}
+    >
+      <WithStyles(ForwardRef(Button))
+        type="submit"
+        variant="outlined"
+      >
+         Submit 
+      </WithStyles(ForwardRef(Button))>
+    </WithStyles(ForwardRef(Grid))>
   </WithStyles(ForwardRef(Grid))>
-  <WithStyles(ForwardRef(Grid))
-    className="rating-rating"
-    item={true}
-  >
-    <WithStyles(ForwardRef(Rating))
-      onChange={[Function]}
-      value={0}
-    />
-  </WithStyles(ForwardRef(Grid))>
-  <WithStyles(ForwardRef(Grid))
-    item={true}
-    xs={5}
-  >
-    <WithStyles(ForwardRef(TextField))
-      fullWidth={true}
-      id="comment"
-      label="Comment"
-      onChange={[Function]}
-      value=""
-      variant="outlined"
-    />
-  </WithStyles(ForwardRef(Grid))>
-</WithStyles(ForwardRef(Grid))>
+</form>
 `;
