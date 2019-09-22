@@ -1,7 +1,5 @@
 {
     "tableName": "musicrating",
     "partitionKeyName": "band",
-    "partitionKeyType": "S",
-    "sortKeyName": "festival-year",
-    "sortKeyType": "S"
+    "partitionKeyType": "S"
 }
