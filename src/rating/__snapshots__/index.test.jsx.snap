@@ -17,8 +17,32 @@ exports[`Rating should render correctly 1`] = `
       xs={2}
     >
       <WithStyles(ForwardRef(TextField))
-        id="bandName"
-        label="Band Name"
+        id="band"
+        label="Band"
+        onChange={[Function]}
+        value=""
+        variant="outlined"
+      />
+    </WithStyles(ForwardRef(Grid))>
+    <WithStyles(ForwardRef(Grid))
+      item={true}
+      xs={2}
+    >
+      <WithStyles(ForwardRef(TextField))
+        id="festival"
+        label="Festival"
+        onChange={[Function]}
+        value=""
+        variant="outlined"
+      />
+    </WithStyles(ForwardRef(Grid))>
+    <WithStyles(ForwardRef(Grid))
+      item={true}
+      xs={1}
+    >
+      <WithStyles(ForwardRef(TextField))
+        id="year"
+        label="Year"
         onChange={[Function]}
         value=""
         variant="outlined"

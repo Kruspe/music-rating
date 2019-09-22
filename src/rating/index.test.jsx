@@ -23,11 +23,15 @@ describe('Rating', () => {
       });
       const expectedInit = {
         header: { Authorization: 'Bearer Token' },
-        body: { bandName: 'bandName', rating: 4, comment: 'comment' },
+        body: {
+          band: 'band', 'festival-year': 'festival-2018', rating: 4, comment: 'comment',
+        },
       };
       const postSpy = jest.spyOn(API, 'post').mockImplementation(f => f);
       jest.spyOn(Auth, 'currentSession').mockImplementation(() => currentSessionMock);
-      wrapper.find('#bandName').prop('onChange')({ target: { value: 'bandName' } });
+      wrapper.find('#band').prop('onChange')({ target: { value: 'band' } });
+      wrapper.find('#festival').prop('onChange')({ target: { value: 'festival' } });
+      wrapper.find('#year').prop('onChange')({ target: { value: 2018 } });
       wrapper.find(RatingMaterialUI).prop('onChange')({}, 4);
       wrapper.find('#comment').prop('onChange')({ target: { value: 'comment' } });
 
@@ -36,27 +40,47 @@ describe('Rating', () => {
       expect(postSpy).toHaveBeenCalledWith('musicrating', '/bands', expectedInit);
     });
 
-    it('should not submit data if bandName is not filled', async () => {
+    it('should not submit data if band is not filled', async () => {
       const preventDefaultMock = jest.fn();
       const postSpy = jest.spyOn(API, 'post').mockImplementation(f => f);
-      wrapper.find('#bandName').prop('onChange')({ target: { value: '' } });
+      wrapper.find('#band').prop('onChange')({ target: { value: '' } });
       await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
-      wrapper.find('#bandName').prop('onChange')({ target: { value: '  ' } });
+      wrapper.find('#band').prop('onChange')({ target: { value: '  ' } });
       await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
-      wrapper.find('#bandName').prop('onChange')({ target: { value: undefined } });
+      wrapper.find('#band').prop('onChange')({ target: { value: undefined } });
       await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
       expect(preventDefaultMock).toHaveBeenCalledTimes(3);
       expect(postSpy).not.toHaveBeenCalled();
     });
   });
 
-  describe('bandName', () => {
+  describe('band', () => {
     it('should have empty string as initial value', () => {
-      expect(wrapper.find('#bandName').prop('value')).toBe('');
+      expect(wrapper.find('#band').prop('value')).toBe('');
     });
     it('should update TextField onChange', () => {
-      wrapper.find('#bandName').prop('onChange')({ target: { value: 'bandName' } });
-      expect(wrapper.find('#bandName').prop('value')).toBe('bandName');
+      wrapper.find('#band').prop('onChange')({ target: { value: 'band' } });
+      expect(wrapper.find('#band').prop('value')).toBe('band');
+    });
+  });
+
+  describe('festival', () => {
+    it('should have empty string as initial value', () => {
+      expect(wrapper.find('#festival').prop('value')).toBe('');
+    });
+    it('should update TextField onChange', () => {
+      wrapper.find('#festival').prop('onChange')({ target: { value: 'festival' } });
+      expect(wrapper.find('#festival').prop('value')).toBe('festival');
+    });
+  });
+
+  describe('year', () => {
+    it('should have empty string as initial value', () => {
+      expect(wrapper.find('#year').prop('value')).toBe('');
+    });
+    it('should update TextField onChange', () => {
+      wrapper.find('#year').prop('onChange')({ target: { value: 2018 } });
+      expect(wrapper.find('#year').prop('value')).toBe(2018);
     });
   });
 

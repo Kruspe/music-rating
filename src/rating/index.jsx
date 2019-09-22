@@ -7,18 +7,22 @@ import { API, Auth } from 'aws-amplify';
 import './rating.css';
 
 const Rating = () => {
-  const [bandName, setBandName] = useState('');
+  const [band, setBand] = useState('');
+  const [festival, setFestival] = useState('');
+  const [year, setYear] = useState('');
   const [rating, setRating] = useState(1);
   const [comment, setComment] = useState('');
 
   const submitRating = async (event) => {
     event.preventDefault();
-    if (bandName && bandName.trim()) {
+    if (band && band.trim()) {
       const currentSession = await Auth.currentSession();
       const token = currentSession.getAccessToken().getJwtToken();
       await API.post('musicrating', '/bands', {
         header: { Authorization: `Bearer ${token}` },
-        body: { bandName, rating, comment },
+        body: {
+          band, 'festival-year': `${festival}-${year}`, rating, comment,
+        },
       });
     }
   };
@@ -28,11 +32,29 @@ const Rating = () => {
       <Grid className="rating-container" container justify="center" alignItems="center" spacing={5}>
         <Grid item xs={2}>
           <TextField
-            id="bandName"
+            id="band"
             variant="outlined"
-            label="Band Name"
-            value={bandName}
-            onChange={event => (setBandName(event.target.value))}
+            label="Band"
+            value={band}
+            onChange={event => setBand(event.target.value)}
+          />
+        </Grid>
+        <Grid item xs={2}>
+          <TextField
+            id="festival"
+            variant="outlined"
+            label="Festival"
+            value={festival}
+            onChange={event => setFestival(event.target.value)}
+          />
+        </Grid>
+        <Grid item xs={1}>
+          <TextField
+            id="year"
+            variant="outlined"
+            label="Year"
+            value={year}
+            onChange={event => setYear(event.target.value)}
           />
         </Grid>
         <Grid item className="rating-rating">
