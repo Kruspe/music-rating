@@ -1,5 +1,7 @@
 {
     "tableName": "musicrating",
-    "partitionKeyName": "band",
-    "partitionKeyType": "S"
+    "partitionKeyName": "user",
+    "partitionKeyType": "S",
+    "sortKeyName": "band",
+    "sortKeyType": "S"
 }

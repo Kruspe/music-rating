@@ -1,1 +1,12 @@
-{}
+{
+    "permissions": {
+        "storage": {
+            "musicrating": [
+                "create",
+                "read",
+                "update",
+                "delete"
+            ]
+        }
+    }
+}

@@ -58,6 +58,12 @@
 						},
 						"REGION": {
 							"Ref": "AWS::Region"
+						},
+						"STORAGE_MUSICRATING_NAME": {
+							"Ref": "storagemusicratingName"
+						},
+						"STORAGE_MUSICRATING_ARN": {
+							"Ref": "storagemusicratingArn"
 						}
 					}
 				},
@@ -67,11 +73,11 @@
 						"Arn"
 					]
 				},
-				"Runtime": "nodejs8.10",
+				"Runtime": "nodejs10.x",
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "music-rating-dev-20190806200152-deployment",
-					"S3Key": "amplify-builds/musicrating-1569183981-latest-build.zip"
+					"S3Key": "amplify-builds/musicrating-6a704b6e4e4e2b417163-build.zip"
 				}
 			}
 		},
@@ -81,12 +87,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"musicratingLambdaRoled390860c",
+						"musicratingLambdaRole53e5e5d3",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"musicratingLambdaRoled390860c",
+									"musicratingLambdaRole53e5e5d3",
 									"-",
 									{
 										"Ref": "env"
@@ -166,6 +172,58 @@
 							"Resource": [
 								{
 									"Ref": "storagemusicratingArn"
+								},
+								{
+									"Fn::Join": [
+										"/",
+										[
+											{
+												"Ref": "storagemusicratingArn"
+											},
+											"index/*"
+										]
+									]
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		"AmplifyResourcesPolicy": {
+			"DependsOn": [
+				"LambdaExecutionRole"
+			],
+			"Type": "AWS::IAM::Policy",
+			"Properties": {
+				"PolicyName": "amplify-lambda-execution-policy",
+				"Roles": [
+					{
+						"Ref": "LambdaExecutionRole"
+					}
+				],
+				"PolicyDocument": {
+					"Version": "2012-10-17",
+					"Statement": [
+						{
+							"Effect": "Allow",
+							"Action": [
+								"dynamodb:Put*",
+								"dynamodb:Create*",
+								"dynamodb:BatchWriteItem",
+								"dynamodb:Get*",
+								"dynamodb:BatchGetItem",
+								"dynamodb:List*",
+								"dynamodb:Describe*",
+								"dynamodb:Scan",
+								"dynamodb:Query",
+								"dynamodb:Update*",
+								"dynamodb:RestoreTable*",
+								"dynamodb:Delete*"
+							],
+							"Resource": [
+								{
+									"Ref": "storagemusicratingArn"
 								}
 							]
 						}
@@ -191,6 +249,11 @@
 		"Region": {
 			"Value": {
 				"Ref": "AWS::Region"
+			}
+		},
+		"LambdaExecutionRole": {
+			"Value": {
+				"Ref": "LambdaExecutionRole"
 			}
 		}
 	}

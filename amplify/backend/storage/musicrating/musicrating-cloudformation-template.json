@@ -12,6 +12,13 @@
             "Type": "String"
         },
         
+        "sortKeyName": {
+            "Type": "String"
+        },
+        "sortKeyType": {
+            "Type": "String"
+        },
+        
         "tableName": {
             "Type": "String"
         }
@@ -33,6 +40,11 @@
                 "AttributeDefinitions": [
                   
                   {
+                      "AttributeName": "user",
+                      "AttributeType": "S"
+                  }  , 
+                  
+                  {
                       "AttributeName": "band",
                       "AttributeType": "S"
                   } 
@@ -41,14 +53,22 @@
                 "KeySchema": [
                   
                   {
-                    "AttributeName": "band",
+                    "AttributeName": "user",
                     "KeyType": "HASH"
+                  }  , 
+                  
+                  {
+                    "AttributeName": "band",
+                    "KeyType": "RANGE"
                   } 
                   
                 ],
                 "ProvisionedThroughput": {
                     "ReadCapacityUnits": "5",
                     "WriteCapacityUnits": "5"
+                },
+                "StreamSpecification": {
+                    "StreamViewType": "NEW_IMAGE"
                 },
                 "TableName": {
                     "Fn::If": [
@@ -70,7 +90,7 @@
                                   }
                                 ]
                             ]
-                        },       
+                        }
                     ]
                 }
                 
@@ -91,6 +111,14 @@
                 ]
             }
         },
+        "StreamArn": {
+            "Value": {
+                "Fn::GetAtt": [
+                    "DynamoDBTable",
+                    "StreamArn"
+                ]
+            }
+        },
         "PartitionKeyName": {
             "Value": {
                 "Ref": "partitionKeyName"
@@ -99,6 +127,17 @@
         "PartitionKeyType": {
             "Value": {
                 "Ref": "partitionKeyType"
+            }
+        },
+        
+        "SortKeyName": {
+            "Value": {
+                "Ref": "sortKeyName"
+            }
+        },
+        "SortKeyType": {
+            "Value": {
+                "Ref": "sortKeyType"
             }
         },
         

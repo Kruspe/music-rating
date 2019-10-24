@@ -1,8 +1,9 @@
 {
 	"auth": {
-		"musicrating89b01fd7": {
+		"musicrating5bf1fb6c": {
 			"service": "Cognito",
-			"providerPlugin": "awscloudformation"
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
 		}
 	},
 	"hosting": {
