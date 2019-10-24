@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Overview should render correctly 1`] = `
+<Fragment>
+  <WithStyles(ForwardRef(Table))>
+    <WithStyles(ForwardRef(TableBody))>
+      <WithStyles(ForwardRef(TableRow))
+        key="band"
+      >
+        <WithStyles(ForwardRef(TableCell))>
+          band
+        </WithStyles(ForwardRef(TableCell))>
+        <WithStyles(ForwardRef(TableCell)) />
+        <WithStyles(ForwardRef(TableCell)) />
+        <WithStyles(ForwardRef(TableCell))>
+          5
+        </WithStyles(ForwardRef(TableCell))>
+      </WithStyles(ForwardRef(TableRow))>
+    </WithStyles(ForwardRef(TableBody))>
+  </WithStyles(ForwardRef(Table))>
+</Fragment>
+`;
