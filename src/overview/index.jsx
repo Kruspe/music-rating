@@ -3,6 +3,7 @@ import {
   Table, TableBody, TableCell, TableRow,
 } from '@material-ui/core';
 import { API, Auth } from 'aws-amplify';
+import { Rating } from '@material-ui/lab';
 
 class Overview extends React.Component {
   state = { ratings: undefined };
@@ -19,22 +20,24 @@ class Overview extends React.Component {
   render() {
     const { ratings } = this.state;
     return (
-      <React.Fragment>
+      <>
         {ratings && (
           <Table>
             <TableBody>
-              {ratings.map(rating => (
+              {ratings.map((rating) => (
                 <TableRow key={rating.band}>
                   <TableCell>{rating.band}</TableCell>
                   <TableCell>{rating.festival}</TableCell>
                   <TableCell>{rating.year}</TableCell>
-                  <TableCell>{rating.rating}</TableCell>
+                  <TableCell>
+                    <Rating value={rating.rating} readOnly />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         )}
-      </React.Fragment>
+      </>
     );
   }
 }

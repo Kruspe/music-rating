@@ -13,7 +13,10 @@ exports[`Overview should render correctly 1`] = `
         <WithStyles(ForwardRef(TableCell)) />
         <WithStyles(ForwardRef(TableCell)) />
         <WithStyles(ForwardRef(TableCell))>
-          5
+          <WithStyles(ForwardRef(Rating))
+            readOnly={true}
+            value={5}
+          />
         </WithStyles(ForwardRef(TableCell))>
       </WithStyles(ForwardRef(TableRow))>
     </WithStyles(ForwardRef(TableBody))>
