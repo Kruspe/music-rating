@@ -21,14 +21,16 @@ describe('Rating', () => {
       const currentSessionMock = Promise.resolve({
         getAccessToken: () => ({ getJwtToken: () => ('Token') }),
       });
+      const currentUserInfoMock = Promise.resolve({ id: 'userId' });
       const expectedInit = {
         header: { Authorization: 'Bearer Token' },
         body: {
-          band: 'band', 'festival-year': 'festival-2018', rating: 4, comment: 'comment',
+          user: 'userId', band: 'band', festival: 'festival', year: 2018, rating: 4, comment: 'comment',
         },
       };
       const postSpy = jest.spyOn(API, 'post').mockImplementation(f => f);
       jest.spyOn(Auth, 'currentSession').mockImplementation(() => currentSessionMock);
+      jest.spyOn(Auth, 'currentUserInfo').mockImplementation(() => currentUserInfoMock);
       wrapper.find('#band').prop('onChange')({ target: { value: 'band' } });
       wrapper.find('#festival').prop('onChange')({ target: { value: 'festival' } });
       wrapper.find('#year').prop('onChange')({ target: { value: 2018 } });

@@ -17,11 +17,12 @@ const Rating = () => {
     event.preventDefault();
     if (band && band.trim()) {
       const currentSession = await Auth.currentSession();
+      const currentUserInfo = await Auth.currentUserInfo();
       const token = currentSession.getAccessToken().getJwtToken();
       await API.post('musicrating', '/bands', {
         header: { Authorization: `Bearer ${token}` },
         body: {
-          band, 'festival-year': `${festival}-${year}`, rating, comment,
+          user: currentUserInfo.id, band, festival, year, rating, comment,
         },
       });
     }
