@@ -1,3 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`App should renders content correctly 1`] = `<Rating />`;
+exports[`App should renders content correctly 1`] = `<TabBar />`;

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { shallow } from 'enzyme';
 import toJSON from 'enzyme-to-json';
 import App from './App';
-import Rating from './rating';
+import TabBar from './TabBar';
 
 describe('App', () => {
   it('renders without crashing', () => {
@@ -17,10 +17,10 @@ describe('App', () => {
   });
 
   it('should render no content when not signedIn', () => {
-    expect(shallow(<App authState="signIn" />).find(Rating)).toHaveLength(0);
+    expect(shallow(<App authState="signIn" />).find(TabBar)).toHaveLength(0);
   });
 
   it('should render content when signedIn', () => {
-    expect(shallow(<App authState="signedIn" />).find(Rating)).toHaveLength(1);
+    expect(shallow(<App authState="signedIn" />).find(TabBar)).toHaveLength(1);
   });
 });
