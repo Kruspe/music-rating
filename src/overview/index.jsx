@@ -6,7 +6,10 @@ import { API, Auth } from 'aws-amplify';
 import { Rating } from '@material-ui/lab';
 
 class Overview extends React.Component {
-  state = { ratings: undefined };
+  constructor(props) {
+    super(props);
+    this.state = { ratings: undefined };
+  }
 
   async componentDidMount() {
     const currentSession = await Auth.currentSession();

@@ -28,7 +28,7 @@ describe('Rating', () => {
           user: 'userId', band: 'band', festival: 'festival', year: 2018, rating: 4, comment: 'comment',
         },
       };
-      const postSpy = jest.spyOn(API, 'post').mockImplementation(f => f);
+      const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
       jest.spyOn(Auth, 'currentSession').mockImplementation(() => currentSessionMock);
       jest.spyOn(Auth, 'currentUserInfo').mockImplementation(() => currentUserInfoMock);
       wrapper.find('#band').prop('onChange')({ target: { value: 'band' } });
@@ -44,7 +44,7 @@ describe('Rating', () => {
 
     it('should not submit data if band is not filled', async () => {
       const preventDefaultMock = jest.fn();
-      const postSpy = jest.spyOn(API, 'post').mockImplementation(f => f);
+      const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
       wrapper.find('#band').prop('onChange')({ target: { value: '' } });
       await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
       wrapper.find('#band').prop('onChange')({ target: { value: '  ' } });

@@ -37,7 +37,7 @@ const Rating = () => {
             variant="outlined"
             label="Band"
             value={band}
-            onChange={event => setBand(event.target.value)}
+            onChange={(event) => setBand(event.target.value)}
           />
         </Grid>
         <Grid item xs={2}>
@@ -46,7 +46,7 @@ const Rating = () => {
             variant="outlined"
             label="Festival"
             value={festival}
-            onChange={event => setFestival(event.target.value)}
+            onChange={(event) => setFestival(event.target.value)}
           />
         </Grid>
         <Grid item xs={1}>
@@ -55,7 +55,7 @@ const Rating = () => {
             variant="outlined"
             label="Year"
             value={year}
-            onChange={event => setYear(event.target.value)}
+            onChange={(event) => setYear(event.target.value)}
           />
         </Grid>
         <Grid item className="rating-rating">
@@ -68,7 +68,7 @@ const Rating = () => {
             variant="outlined"
             label="Comment"
             value={comment}
-            onChange={event => setComment(event.target.value)}
+            onChange={(event) => setComment(event.target.value)}
           />
         </Grid>
         <Grid item xs={1}>
