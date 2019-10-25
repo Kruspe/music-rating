@@ -16,8 +16,19 @@ describe('Rating', () => {
   });
 
   describe('form', () => {
+    let preventDefaultMock;
+    beforeEach(() => {
+      preventDefaultMock = jest.fn();
+    });
+    const fillRatingTextFields = () => {
+      wrapper.find('#band').prop('onChange')({ target: { value: 'band' } });
+      wrapper.find('#festival').prop('onChange')({ target: { value: 'festival' } });
+      wrapper.find('#year').prop('onChange')({ target: { value: 2018 } });
+      wrapper.find(RatingMaterialUI).prop('onChange')({}, 4);
+      wrapper.find('#comment').prop('onChange')({ target: { value: 'comment' } });
+    };
+
     it('should sent data to api and should call event.preventDefault', async () => {
-      const preventDefaultMock = jest.fn();
       const currentSessionMock = Promise.resolve({
         getAccessToken: () => ({ getJwtToken: () => ('Token') }),
       });
@@ -31,19 +42,23 @@ describe('Rating', () => {
       const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
       jest.spyOn(Auth, 'currentSession').mockImplementation(() => currentSessionMock);
       jest.spyOn(Auth, 'currentUserInfo').mockImplementation(() => currentUserInfoMock);
-      wrapper.find('#band').prop('onChange')({ target: { value: 'band' } });
-      wrapper.find('#festival').prop('onChange')({ target: { value: 'festival' } });
-      wrapper.find('#year').prop('onChange')({ target: { value: 2018 } });
-      wrapper.find(RatingMaterialUI).prop('onChange')({}, 4);
-      wrapper.find('#comment').prop('onChange')({ target: { value: 'comment' } });
-
+      fillRatingTextFields();
       await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
       expect(preventDefaultMock).toHaveBeenCalled();
       expect(postSpy).toHaveBeenCalledWith('musicrating', '/bands', expectedInit);
     });
 
+    it('should empty fields after submit', async () => {
+      fillRatingTextFields();
+      await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
+      expect(wrapper.find('#band').prop('value')).toEqual('');
+      expect(wrapper.find('#festival').prop('value')).toEqual('');
+      expect(wrapper.find('#year').prop('value')).toEqual('');
+      expect(wrapper.find(RatingMaterialUI).prop('value')).toEqual(1);
+      expect(wrapper.find('#comment').prop('value')).toEqual('');
+    });
+
     it('should not submit data if band is not filled', async () => {
-      const preventDefaultMock = jest.fn();
       const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
       wrapper.find('#band').prop('onChange')({ target: { value: '' } });
       await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });

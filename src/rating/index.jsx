@@ -13,6 +13,14 @@ const Rating = () => {
   const [rating, setRating] = useState(1);
   const [comment, setComment] = useState('');
 
+  const resetRating = () => {
+    setBand('');
+    setFestival('');
+    setYear('');
+    setRating(1);
+    setComment('');
+  };
+
   const submitRating = async (event) => {
     event.preventDefault();
     if (band && band.trim()) {
@@ -25,6 +33,7 @@ const Rating = () => {
           user: currentUserInfo.id, band, festival, year, rating, comment,
         },
       });
+      resetRating();
     }
   };
 
