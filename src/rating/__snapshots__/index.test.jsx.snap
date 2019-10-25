@@ -20,6 +20,7 @@ exports[`Rating should render correctly 1`] = `
         id="band"
         label="Band"
         onChange={[Function]}
+        required={true}
         value=""
         variant="outlined"
       />
@@ -32,6 +33,7 @@ exports[`Rating should render correctly 1`] = `
         id="festival"
         label="Festival"
         onChange={[Function]}
+        required={true}
         value=""
         variant="outlined"
       />
@@ -44,6 +46,7 @@ exports[`Rating should render correctly 1`] = `
         id="year"
         label="Year"
         onChange={[Function]}
+        required={true}
         value=""
         variant="outlined"
       />

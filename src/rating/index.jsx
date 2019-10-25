@@ -34,6 +34,7 @@ const Rating = () => {
         <Grid item xs={2}>
           <TextField
             id="band"
+            required
             variant="outlined"
             label="Band"
             value={band}
@@ -43,6 +44,7 @@ const Rating = () => {
         <Grid item xs={2}>
           <TextField
             id="festival"
+            required
             variant="outlined"
             label="Festival"
             value={festival}
@@ -52,6 +54,7 @@ const Rating = () => {
         <Grid item xs={1}>
           <TextField
             id="year"
+            required
             variant="outlined"
             label="Year"
             value={year}
