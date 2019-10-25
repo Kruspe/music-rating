@@ -1,7 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Authentication should render correctly 1`] = `
-<Authenticator>
+<Authenticator
+  signUpConfig={
+    Object {
+      "defaultCountryCode": 49,
+      "hiddenDefaults": Array [
+        "phone_number",
+      ],
+    }
+  }
+>
   <App />
 </Authenticator>
 `;
