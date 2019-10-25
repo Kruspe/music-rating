@@ -8,10 +8,10 @@ import './App.css';
 
 Amplify.configure(awsExports);
 
-const Authentication = () => (
+const AppWithAuthentication = () => (
   <Authenticator signUpConfig={{ defaultCountryCode: 49, hiddenDefaults: ['phone_number'] }}>
     <App />
   </Authenticator>
 );
 
-export default Authentication;
+export default AppWithAuthentication;
