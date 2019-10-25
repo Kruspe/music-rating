@@ -17,8 +17,16 @@ describe('Rating', () => {
 
   describe('form', () => {
     let preventDefaultMock;
+    let postSpy;
+    const currentSessionMock = Promise.resolve({
+      getAccessToken: () => ({ getJwtToken: () => ('Token') }),
+    });
+    const currentUserInfoMock = Promise.resolve({ id: 'userId' });
     beforeEach(() => {
       preventDefaultMock = jest.fn();
+      postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
+      jest.spyOn(Auth, 'currentSession').mockImplementation(() => currentSessionMock);
+      jest.spyOn(Auth, 'currentUserInfo').mockImplementation(() => currentUserInfoMock);
     });
     const fillRatingTextFields = () => {
       wrapper.find('#band').prop('onChange')({ target: { value: 'band' } });
@@ -29,19 +37,12 @@ describe('Rating', () => {
     };
 
     it('should sent data to api and should call event.preventDefault', async () => {
-      const currentSessionMock = Promise.resolve({
-        getAccessToken: () => ({ getJwtToken: () => ('Token') }),
-      });
-      const currentUserInfoMock = Promise.resolve({ id: 'userId' });
       const expectedInit = {
         header: { Authorization: 'Bearer Token' },
         body: {
           user: 'userId', band: 'band', festival: 'festival', year: 2018, rating: 4, comment: 'comment',
         },
       };
-      const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
-      jest.spyOn(Auth, 'currentSession').mockImplementation(() => currentSessionMock);
-      jest.spyOn(Auth, 'currentUserInfo').mockImplementation(() => currentUserInfoMock);
       fillRatingTextFields();
       await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
       expect(preventDefaultMock).toHaveBeenCalled();
@@ -58,8 +59,20 @@ describe('Rating', () => {
       expect(wrapper.find('#comment').prop('value')).toEqual('');
     });
 
+    it('should not send empty comment to api', async () => {
+      const expectedInit = {
+        header: { Authorization: 'Bearer Token' },
+        body: {
+          user: 'userId', band: 'band', festival: 'festival', year: 2018, rating: 4,
+        },
+      };
+      fillRatingTextFields();
+      wrapper.find('#comment').prop('onChange')({ target: { value: '' } });
+      await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
+      expect(postSpy).toHaveBeenCalledWith('musicrating', '/bands', expectedInit);
+    });
+
     it('should not submit data if band is not filled', async () => {
-      const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
       wrapper.find('#band').prop('onChange')({ target: { value: '' } });
       await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
       wrapper.find('#band').prop('onChange')({ target: { value: '  ' } });

@@ -30,7 +30,7 @@ const Rating = () => {
       await API.post('musicrating', '/bands', {
         header: { Authorization: `Bearer ${token}` },
         body: {
-          user: currentUserInfo.id, band, festival, year, rating, comment,
+          user: currentUserInfo.id, band, festival, year, rating, comment: comment || undefined,
         },
       });
       resetRating();
