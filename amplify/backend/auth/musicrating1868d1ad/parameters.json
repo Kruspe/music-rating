@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "musicrating5bf1fb6c_identitypool_5bf1fb6c",
+    "identityPoolName": "musicrating1868d1ad_identitypool_1868d1ad",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "musicr5bf1fb6c",
-    "userPoolName": "musicrating5bf1fb6c_userpool_5bf1fb6c",
+    "resourceNameTruncated": "musicr1868d1ad",
+    "userPoolName": "musicrating1868d1ad_userpool_1868d1ad",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -18,8 +18,7 @@
     "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [],
     "requiredAttributes": [
-        "email",
-        "name"
+        "email"
     ],
     "userpoolClientGenerateSecret": true,
     "userpoolClientRefreshTokenValidity": 30,
@@ -29,9 +28,9 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "musicr5bf1fb6c_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "musicr1868d1ad_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "resourceName": "musicrating5bf1fb6c",
+    "resourceName": "musicrating1868d1ad",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
