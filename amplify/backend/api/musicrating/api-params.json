@@ -18,8 +18,8 @@
     "privacy": {
         "auth": 0,
         "unauth": 0,
-        "authRoleName": "music-rating-dev-20190806200152-authRole",
-        "unAuthRoleName": "music-rating-dev-20190806200152-unauthRole"
+        "authRoleName": "music-rating-dev-20191026021858-authRole",
+        "unAuthRoleName": "music-rating-dev-20191026021858-unauthRole"
     },
     "dependsOn": [
         {
