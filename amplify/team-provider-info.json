@@ -13,6 +13,29 @@
         "categories": {
             "auth": {
                 "musicrating2485f76f": {}
+            },
+            "function": {
+                "musicrating": {}
+            }
+        }
+    },
+    "prod": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-music-rating-prod-230658-authRole",
+            "UnauthRoleArn": "arn:aws:iam::025007687265:role/amplify-music-rating-prod-230658-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::025007687265:role/amplify-music-rating-prod-230658-authRole",
+            "Region": "eu-west-1",
+            "DeploymentBucketName": "amplify-music-rating-prod-230658-deployment",
+            "UnauthRoleName": "amplify-music-rating-prod-230658-unauthRole",
+            "StackName": "amplify-music-rating-prod-230658",
+            "StackId": "arn:aws:cloudformation:eu-west-1:025007687265:stack/amplify-music-rating-prod-230658/18798d50-f906-11e9-845e-0254d350c81a"
+        },
+        "categories": {
+            "auth": {
+                "musicrating2485f76f": {}
+            },
+            "function": {
+                "musicrating": {}
             }
         }
     }
