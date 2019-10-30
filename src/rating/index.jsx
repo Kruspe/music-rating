@@ -40,9 +40,10 @@ const Rating = () => {
   return (
     <form id="rating-form" onSubmit={submitRating}>
       <Grid className="rating-container" container justify="center" alignItems="center" spacing={5}>
-        <Grid item xs={2}>
+        <Grid item lg={2} xs={12}>
           <TextField
             id="band"
+            fullWidth
             required
             variant="outlined"
             label="Band"
@@ -50,9 +51,10 @@ const Rating = () => {
             onChange={(event) => setBand(event.target.value)}
           />
         </Grid>
-        <Grid item xs={2}>
+        <Grid item lg={2} xs={12}>
           <TextField
             id="festival"
+            fullWidth
             required
             variant="outlined"
             label="Festival"
@@ -60,9 +62,10 @@ const Rating = () => {
             onChange={(event) => setFestival(event.target.value)}
           />
         </Grid>
-        <Grid item xs={1}>
+        <Grid item lg={1} xs={12}>
           <TextField
             id="year"
+            fullWidth
             required
             variant="outlined"
             label="Year"
@@ -73,7 +76,7 @@ const Rating = () => {
         <Grid item className="rating-rating">
           <RatingMaterialUI name="rating" value={rating} onChange={(event, value) => setRating(value)} />
         </Grid>
-        <Grid item xs={4}>
+        <Grid item lg={4} xs={12}>
           <TextField
             id="comment"
             fullWidth
@@ -83,7 +86,7 @@ const Rating = () => {
             onChange={(event) => setComment(event.target.value)}
           />
         </Grid>
-        <Grid item xs={1}>
+        <Grid item lg={1}>
           <Button type="submit" variant="outlined"> Submit </Button>
         </Grid>
       </Grid>

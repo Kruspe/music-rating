@@ -14,9 +14,11 @@ exports[`Rating should render correctly 1`] = `
   >
     <WithStyles(ForwardRef(Grid))
       item={true}
-      xs={2}
+      lg={2}
+      xs={12}
     >
       <WithStyles(ForwardRef(TextField))
+        fullWidth={true}
         id="band"
         label="Band"
         onChange={[Function]}
@@ -27,9 +29,11 @@ exports[`Rating should render correctly 1`] = `
     </WithStyles(ForwardRef(Grid))>
     <WithStyles(ForwardRef(Grid))
       item={true}
-      xs={2}
+      lg={2}
+      xs={12}
     >
       <WithStyles(ForwardRef(TextField))
+        fullWidth={true}
         id="festival"
         label="Festival"
         onChange={[Function]}
@@ -40,9 +44,11 @@ exports[`Rating should render correctly 1`] = `
     </WithStyles(ForwardRef(Grid))>
     <WithStyles(ForwardRef(Grid))
       item={true}
-      xs={1}
+      lg={1}
+      xs={12}
     >
       <WithStyles(ForwardRef(TextField))
+        fullWidth={true}
         id="year"
         label="Year"
         onChange={[Function]}
@@ -63,7 +69,8 @@ exports[`Rating should render correctly 1`] = `
     </WithStyles(ForwardRef(Grid))>
     <WithStyles(ForwardRef(Grid))
       item={true}
-      xs={4}
+      lg={4}
+      xs={12}
     >
       <WithStyles(ForwardRef(TextField))
         fullWidth={true}
@@ -76,7 +83,7 @@ exports[`Rating should render correctly 1`] = `
     </WithStyles(ForwardRef(Grid))>
     <WithStyles(ForwardRef(Grid))
       item={true}
-      xs={1}
+      lg={1}
     >
       <WithStyles(ForwardRef(Button))
         type="submit"
