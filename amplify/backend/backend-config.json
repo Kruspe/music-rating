@@ -16,6 +16,10 @@
 		"musicrating": {
 			"service": "DynamoDB",
 			"providerPlugin": "awscloudformation"
+		},
+		"festivalBands": {
+			"service": "S3",
+			"providerPlugin": "awscloudformation"
 		}
 	},
 	"function": {

@@ -1,0 +1,33 @@
+{
+    "bucketName": "festival-bands",
+    "authPolicyName": "s3_amplify_b7db90b6",
+    "unauthPolicyName": "s3_amplify_b7db90b6",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "selectedGuestPermissions": [
+        "s3:GetObject",
+        "s3:ListBucket"
+    ],
+    "selectedAuthenticatedPermissions": [
+        "s3:GetObject",
+        "s3:ListBucket"
+    ],
+    "s3PermissionsAuthenticatedPublic": "s3:GetObject",
+    "s3PublicPolicy": "Public_policy_cf6f10ff",
+    "s3PermissionsAuthenticatedUploads": "DISALLOW",
+    "s3UploadsPolicy": "Uploads_policy_cf6f10ff",
+    "s3PermissionsAuthenticatedProtected": "s3:GetObject",
+    "s3ProtectedPolicy": "Protected_policy_cf6f10ff",
+    "s3PermissionsAuthenticatedPrivate": "s3:GetObject",
+    "s3PrivatePolicy": "Private_policy_cf6f10ff",
+    "AuthenticatedAllowList": "ALLOW",
+    "s3ReadPolicy": "read_policy_cf6f10ff",
+    "s3PermissionsGuestPublic": "DISALLOW",
+    "s3PermissionsGuestUploads": "DISALLOW",
+    "GuestAllowList": "DISALLOW",
+    "triggerFunction": "NONE"
+}
