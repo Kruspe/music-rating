@@ -1,136 +1,82 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import toJSON from 'enzyme-to-json';
-import { Rating as RatingMaterialUI } from '@material-ui/lab';
+import { fireEvent, render, wait } from '@testing-library/react';
 import { API, Auth } from 'aws-amplify';
 import Rating from './index';
 
-let wrapper;
+import '@testing-library/jest-dom/extend-expect';
+
 describe('Rating', () => {
-  beforeEach(() => {
-    wrapper = shallow(<Rating />);
-    jest.clearAllMocks();
-  });
-  it('should render correctly', () => {
-    expect(toJSON(wrapper)).toMatchSnapshot();
+  const isFormInEmptyState = (getByLabelText) => {
+    expect(getByLabelText(/band \*/i)).toHaveValue('');
+    expect(getByLabelText(/festival \*/i)).toHaveValue('');
+    expect(getByLabelText(/year \*/i)).toHaveValue('');
+    expect(getByLabelText(/1 star/i)).toBeChecked();
+    expect(getByLabelText(/comment/i)).toHaveValue('');
+  };
+
+  it('should display empty form', () => {
+    const { getByLabelText } = render(<Rating />);
+    isFormInEmptyState(getByLabelText);
   });
 
-  describe('form', () => {
-    let preventDefaultMock;
-    let postSpy;
-    const currentSessionMock = Promise.resolve({
-      getAccessToken: () => ({ getJwtToken: () => ('Token') }),
-    });
-    const currentUserInfoMock = Promise.resolve({ id: 'userId' });
+  describe('submit', () => {
+    const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
     beforeEach(() => {
-      preventDefaultMock = jest.fn();
-      postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
-      jest.spyOn(Auth, 'currentSession').mockImplementation(() => currentSessionMock);
-      jest.spyOn(Auth, 'currentUserInfo').mockImplementation(() => currentUserInfoMock);
+      postSpy.mockClear();
+      const currentSessionMock = {
+        getAccessToken: () => ({ getJwtToken: () => ('Token') }),
+      };
+      const currentUserInfoMock = { id: 'userId' };
+      jest.spyOn(Auth, 'currentSession').mockResolvedValueOnce(currentSessionMock);
+      jest.spyOn(Auth, 'currentUserInfo').mockResolvedValueOnce(currentUserInfoMock);
     });
-    const fillRatingTextFields = () => {
-      wrapper.find('#band').prop('onChange')({ target: { value: 'band' } });
-      wrapper.find('#festival').prop('onChange')({ target: { value: 'festival' } });
-      wrapper.find('#year').prop('onChange')({ target: { value: 2018 } });
-      wrapper.find(RatingMaterialUI).prop('onChange')({}, 4);
-      wrapper.find('#comment').prop('onChange')({ target: { value: 'comment' } });
+    const fillRatingFields = (getByLabelText) => {
+      fireEvent.change(getByLabelText(/band \*/i), { target: { value: 'Bloodbath' } });
+      fireEvent.change(getByLabelText(/festival \*/i), { target: { value: 'Wacken' } });
+      fireEvent.change(getByLabelText(/year \*/i), { target: { value: '2015' } });
+      fireEvent.click(getByLabelText(/5 star/i));
+      fireEvent.change(getByLabelText(/comment/i), { target: { value: 'comment' } });
     };
 
-    it('should sent data to api and should call event.preventDefault', async () => {
+    it('should enter data and save it', async () => {
       const expectedInit = {
         header: { Authorization: 'Bearer Token' },
         body: {
-          user: 'userId', band: 'band', festival: 'festival', year: 2018, rating: 4, comment: 'comment',
+          user: 'userId', band: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5, comment: 'comment',
         },
       };
-      fillRatingTextFields();
-      await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
-      expect(preventDefaultMock).toHaveBeenCalled();
-      expect(postSpy).toHaveBeenCalledWith('musicrating', '/bands', expectedInit);
-    });
 
-    it('should empty fields after submit', async () => {
-      fillRatingTextFields();
-      await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
-      expect(wrapper.find('#band').prop('value')).toEqual('');
-      expect(wrapper.find('#festival').prop('value')).toEqual('');
-      expect(wrapper.find('#year').prop('value')).toEqual('');
-      expect(wrapper.find(RatingMaterialUI).prop('value')).toEqual(1);
-      expect(wrapper.find('#comment').prop('value')).toEqual('');
-    });
+      const { getByLabelText, getByText } = render(<Rating />);
+      fillRatingFields(getByLabelText);
+      fireEvent.submit(getByText(/submit/i));
 
-    it('should not send empty comment to api', async () => {
+      await wait(() => expect(postSpy).toHaveBeenCalledTimes(1));
+      await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/bands', expectedInit));
+      isFormInEmptyState(getByLabelText);
+    });
+    it('should not try to save empty comment', async () => {
       const expectedInit = {
         header: { Authorization: 'Bearer Token' },
         body: {
-          user: 'userId', band: 'band', festival: 'festival', year: 2018, rating: 4,
+          user: 'userId', band: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5,
         },
       };
-      fillRatingTextFields();
-      wrapper.find('#comment').prop('onChange')({ target: { value: '' } });
-      await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
-      expect(postSpy).toHaveBeenCalledWith('musicrating', '/bands', expectedInit);
-    });
 
-    it('should not submit data if band is not filled', async () => {
-      wrapper.find('#band').prop('onChange')({ target: { value: '' } });
-      await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
-      wrapper.find('#band').prop('onChange')({ target: { value: '  ' } });
-      await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
-      wrapper.find('#band').prop('onChange')({ target: { value: undefined } });
-      await wrapper.find('#rating-form').prop('onSubmit')({ preventDefault: preventDefaultMock });
-      expect(preventDefaultMock).toHaveBeenCalledTimes(3);
+      const { getByLabelText, getByText } = render(<Rating />);
+      fillRatingFields(getByLabelText);
+      fireEvent.change(getByLabelText(/comment/i), { target: { value: '' } });
+      fireEvent.submit(getByText(/submit/i));
+      await wait(() => expect(postSpy).toHaveBeenCalledTimes(1));
+      await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/bands', expectedInit));
+    });
+    it('should require band, festival and year', () => {
+      const { getByLabelText, getByText } = render(<Rating />);
+      fireEvent.submit(getByText(/submit/i));
+
+      expect(getByLabelText(/band \*/i)).toBeRequired();
+      expect(getByLabelText(/festival \*/i)).toBeRequired();
+      expect(getByLabelText(/year \*/i)).toBeRequired();
       expect(postSpy).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('band', () => {
-    it('should have empty string as initial value', () => {
-      expect(wrapper.find('#band').prop('value')).toBe('');
-    });
-    it('should update TextField onChange', () => {
-      wrapper.find('#band').prop('onChange')({ target: { value: 'band' } });
-      expect(wrapper.find('#band').prop('value')).toBe('band');
-    });
-  });
-
-  describe('festival', () => {
-    it('should have empty string as initial value', () => {
-      expect(wrapper.find('#festival').prop('value')).toBe('');
-    });
-    it('should update TextField onChange', () => {
-      wrapper.find('#festival').prop('onChange')({ target: { value: 'festival' } });
-      expect(wrapper.find('#festival').prop('value')).toBe('festival');
-    });
-  });
-
-  describe('year', () => {
-    it('should have empty string as initial value', () => {
-      expect(wrapper.find('#year').prop('value')).toBe('');
-    });
-    it('should update TextField onChange', () => {
-      wrapper.find('#year').prop('onChange')({ target: { value: 2018 } });
-      expect(wrapper.find('#year').prop('value')).toBe(2018);
-    });
-  });
-
-  describe('rating', () => {
-    it('should have 0 as initial state', () => {
-      expect(wrapper.find(RatingMaterialUI).prop('value')).toBe(1);
-    });
-    it('should update rating onChange', () => {
-      wrapper.find(RatingMaterialUI).prop('onChange')({}, 2);
-      expect(wrapper.find(RatingMaterialUI).prop('value')).toBe(2);
-    });
-  });
-
-  describe('comment', () => {
-    it('should have empty string as initial state', () => {
-      expect(wrapper.find('#comment').prop('value')).toBe('');
-    });
-    it('should update rating onChange', () => {
-      wrapper.find('#comment').prop('onChange')({ target: { value: 'comment' } });
-      expect(wrapper.find('#comment').prop('value')).toBe('comment');
     });
   });
 });

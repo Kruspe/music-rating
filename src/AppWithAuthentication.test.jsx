@@ -1,17 +1,18 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import toJSON from 'enzyme-to-json';
-import { Authenticator } from 'aws-amplify-react';
+import { render, waitForElement, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
 import AppWithAuthentication from './AppWithAuthentication';
 
 describe('Authentication', () => {
-  it('should render correctly', () => {
-    expect(toJSON(shallow(<AppWithAuthentication />))).toMatchSnapshot();
+  it('should display SignIn form', async () => {
+    const { findByText } = render(<AppWithAuthentication />);
+    expect(await waitForElement(() => findByText(/sign in$/i))).toBeInTheDocument();
   });
 
-  it('should have right signUpConfig', () => {
-    const expectedSignUpConfig = { defaultCountryCode: 49, hiddenDefaults: ['phone_number'] };
-    const wrapper = shallow(<AppWithAuthentication />);
-    expect(wrapper.find(Authenticator).prop('signUpConfig')).toEqual(expectedSignUpConfig);
+  it('should display correct SignUp form', async () => {
+    const { findByText } = render(<AppWithAuthentication />);
+    const signUpLink = await waitForElement(() => findByText('Create account'));
+    fireEvent.click(signUpLink);
+    expect(await waitForElement(() => findByText(/create account/i))).toBeInTheDocument();
   });
 });
