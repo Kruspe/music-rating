@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { API, Auth } from 'aws-amplify';
 import { Rating } from '@material-ui/lab';
 import MaterialTable from 'material-table';
@@ -18,44 +18,39 @@ const tableIcons = {
   SortArrow: forwardRef((props, ref) => <ArrowUpward {...props} ref={ref} />),
   /* eslint-enable react/jsx-props-no-spreading */
 };
-class Overview extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { ratings: undefined };
-  }
+const Overview = () => {
+  const [ratings, setRatings] = useState();
 
-  async componentDidMount() {
-    const currentSession = await Auth.currentSession();
-    const currentUserInfo = await Auth.currentUserInfo();
-    const token = currentSession.getAccessToken().getJwtToken();
+  useEffect(() => {
+    const getRatings = async () => {
+      const currentSession = await Auth.currentSession();
+      const currentUserInfo = await Auth.currentUserInfo();
+      const token = currentSession.getAccessToken().getJwtToken();
+      setRatings(await API.get('musicrating', `/bands/${currentUserInfo.id}`, { header: { Authorization: `Bearer ${token}` } }));
+    };
+    getRatings();
+  }, []);
 
-    const ratings = await API.get('musicrating', `/bands/${currentUserInfo.id}`, { header: { Authorization: `Bearer ${token}` } });
-    this.setState({ ratings });
-  }
-
-  render() {
-    const { ratings } = this.state;
-    return (
-      <>
-        {ratings && (
-          <MaterialTable
-            columns={[
-              { title: 'Band', field: 'band' },
-              { title: 'Festival', field: 'festival' },
-              { title: 'Year', field: 'year' },
-              {
-                title: 'Rating',
-                field: 'rating',
-                render: (data) => (<Rating name={data.band} value={data.rating} readOnly />),
-              }]}
-            data={ratings}
-            icons={tableIcons}
-            options={{ showTitle: false, draggable: false, pageSize: 10 }}
-          />
-        )}
-      </>
-    );
-  }
-}
+  return (
+    <>
+      {ratings && (
+        <MaterialTable
+          columns={[
+            { title: 'Band', field: 'band' },
+            { title: 'Festival', field: 'festival' },
+            { title: 'Year', field: 'year' },
+            {
+              title: 'Rating',
+              field: 'rating',
+              render: (data) => (<Rating name={data.band} value={data.rating} readOnly />),
+            }]}
+          data={ratings}
+          icons={tableIcons}
+          options={{ showTitle: false, draggable: false, pageSize: 10 }}
+        />
+      )}
+    </>
+  );
+};
 
 export default Overview;
