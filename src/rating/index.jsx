@@ -87,7 +87,7 @@ const Rating = () => {
           />
         </Grid>
         <Grid item lg={1}>
-          <Button type="submit" variant="outlined"> Submit </Button>
+          <Button type="submit" variant="outlined">Submit</Button>
         </Grid>
       </Grid>
     </form>
