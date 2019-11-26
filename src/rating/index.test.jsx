@@ -17,6 +17,18 @@ describe('Rating', () => {
     isFormInEmptyState(getByLabelText);
   });
 
+  it('should display form with disabled band field filled in band name', () => {
+    const { getByLabelText } = render(<Rating bandName="Bloodbath" />);
+    const bandField = getByLabelText(/band/i);
+    expect(bandField).toHaveValue('Bloodbath');
+    expect(bandField).toBeDisabled();
+    expect(bandField).not.toBeRequired();
+    expect(getByLabelText(/festival \*/i)).toHaveValue('');
+    expect(getByLabelText(/year \*/i)).toHaveValue('');
+    expect(getByLabelText(/1 star/i)).toBeChecked();
+    expect(getByLabelText(/comment/i)).toHaveValue('');
+  });
+
   describe('submit', () => {
     const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
     beforeEach(() => {

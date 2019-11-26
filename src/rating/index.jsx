@@ -3,11 +3,12 @@ import { Rating as RatingMaterialUI } from '@material-ui/lab';
 import { Grid, TextField } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { API, Auth } from 'aws-amplify';
+import PropTypes from 'prop-types';
 
 import './rating.css';
 
-const Rating = () => {
-  const [band, setBand] = useState('');
+const Rating = ({ bandName }) => {
+  const [band, setBand] = useState(bandName);
   const [festival, setFestival] = useState('');
   const [year, setYear] = useState('');
   const [rating, setRating] = useState(1);
@@ -44,7 +45,8 @@ const Rating = () => {
           <TextField
             id="band"
             fullWidth
-            required
+            required={!bandName}
+            disabled={!!bandName}
             variant="outlined"
             label="Band"
             value={band}
@@ -92,6 +94,14 @@ const Rating = () => {
       </Grid>
     </form>
   );
+};
+
+Rating.propTypes = {
+  bandName: PropTypes.string,
+};
+
+Rating.defaultProps = {
+  bandName: '',
 };
 
 export default Rating;
