@@ -3,8 +3,6 @@ import { fireEvent, render, wait } from '@testing-library/react';
 import { API, Auth } from 'aws-amplify';
 import Rating from './index';
 
-import '@testing-library/jest-dom/extend-expect';
-
 describe('Rating', () => {
   const isFormInEmptyState = (getByLabelText) => {
     expect(getByLabelText(/band \*/i)).toHaveValue('');
