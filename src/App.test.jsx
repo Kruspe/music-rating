@@ -35,6 +35,7 @@ describe('App', () => {
       expect(getByLabelText(/band \*/i)).toBeVisible();
       expect(getByLabelText(/festival \*/i)).toBeVisible();
       expect(getByLabelText(/year \*/i)).toBeVisible();
+      expect(getByLabelText(/1 stars/i)).toBeVisible();
       expect(getByLabelText(/comment/i)).toBeVisible();
     };
 
