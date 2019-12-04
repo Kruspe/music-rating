@@ -23,19 +23,19 @@ describe('App', () => {
     });
 
     const isOverviewVisible = async (findByPlaceholderText, findByText, findByLabelText) => {
-      await findByPlaceholderText(/search/i);
-      await findByText(/bloodbath/i);
-      await findByText(/wacken/i);
-      await findByText(/2015/);
-      await findByLabelText(/5 stars/i);
-      await findByText(/10 rows/i);
+      expect(await findByPlaceholderText(/search/i)).toBeVisible();
+      expect(await findByText(/bloodbath/i)).toBeVisible();
+      expect(await findByText(/wacken/i)).toBeVisible();
+      expect(await findByText(/2015/)).toBeVisible();
+      expect(await findByLabelText(/5 stars/i)).toBeVisible();
+      expect(await findByText(/10 rows/i)).toBeVisible();
     };
 
     const isRatingVisible = (getByLabelText) => {
-      getByLabelText(/band \*/i);
-      getByLabelText(/festival \*/i);
-      getByLabelText(/year \*/i);
-      getByLabelText(/comment/i);
+      expect(getByLabelText(/band \*/i)).toBeVisible();
+      expect(getByLabelText(/festival \*/i)).toBeVisible();
+      expect(getByLabelText(/year \*/i)).toBeVisible();
+      expect(getByLabelText(/comment/i)).toBeVisible();
     };
 
     it('should render overview', async () => {
