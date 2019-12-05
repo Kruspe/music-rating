@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 import './rating.css';
 
-const Rating = ({ bandName }) => {
+const Rating = ({ bandName, onSubmitBehaviour }) => {
   const [band, setBand] = useState(bandName);
   const [festival, setFestival] = useState('');
   const [year, setYear] = useState('');
@@ -35,6 +35,7 @@ const Rating = ({ bandName }) => {
         },
       });
       resetRating();
+      onSubmitBehaviour();
     }
   };
 
@@ -43,10 +44,11 @@ const Rating = ({ bandName }) => {
       <Grid className="rating-container" container justify="center" alignItems="center" spacing={5}>
         <Grid item lg={2} xs={12}>
           <TextField
-            id="band"
+            id={`${bandName}-band`}
+            name="band"
             fullWidth
             required={!bandName}
-            disabled={!!bandName}
+            InputProps={{ readOnly: !!bandName }}
             variant="outlined"
             label="Band"
             value={band}
@@ -55,7 +57,8 @@ const Rating = ({ bandName }) => {
         </Grid>
         <Grid item lg={2} xs={12}>
           <TextField
-            id="festival"
+            id={`${bandName}-festival`}
+            name="festival"
             fullWidth
             required
             variant="outlined"
@@ -66,7 +69,8 @@ const Rating = ({ bandName }) => {
         </Grid>
         <Grid item lg={1} xs={12}>
           <TextField
-            id="year"
+            id={`${bandName}-year`}
+            name="year"
             fullWidth
             required
             variant="outlined"
@@ -80,7 +84,8 @@ const Rating = ({ bandName }) => {
         </Grid>
         <Grid item lg={4} xs={12}>
           <TextField
-            id="comment"
+            id={`${bandName}-comment`}
+            name="comment"
             fullWidth
             variant="outlined"
             label="Comment"
@@ -98,10 +103,12 @@ const Rating = ({ bandName }) => {
 
 Rating.propTypes = {
   bandName: PropTypes.string,
+  onSubmitBehaviour: PropTypes.func,
 };
 
 Rating.defaultProps = {
   bandName: '',
+  onSubmitBehaviour: () => {},
 };
 
 export default Rating;

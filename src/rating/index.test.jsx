@@ -5,7 +5,9 @@ import Rating from './index';
 
 describe('Rating', () => {
   const isFormInEmptyState = (getByLabelText) => {
-    expect(getByLabelText(/band \*/i)).toHaveValue('');
+    const bandField = getByLabelText(/band \*/i);
+    expect(bandField).toHaveValue('');
+    expect(bandField).not.toHaveAttribute('readOnly');
     expect(getByLabelText(/festival \*/i)).toHaveValue('');
     expect(getByLabelText(/year \*/i)).toHaveValue('');
     expect(getByLabelText(/1 star/i)).toBeChecked();
@@ -21,7 +23,7 @@ describe('Rating', () => {
     const { getByLabelText } = render(<Rating bandName="Bloodbath" />);
     const bandField = getByLabelText(/band/i);
     expect(bandField).toHaveValue('Bloodbath');
-    expect(bandField).toBeDisabled();
+    expect(bandField).toHaveAttribute('readOnly');
     expect(bandField).not.toBeRequired();
     expect(getByLabelText(/festival \*/i)).toHaveValue('');
     expect(getByLabelText(/year \*/i)).toHaveValue('');
@@ -48,20 +50,24 @@ describe('Rating', () => {
       fireEvent.change(getByLabelText(/comment/i), { target: { value: 'comment' } });
     };
 
-    it('should enter data and save it', async () => {
+    it('should enter data, save it and call onSubmitBehaviour ', async () => {
       const expectedInit = {
         header: { Authorization: 'Bearer Token' },
         body: {
           user: 'userId', band: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5, comment: 'comment',
         },
       };
+      const onSubmitBehaviourMock = jest.fn();
 
-      const { getByLabelText, getByText } = render(<Rating />);
+      const {
+        getByLabelText, getByText,
+      } = render(<Rating onSubmitBehaviour={onSubmitBehaviourMock} />);
       fillRatingFields(getByLabelText);
       fireEvent.submit(getByText(/submit/i));
 
       await wait(() => expect(postSpy).toHaveBeenCalledTimes(1));
       await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/bands', expectedInit));
+      await wait(() => expect(onSubmitBehaviourMock).toHaveBeenCalledTimes(1));
       isFormInEmptyState(getByLabelText);
     });
     it('should not try to save empty comment', async () => {

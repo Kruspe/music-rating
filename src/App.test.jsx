@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import { API, Auth } from 'aws-amplify';
+import { API, Auth, Storage } from 'aws-amplify';
 import App from './App';
 
 describe('App', () => {
@@ -25,7 +25,7 @@ describe('App', () => {
     const isOverviewVisible = async (findByPlaceholderText, findByText, findByLabelText) => {
       expect(await findByPlaceholderText(/search/i)).toBeVisible();
       expect(await findByText(/bloodbath/i)).toBeVisible();
-      expect(await findByText(/wacken/i)).toBeVisible();
+      expect(await findByText(/^wacken$/i)).toBeVisible();
       expect(await findByText(/2015/)).toBeVisible();
       expect(await findByLabelText(/5 stars/i)).toBeVisible();
       expect(await findByText(/10 rows/i)).toBeVisible();
@@ -39,12 +39,21 @@ describe('App', () => {
       expect(getByLabelText(/comment/i)).toBeVisible();
     };
 
+    const isEstimateWackenVisible = async (findByLabelText) => {
+      expect(await findByLabelText(/band/i)).toHaveValue('Vader');
+      expect(await findByLabelText(/festival \*/i)).toBeVisible();
+      expect(await findByLabelText(/1 star/i)).toBeVisible();
+      expect(await findByLabelText(/comment/i)).toBeVisible();
+    };
+
     it('should render overview', async () => {
       const { findByPlaceholderText, findByText, findByLabelText } = render(<App authState="signedIn" />);
       await isOverviewVisible(findByPlaceholderText, findByText, findByLabelText);
     });
 
-    it('should switch between overview and rating', async () => {
+    it('should switch between overview, rating and estimation', async () => {
+      jest.spyOn(Storage, 'get').mockResolvedValueOnce('www.link-to-json.com');
+      global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(['Bloodbath', 'Vader'])));
       const {
         findByText, getByText, getByLabelText, findByPlaceholderText, findByLabelText,
       } = render(<App authState="signedIn" />);
@@ -53,6 +62,8 @@ describe('App', () => {
       isRatingVisible(getByLabelText);
       fireEvent.click(getByText(/overview/i));
       await isOverviewVisible(findByPlaceholderText, findByText, findByLabelText);
+      fireEvent.click(getByText(/estimate wacken/i));
+      await isEstimateWackenVisible(findByLabelText);
     });
   });
 });
