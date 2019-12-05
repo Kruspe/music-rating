@@ -51,6 +51,13 @@ describe('EstimateWacken', () => {
     });
     it('should remove unrated band after rating', async () => {
       global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(['Bloodbath', 'Vader'])));
+      const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
+      const expectedInit = {
+        header: { Authorization: 'Bearer Token' },
+        body: {
+          user: 'userId', band: 'Vader', festival: 'Wacken', year: '2015', rating: 5, comment: 'comment',
+        },
+      };
       const {
         findByLabelText, getByLabelText, getByText, queryByLabelText,
       } = render(<EstimateWacken />);
@@ -63,6 +70,8 @@ describe('EstimateWacken', () => {
       await act(async () => {
         fireEvent.submit(getByText(/submit/i));
       });
+      await wait(() => expect(postSpy).toHaveBeenCalledTimes(1));
+      await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/bands', expectedInit));
       expect(queryByLabelText(/band/i)).not.toBeInTheDocument();
     });
   });
