@@ -8,7 +8,8 @@
             "DeploymentBucketName": "music-rating-dev-20191026021858-deployment",
             "UnauthRoleName": "music-rating-dev-20191026021858-unauthRole",
             "StackName": "music-rating-dev-20191026021858",
-            "StackId": "arn:aws:cloudformation:eu-west-1:025007687265:stack/music-rating-dev-20191026021858/349180a0-f786-11e9-a8c1-02731a038876"
+            "StackId": "arn:aws:cloudformation:eu-west-1:025007687265:stack/music-rating-dev-20191026021858/349180a0-f786-11e9-a8c1-02731a038876",
+            "AmplifyAppId": "d2q3jemeadkjjs"
         },
         "categories": {
             "auth": {
@@ -28,7 +29,8 @@
             "DeploymentBucketName": "amplify-music-rating-prod-230658-deployment",
             "UnauthRoleName": "amplify-music-rating-prod-230658-unauthRole",
             "StackName": "amplify-music-rating-prod-230658",
-            "StackId": "arn:aws:cloudformation:eu-west-1:025007687265:stack/amplify-music-rating-prod-230658/18798d50-f906-11e9-845e-0254d350c81a"
+            "StackId": "arn:aws:cloudformation:eu-west-1:025007687265:stack/amplify-music-rating-prod-230658/18798d50-f906-11e9-845e-0254d350c81a",
+            "AmplifyAppId": "d2q3jemeadkjjs"
         },
         "categories": {
             "auth": {

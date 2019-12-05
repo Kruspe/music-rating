@@ -1,7 +1,7 @@
 {
     "bucketName": "festival-bands",
-    "authPolicyName": "s3_amplify_b7db90b6",
-    "unauthPolicyName": "s3_amplify_b7db90b6",
+    "authPolicyName": "s3_amplify_4b416df6",
+    "unauthPolicyName": "s3_amplify_4b416df6",
     "authRoleName": {
         "Ref": "AuthRoleName"
     },
@@ -17,15 +17,15 @@
         "s3:ListBucket"
     ],
     "s3PermissionsAuthenticatedPublic": "s3:GetObject",
-    "s3PublicPolicy": "Public_policy_cf6f10ff",
+    "s3PublicPolicy": "Public_policy_226b6a6e",
     "s3PermissionsAuthenticatedUploads": "DISALLOW",
-    "s3UploadsPolicy": "Uploads_policy_cf6f10ff",
+    "s3UploadsPolicy": "Uploads_policy_226b6a6e",
     "s3PermissionsAuthenticatedProtected": "s3:GetObject",
-    "s3ProtectedPolicy": "Protected_policy_cf6f10ff",
+    "s3ProtectedPolicy": "Protected_policy_226b6a6e",
     "s3PermissionsAuthenticatedPrivate": "s3:GetObject",
-    "s3PrivatePolicy": "Private_policy_cf6f10ff",
+    "s3PrivatePolicy": "Private_policy_226b6a6e",
     "AuthenticatedAllowList": "ALLOW",
-    "s3ReadPolicy": "read_policy_cf6f10ff",
+    "s3ReadPolicy": "read_policy_226b6a6e",
     "s3PermissionsGuestPublic": "DISALLOW",
     "s3PermissionsGuestUploads": "DISALLOW",
     "GuestAllowList": "DISALLOW",
