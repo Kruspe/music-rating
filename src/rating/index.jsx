@@ -44,7 +44,7 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
       <Grid className="rating-container" container justify="center" alignItems="center" spacing={5}>
         <Grid item lg={2} xs={12}>
           <TextField
-            id={`${bandName}-band`}
+            id={bandName ? `${bandName}-band` : 'band'}
             name="band"
             fullWidth
             required={!bandName}
@@ -57,7 +57,7 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
         </Grid>
         <Grid item lg={2} xs={12}>
           <TextField
-            id={`${bandName}-festival`}
+            id={bandName ? `${bandName}-festival` : 'festival'}
             name="festival"
             fullWidth
             required
@@ -69,7 +69,7 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
         </Grid>
         <Grid item lg={1} xs={12}>
           <TextField
-            id={`${bandName}-year`}
+            id={bandName ? `${bandName}-year` : 'year'}
             name="year"
             fullWidth
             required
@@ -80,11 +80,15 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
           />
         </Grid>
         <Grid item className="rating-rating">
-          <RatingMaterialUI name="rating" value={rating} onChange={(event, value) => setRating(value)} />
+          <RatingMaterialUI
+            name={bandName ? `${bandName}-rating` : 'rating'}
+            value={rating}
+            onChange={(event, value) => setRating(value)}
+          />
         </Grid>
         <Grid item lg={4} xs={12}>
           <TextField
-            id={`${bandName}-comment`}
+            id={bandName ? `${bandName}-comment` : 'comment'}
             name="comment"
             fullWidth
             variant="outlined"
