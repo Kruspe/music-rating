@@ -8,7 +8,7 @@
     "@material-ui/lab": "^4.0.0-alpha.24",
     "aws-amplify": "^1.1.36",
     "aws-amplify-react": "^2.3.12",
-    "material-table": "^1.53.0",
+    "material-table": "^1.54.2",
     "prop-types": "^15.7.2",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
