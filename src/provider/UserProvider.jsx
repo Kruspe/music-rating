@@ -28,7 +28,9 @@ const UserProvider = ({ children }) => {
           header: { Authorization: `Bearer ${jwtToken}` },
         }));
     };
-    getRatedBands();
+    if (userId && jwtToken) {
+      getRatedBands();
+    }
   }, [jwtToken, userId]);
 
   return (

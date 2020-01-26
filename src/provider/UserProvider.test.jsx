@@ -5,6 +5,9 @@ import UserProvider from './UserProvider';
 import UserContext from '../context/UserContext';
 
 describe('UserProvider', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
   it('should display userId, jwtToken and ratedBands', async () => {
     jest.spyOn(API, 'get').mockResolvedValue([{
       band: 'Bloodbath', festival: 'Wacken', year: 2015, rating: 5, comment: 'comment',
@@ -13,8 +16,8 @@ describe('UserProvider', () => {
       getAccessToken: () => ({ getJwtToken: () => ('token') }),
     };
     const currentUserInfoMock = { id: 'userId' };
-    jest.spyOn(Auth, 'currentUserInfo').mockResolvedValue(currentUserInfoMock);
-    jest.spyOn(Auth, 'currentSession').mockResolvedValue(currentSessionMock);
+    jest.spyOn(Auth, 'currentUserInfo').mockResolvedValueOnce(currentUserInfoMock);
+    jest.spyOn(Auth, 'currentSession').mockResolvedValueOnce(currentSessionMock);
 
     const { findByText } = render(
       <UserProvider>
@@ -35,5 +38,18 @@ describe('UserProvider', () => {
     expect(await findByText('userId')).toBeVisible();
     expect(await findByText('token')).toBeVisible();
     expect(await findByText('Bloodbath')).toBeVisible();
+  });
+  it('should not get bands if userId and jwtToken are not available', () => {
+    const getSpy = jest.spyOn(API, 'get');
+    const currentSessionMock = {
+      getAccessToken: () => ({ getJwtToken: () => ('') }),
+    };
+    const currentUserInfoMock = { id: '' };
+    jest.spyOn(Auth, 'currentUserInfo').mockResolvedValueOnce(currentUserInfoMock);
+    jest.spyOn(Auth, 'currentSession').mockResolvedValueOnce(currentSessionMock);
+
+    render(<UserProvider />);
+
+    expect(getSpy).not.toHaveBeenCalled();
   });
 });
