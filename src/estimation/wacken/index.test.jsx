@@ -2,24 +2,14 @@ import React from 'react';
 import {
   act, fireEvent, render, wait,
 } from '@testing-library/react';
-import { API, Auth, Storage } from 'aws-amplify';
+import { API, Storage } from 'aws-amplify';
 import EstimateWacken from './index';
-
+import UserContext from '../../context/UserContext';
 
 describe('EstimateWacken', () => {
   describe('Wacken', () => {
     beforeEach(() => {
       jest.spyOn(Storage, 'get').mockResolvedValueOnce('www.link-to-json.com');
-      jest.spyOn(API, 'get').mockResolvedValueOnce([{
-        band: 'Bloodbath', festival: 'Wacken', year: 2015, rating: 5, comment: 'comment',
-      }]);
-      API.post = jest.fn();
-      const currentSessionMock = {
-        getAccessToken: () => ({ getJwtToken: () => ('token') }),
-      };
-      const currentUserInfoMock = { id: 'userId' };
-      jest.spyOn(Auth, 'currentUserInfo').mockResolvedValue(currentUserInfoMock);
-      jest.spyOn(Auth, 'currentSession').mockResolvedValue(currentSessionMock);
     });
     const expectAllRatingFieldsToBeVisible = (getAllByLabelText) => {
       getAllByLabelText(/festival \*/i).forEach((festivalField) => {
@@ -38,7 +28,11 @@ describe('EstimateWacken', () => {
 
     it('should display unrated bands', async () => {
       global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(['Bloodbath', 'Megadeth', 'Vader'])));
-      const { getAllByLabelText } = render(<EstimateWacken />);
+      const { getAllByLabelText } = render(
+        <UserContext.Provider value={{ ratedBands: [{ band: 'Bloodbath' }] }}>
+          <EstimateWacken />
+        </UserContext.Provider>,
+      );
 
       await wait(() => {
         expect(global.fetch).toHaveBeenCalledTimes(1);
@@ -62,7 +56,11 @@ describe('EstimateWacken', () => {
       };
       const {
         findByLabelText, getByLabelText, getByText, queryByLabelText,
-      } = render(<EstimateWacken />);
+      } = render(
+        <UserContext.Provider value={{ userId: 'userId', jwtToken: 'token', ratedBands: [{ band: 'Bloodbath' }] }}>
+          <EstimateWacken />
+        </UserContext.Provider>,
+      );
 
       expect(await findByLabelText(/band/i)).toHaveValue('Vader');
       fireEvent.change(getByLabelText(/festival \*/i), { target: { value: 'Wacken' } });
