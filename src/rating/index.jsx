@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Rating as RatingMaterialUI } from '@material-ui/lab';
 import { Grid, TextField } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import { API, Auth } from 'aws-amplify';
+import { API } from 'aws-amplify';
 import PropTypes from 'prop-types';
+import UserContext from '../context/UserContext';
 
 import './rating.css';
 
@@ -13,6 +14,7 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
   const [year, setYear] = useState('');
   const [rating, setRating] = useState(1);
   const [comment, setComment] = useState('');
+  const { userId, jwtToken } = useContext(UserContext);
 
   const resetRating = () => {
     setBand('');
@@ -25,13 +27,10 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
   const submitRating = async (event) => {
     event.preventDefault();
     if (band && band.trim()) {
-      const currentSession = await Auth.currentSession();
-      const currentUserInfo = await Auth.currentUserInfo();
-      const token = currentSession.getAccessToken().getJwtToken();
       await API.post('musicrating', '/bands', {
-        header: { Authorization: `Bearer ${token}` },
+        header: { Authorization: `Bearer ${jwtToken}` },
         body: {
-          user: currentUserInfo.id, band, festival, year, rating, comment: comment || undefined,
+          user: userId, band, festival, year, rating, comment: comment || undefined,
         },
       });
       resetRating();

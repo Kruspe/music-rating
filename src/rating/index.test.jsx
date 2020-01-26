@@ -1,7 +1,8 @@
 import React from 'react';
 import { fireEvent, render, wait } from '@testing-library/react';
-import { API, Auth } from 'aws-amplify';
+import { API } from 'aws-amplify';
 import Rating from './index';
+import UserContext from '../context/UserContext';
 
 describe('Rating', () => {
   const isFormInEmptyState = (getByLabelText) => {
@@ -35,12 +36,6 @@ describe('Rating', () => {
     const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
     beforeEach(() => {
       postSpy.mockClear();
-      const currentSessionMock = {
-        getAccessToken: () => ({ getJwtToken: () => ('token') }),
-      };
-      const currentUserInfoMock = { id: 'userId' };
-      jest.spyOn(Auth, 'currentSession').mockResolvedValueOnce(currentSessionMock);
-      jest.spyOn(Auth, 'currentUserInfo').mockResolvedValueOnce(currentUserInfoMock);
     });
     const fillRatingFields = (getByLabelText) => {
       fireEvent.change(getByLabelText(/band \*/i), { target: { value: 'Bloodbath' } });
@@ -61,7 +56,11 @@ describe('Rating', () => {
 
       const {
         getByLabelText, getByText,
-      } = render(<Rating onSubmitBehaviour={onSubmitBehaviourMock} />);
+      } = render(
+        <UserContext.Provider value={{ userId: 'userId', jwtToken: 'token' }}>
+          <Rating onSubmitBehaviour={onSubmitBehaviourMock} />
+        </UserContext.Provider>,
+      );
       fillRatingFields(getByLabelText);
       fireEvent.submit(getByText(/submit/i));
 
@@ -78,7 +77,11 @@ describe('Rating', () => {
         },
       };
 
-      const { getByLabelText, getByText } = render(<Rating />);
+      const { getByLabelText, getByText } = render(
+        <UserContext.Provider value={{ userId: 'userId', jwtToken: 'token' }}>
+          <Rating />
+        </UserContext.Provider>,
+      );
       fillRatingFields(getByLabelText);
       fireEvent.change(getByLabelText(/comment/i), { target: { value: '' } });
       fireEvent.submit(getByText(/submit/i));
@@ -86,7 +89,11 @@ describe('Rating', () => {
       await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/bands', expectedInit));
     });
     it('should require band, festival and year', () => {
-      const { getByLabelText, getByText } = render(<Rating />);
+      const { getByLabelText, getByText } = render(
+        <UserContext.Provider value={{ userId: 'userId', jwtToken: 'token' }}>
+          <Rating />
+        </UserContext.Provider>,
+      );
       fireEvent.submit(getByText(/submit/i));
 
       expect(getByLabelText(/band \*/i)).toBeRequired();
