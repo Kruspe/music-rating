@@ -15,7 +15,7 @@ describe('App', () => {
         band: 'Bloodbath', festival: 'Wacken', year: 2015, rating: 5, comment: 'comment',
       }]);
       const currentSessionMock = {
-        getAccessToken: () => ({ getJwtToken: () => ('Token') }),
+        getAccessToken: () => ({ getJwtToken: () => ('token') }),
       };
       const currentUserInfoMock = { id: 'userId' };
       jest.spyOn(Auth, 'currentUserInfo').mockResolvedValue(currentUserInfoMock);

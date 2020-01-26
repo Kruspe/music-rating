@@ -13,7 +13,7 @@ describe('EstimateWacken', () => {
       }]);
       API.post = jest.fn();
       const currentSessionMock = {
-        getAccessToken: () => ({ getJwtToken: () => ('Token') }),
+        getAccessToken: () => ({ getJwtToken: () => ('token') }),
       };
       const currentUserInfoMock = { id: 'userId' };
       jest.spyOn(Auth, 'currentUserInfo').mockResolvedValue(currentUserInfoMock);
@@ -53,7 +53,7 @@ describe('EstimateWacken', () => {
       global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(['Bloodbath', 'Vader'])));
       const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
       const expectedInit = {
-        header: { Authorization: 'Bearer Token' },
+        header: { Authorization: 'Bearer token' },
         body: {
           user: 'userId', band: 'Vader', festival: 'Wacken', year: '2015', rating: 5, comment: 'comment',
         },

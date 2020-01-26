@@ -36,7 +36,7 @@ describe('Rating', () => {
     beforeEach(() => {
       postSpy.mockClear();
       const currentSessionMock = {
-        getAccessToken: () => ({ getJwtToken: () => ('Token') }),
+        getAccessToken: () => ({ getJwtToken: () => ('token') }),
       };
       const currentUserInfoMock = { id: 'userId' };
       jest.spyOn(Auth, 'currentSession').mockResolvedValueOnce(currentSessionMock);
@@ -52,7 +52,7 @@ describe('Rating', () => {
 
     it('should enter data, save it and call onSubmitBehaviour ', async () => {
       const expectedInit = {
-        header: { Authorization: 'Bearer Token' },
+        header: { Authorization: 'Bearer token' },
         body: {
           user: 'userId', band: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5, comment: 'comment',
         },
@@ -72,7 +72,7 @@ describe('Rating', () => {
     });
     it('should not try to save empty comment', async () => {
       const expectedInit = {
-        header: { Authorization: 'Bearer Token' },
+        header: { Authorization: 'Bearer token' },
         body: {
           user: 'userId', band: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5,
         },
