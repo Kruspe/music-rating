@@ -1,11 +1,11 @@
-import React, { forwardRef, useEffect, useState } from 'react';
-import { API, Auth } from 'aws-amplify';
+import React, { forwardRef, useContext } from 'react';
 import { Rating } from '@material-ui/lab';
 import MaterialTable from 'material-table';
 
 import {
   ArrowUpward, ChevronLeft, ChevronRight, Clear, FirstPage, LastPage, Search,
 } from '@material-ui/icons';
+import UserContext from '../context/UserContext';
 
 const tableIcons = {
   /* eslint-disable react/jsx-props-no-spreading */
@@ -19,21 +19,10 @@ const tableIcons = {
   /* eslint-enable react/jsx-props-no-spreading */
 };
 const Overview = () => {
-  const [ratings, setRatings] = useState();
-
-  useEffect(() => {
-    const getRatings = async () => {
-      const currentSession = await Auth.currentSession();
-      const currentUserInfo = await Auth.currentUserInfo();
-      const token = currentSession.getAccessToken().getJwtToken();
-      setRatings(await API.get('musicrating', `/bands/${currentUserInfo.id}`, { header: { Authorization: `Bearer ${token}` } }));
-    };
-    getRatings();
-  }, []);
-
+  const { ratedBands } = useContext(UserContext);
   return (
     <>
-      {ratings && (
+      {ratedBands && (
         <MaterialTable
           columns={[
             { title: 'Band', field: 'band' },
@@ -44,7 +33,7 @@ const Overview = () => {
               field: 'rating',
               render: (data) => (<Rating name={data.band} value={data.rating} readOnly />),
             }]}
-          data={ratings}
+          data={ratedBands}
           icons={tableIcons}
           options={{ showTitle: false, draggable: false, pageSize: 10 }}
         />
