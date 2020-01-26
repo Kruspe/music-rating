@@ -1,5 +1,7 @@
 import React from 'react';
-import { act, fireEvent, render, wait, } from '@testing-library/react';
+import {
+  act, fireEvent, render, wait,
+} from '@testing-library/react';
 import { API, Auth, Storage } from 'aws-amplify';
 import EstimateWacken from './index';
 
