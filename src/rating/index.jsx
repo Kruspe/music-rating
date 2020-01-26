@@ -40,7 +40,7 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
   };
 
   return (
-    <form id="rating-form" onSubmit={submitRating}>
+    <form id={band ? `rating-form-${band}` : 'rating-form'} onSubmit={submitRating}>
       <Grid className="rating-container" container justify="center" alignItems="center" spacing={5}>
         <Grid item lg={2} xs={12}>
           <TextField
