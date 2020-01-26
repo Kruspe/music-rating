@@ -58,7 +58,7 @@ describe('App', () => {
         findByText, getByText, getByLabelText, findByPlaceholderText, findByLabelText,
       } = render(<App authState="signedIn" />);
 
-      fireEvent.click(getByText(/rating/i));
+      fireEvent.click(getByText(/rate/i));
       isRatingVisible(getByLabelText);
       fireEvent.click(getByText(/overview/i));
       await isOverviewVisible(findByPlaceholderText, findByText, findByLabelText);

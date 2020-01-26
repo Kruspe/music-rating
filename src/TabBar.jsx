@@ -15,7 +15,7 @@ const TabBar = () => {
         onChange={(event, value) => setTab(value)}
       >
         <Tab label="Overview" />
-        <Tab label="Rating" />
+        <Tab label="Rate" />
         <Tab label="Estimate Wacken" />
       </Tabs>
       {tab === 0 && <Overview />}
