@@ -53,7 +53,7 @@ describe('App', () => {
 
     it('should switch between overview, rating and estimation', async () => {
       jest.spyOn(Storage, 'get').mockResolvedValueOnce('www.link-to-json.com');
-      global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(['Bloodbath', 'Vader'])));
+      global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(['Vader'])));
       const {
         findByText, getByText, getByLabelText, findByPlaceholderText, findByLabelText,
       } = render(<App authState="signedIn" />);
