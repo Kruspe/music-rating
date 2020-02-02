@@ -27,7 +27,12 @@ describe('EstimateWacken', () => {
     };
 
     it('should display unrated bands', async () => {
-      global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(['Bloodbath', 'Megadeth', 'Vader'])));
+      global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(
+        [
+          { name: 'Bloodbath', image: 'bloodbathImage' },
+          { name: 'Megadeth', image: 'megadethImage' },
+          { name: 'Vader', image: 'vaderImage' }],
+      )));
       const { getAllByLabelText } = render(
         <UserContext.Provider value={{ ratedBands: [{ band: 'Bloodbath' }] }}>
           <EstimateWacken />
@@ -40,13 +45,17 @@ describe('EstimateWacken', () => {
           { headers: { 'Content-Type': 'application/json' } });
       });
       expectAllRatingFieldsToBeVisible(getAllByLabelText);
-      const bandField = getAllByLabelText(/band/i);
-      expect(bandField).toHaveLength(2);
-      expect(bandField[0]).toHaveValue('Megadeth');
-      expect(bandField[1]).toHaveValue('Vader');
+      const bandFields = getAllByLabelText(/band/i);
+      expect(bandFields).toHaveLength(2);
+      expect(bandFields[0]).toHaveValue('Megadeth');
+      expect(bandFields[1]).toHaveValue('Vader');
     });
     it('should remove unrated band after rating', async () => {
-      global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(['Bloodbath', 'Vader'])));
+      global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(
+        [
+          { name: 'Bloodbath', image: 'bloodbathImage' },
+          { name: 'Vader', image: 'vaderImage' }],
+      )));
       const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
       const expectedInit = {
         header: { Authorization: 'Bearer token' },

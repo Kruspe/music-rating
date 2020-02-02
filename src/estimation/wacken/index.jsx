@@ -16,7 +16,8 @@ const EstimateWacken = () => {
     const getUnratedWackenBands = async () => {
       const wackenBands = await getWackenBands();
       const ratedBandNames = ratedBands.map((ratedBand) => ratedBand.band);
-      setBandsToBeRated(wackenBands.filter((wackenBand) => !ratedBandNames.includes(wackenBand)));
+      setBandsToBeRated(wackenBands
+        .filter((wackenBand) => !ratedBandNames.includes(wackenBand.name)));
     };
     getUnratedWackenBands();
   }, [ratedBands]);
@@ -25,10 +26,10 @@ const EstimateWacken = () => {
     <>
       {bandsToBeRated.map((bandToBeRated) => (
         <Rating
-          key={bandToBeRated}
-          bandName={bandToBeRated}
+          key={bandToBeRated.name}
+          bandName={bandToBeRated.name}
           onSubmitBehaviour={() => setBandsToBeRated(
-            bandsToBeRated.filter((band) => band !== bandToBeRated),
+            bandsToBeRated.filter((band) => band.name !== bandToBeRated.name),
           )}
         />
       ))}
