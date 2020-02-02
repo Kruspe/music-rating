@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Storage } from 'aws-amplify';
 import Rating from '../../rating';
 import UserContext from '../../context/UserContext';
+import './wacken.css';
 
 const EstimateWacken = () => {
   const [bandsToBeRated, setBandsToBeRated] = useState([]);
@@ -25,13 +26,16 @@ const EstimateWacken = () => {
   return (
     <>
       {bandsToBeRated.map((bandToBeRated) => (
-        <Rating
-          key={bandToBeRated.name}
-          bandName={bandToBeRated.name}
-          onSubmitBehaviour={() => setBandsToBeRated(
-            bandsToBeRated.filter((band) => band.name !== bandToBeRated.name),
-          )}
-        />
+        <div key={bandToBeRated.name} className="estimate-wacken">
+          <img src={bandToBeRated.image} alt={bandToBeRated.name} width="250px" height="250px" />
+          <Rating
+            key={bandToBeRated.name}
+            bandName={bandToBeRated.name}
+            onSubmitBehaviour={() => setBandsToBeRated(
+              bandsToBeRated.filter((band) => band.name !== bandToBeRated.name),
+            )}
+          />
+        </div>
       ))}
     </>
   );

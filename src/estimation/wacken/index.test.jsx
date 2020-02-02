@@ -33,7 +33,7 @@ describe('EstimateWacken', () => {
           { name: 'Megadeth', image: 'megadethImage' },
           { name: 'Vader', image: 'vaderImage' }],
       )));
-      const { getAllByLabelText } = render(
+      const { getAllByLabelText, getByAltText } = render(
         <UserContext.Provider value={{ ratedBands: [{ band: 'Bloodbath' }] }}>
           <EstimateWacken />
         </UserContext.Provider>,
@@ -49,6 +49,8 @@ describe('EstimateWacken', () => {
       expect(bandFields).toHaveLength(2);
       expect(bandFields[0]).toHaveValue('Megadeth');
       expect(bandFields[1]).toHaveValue('Vader');
+      expect(getByAltText('Megadeth')).toBeVisible();
+      expect(getByAltText('Vader')).toBeVisible();
     });
     it('should remove unrated band after rating', async () => {
       global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(

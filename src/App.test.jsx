@@ -39,7 +39,8 @@ describe('App', () => {
       expect(getByLabelText(/comment/i)).toBeVisible();
     };
 
-    const isEstimateWackenVisible = async (findByLabelText) => {
+    const isEstimateWackenVisible = async (findByLabelText, findByAltText) => {
+      expect(await findByAltText('Vader')).toBeVisible();
       expect(await findByLabelText(/band/i)).toHaveValue('Vader');
       expect(await findByLabelText(/festival \*/i)).toBeVisible();
       expect(await findByLabelText(/1 star/i)).toBeVisible();
@@ -58,7 +59,8 @@ describe('App', () => {
           { name: 'Vader', image: 'vaderImage' }],
       )));
       const {
-        findByText, getByText, getByLabelText, findByPlaceholderText, findByLabelText,
+        findByText, getByText, getByLabelText,
+        findByPlaceholderText, findByLabelText, findByAltText,
       } = render(<App authState="signedIn" />);
 
       fireEvent.click(getByText(/rate/i));
@@ -66,7 +68,7 @@ describe('App', () => {
       fireEvent.click(getByText(/overview/i));
       await isOverviewVisible(findByPlaceholderText, findByText, findByLabelText);
       fireEvent.click(getByText(/estimate wacken/i));
-      await isEstimateWackenVisible(findByLabelText);
+      await isEstimateWackenVisible(findByLabelText, findByAltText);
     });
   });
 });
