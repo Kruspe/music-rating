@@ -82,7 +82,7 @@ describe('EstimateWacken', () => {
         fireEvent.submit(getByText(/submit/i));
       });
       await wait(() => expect(postSpy).toHaveBeenCalledTimes(1));
-      await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/bands', expectedInit));
+      await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
       expect(queryByLabelText(/band/i)).not.toBeInTheDocument();
     });
   });

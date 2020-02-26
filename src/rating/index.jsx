@@ -27,7 +27,7 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
   const submitRating = async (event) => {
     event.preventDefault();
     if (band && band.trim()) {
-      await API.post('musicrating', '/bands', {
+      await API.post('musicrating', '/api/v1/ratings/bands', {
         header: { Authorization: `Bearer ${jwtToken}` },
         body: {
           user: userId, band, festival, year, rating, comment: comment || undefined,

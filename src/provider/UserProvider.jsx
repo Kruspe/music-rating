@@ -24,7 +24,7 @@ const UserProvider = ({ children }) => {
   useEffect(() => {
     const getRatedBands = async () => {
       setRatedBands(await API.get('musicrating',
-        `/bands/${userId}`, {
+        `/api/v1/ratings/bands/${userId}`, {
           header: { Authorization: `Bearer ${jwtToken}` },
         }));
     };

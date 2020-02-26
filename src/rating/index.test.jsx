@@ -65,7 +65,7 @@ describe('Rating', () => {
       fireEvent.submit(getByText(/submit/i));
 
       await wait(() => expect(postSpy).toHaveBeenCalledTimes(1));
-      await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/bands', expectedInit));
+      await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
       await wait(() => expect(onSubmitBehaviourMock).toHaveBeenCalledTimes(1));
       isFormInEmptyState(getByLabelText);
     });
@@ -86,7 +86,7 @@ describe('Rating', () => {
       fireEvent.change(getByLabelText(/comment/i), { target: { value: '' } });
       fireEvent.submit(getByText(/submit/i));
       await wait(() => expect(postSpy).toHaveBeenCalledTimes(1));
-      await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/bands', expectedInit));
+      await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
     });
     it('should require band, festival and year', () => {
       const { getByLabelText, getByText } = render(

@@ -9,7 +9,7 @@ describe('UserProvider', () => {
     jest.restoreAllMocks();
   });
   it('should display userId, jwtToken and ratedBands', async () => {
-    jest.spyOn(API, 'get').mockResolvedValue([{
+    const ratedBandsGetSpy = jest.spyOn(API, 'get').mockResolvedValue([{
       band: 'Bloodbath', festival: 'Wacken', year: 2015, rating: 5, comment: 'comment',
     }]);
     const currentSessionMock = {
@@ -38,6 +38,8 @@ describe('UserProvider', () => {
     expect(await findByText('userId')).toBeVisible();
     expect(await findByText('token')).toBeVisible();
     expect(await findByText('Bloodbath')).toBeVisible();
+    expect(ratedBandsGetSpy).toHaveBeenCalledTimes(1);
+    expect(ratedBandsGetSpy).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands/userId', { header: { Authorization: 'Bearer token' } });
   });
   it('should not get bands if userId and jwtToken are not available', () => {
     const getSpy = jest.spyOn(API, 'get');

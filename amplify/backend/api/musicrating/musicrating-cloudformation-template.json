@@ -42,6 +42,9 @@
     "Resources": {
         
         
+        
+        
+        
       "musicrating": {
         "Type": "AWS::ApiGateway::RestApi",
         "Properties": {
@@ -87,7 +90,7 @@
             ],
             "paths": {
               
-              "/bands": {
+              "/api/v1/ratings/bands": {
                 "options": {
                   "consumes": [
                     "application/json"
@@ -186,7 +189,7 @@
                   }
                 }
               },
-              "/bands/{proxy+}": {
+              "/api/v1/ratings/bands/{proxy+}": {
                 "options": {
                   "consumes": [
                     "application/json"
@@ -364,7 +367,7 @@
         
         
         
-      "DeploymentAPIGWmusicrating": {
+      "DeploymentAPIGWmusicratingee60abd3": {
         "Type": "AWS::ApiGateway::Deployment",
         "Properties": {
           "Description": "The Development stage deployment of your API.",
