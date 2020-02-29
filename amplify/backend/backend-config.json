@@ -37,6 +37,11 @@
                     ]
                 }
             ]
+        },
+        "artistInformationService": {
+            "service": "Lambda",
+            "providerPlugin": "awscloudformation",
+            "build": true
         }
     },
     "api": {
@@ -47,6 +52,14 @@
                 {
                     "category": "function",
                     "resourceName": "musicrating",
+                    "attributes": [
+                        "Name",
+                        "Arn"
+                    ]
+                },
+                {
+                    "category": "function",
+                    "resourceName": "artistInformationService",
                     "attributes": [
                         "Name",
                         "Arn"

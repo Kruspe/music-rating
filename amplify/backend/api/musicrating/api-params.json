@@ -6,6 +6,13 @@
             "privacy": {
                 "open": true
             }
+        },
+        {
+            "name": "/api/v1/information/artists",
+            "lambdaFunction": "artistInformationService",
+            "privacy": {
+                "open": true
+            }
         }
     ],
     "resourceName": "musicrating",
@@ -13,6 +20,9 @@
     "functionArns": [
         {
             "lambdaFunction": "musicrating"
+        },
+        {
+            "lambdaFunction": "artistInformationService"
         }
     ],
     "privacy": {
@@ -29,7 +39,15 @@
                 "Name",
                 "Arn"
             ]
+        },
+        {
+            "category": "function",
+            "resourceName": "artistInformationService",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
         }
     ],
-    "uuid": "ee60abd3"
+    "uuid": "f73765ec"
 }
