@@ -18,7 +18,7 @@
     "whatwg-fetch": "^3.0.0"
   },
   "scripts": {
-    "test": "jest --watch"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC"
