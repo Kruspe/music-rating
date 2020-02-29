@@ -3,6 +3,10 @@ dist: bionic
 node_js:
   - "10"
 
+branches:
+  only:
+    - master
+
 before_install:
   - touch src/aws-exports.js
 
