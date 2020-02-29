@@ -63,7 +63,7 @@
 				"Timeout": "25",
 				"Code": {
 					"S3Bucket": "music-rating-dev-20191026021858-deployment",
-					"S3Key": "amplify-builds/artistInformationService-564935576c486a324c30-build.zip"
+					"S3Key": "amplify-builds/artistInformationService-464d7045436273455a54-build.zip"
 				}
 			}
 		},
