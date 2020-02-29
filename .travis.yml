@@ -6,4 +6,9 @@ node_js:
 before_install:
   - touch src/aws-exports.js
 
+before_script:
+  - cd amplify/backend/function/artistInformationService/src
+  - yarn
+  - yarn test
+
 cache: yarn
