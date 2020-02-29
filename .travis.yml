@@ -14,5 +14,6 @@ before_script:
   - cd amplify/backend/function/artistInformationService/src
   - yarn
   - yarn test
+  - cd $TRAVIS_BUILD_DIR
 
 cache: yarn
