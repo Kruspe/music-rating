@@ -39,12 +39,9 @@ describe('App', () => {
       expect(getByLabelText(/comment/i)).toBeVisible();
     };
 
-    const isEstimateWackenVisible = async (findByLabelText, findByAltText) => {
+    const isEstimateWackenVisible = async (findByText, findByAltText) => {
       expect(await findByAltText('Vader')).toBeVisible();
-      expect(await findByLabelText(/band/i)).toHaveValue('Vader');
-      expect(await findByLabelText(/festival \*/i)).toBeVisible();
-      expect(await findByLabelText(/1 star/i)).toBeVisible();
-      expect(await findByLabelText(/comment/i)).toBeVisible();
+      expect(await findByText('Vader')).toBeVisible();
     };
 
     it('should render overview', async () => {
@@ -56,7 +53,7 @@ describe('App', () => {
       jest.spyOn(Storage, 'get').mockResolvedValueOnce('www.link-to-json.com');
       global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(
         [
-          { name: 'Vader', image: 'vaderImage' }],
+          { artist: 'Vader', image: 'vaderImage' }],
       )));
       const {
         findByText, getByText, getByLabelText,
@@ -68,7 +65,7 @@ describe('App', () => {
       fireEvent.click(getByText(/overview/i));
       await isOverviewVisible(findByPlaceholderText, findByText, findByLabelText);
       fireEvent.click(getByText(/estimate wacken/i));
-      await isEstimateWackenVisible(findByLabelText, findByAltText);
+      await isEstimateWackenVisible(findByText, findByAltText);
     });
   });
 });
