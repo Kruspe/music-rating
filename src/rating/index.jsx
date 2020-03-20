@@ -5,10 +5,16 @@ import Button from '@material-ui/core/Button';
 import { API } from 'aws-amplify';
 import PropTypes from 'prop-types';
 import UserContext from '../context/UserContext';
+import { makeStyles } from '@material-ui/core/styles';
 
-import './rating.css';
+const useStyle = makeStyles({
+  root: {
+    paddingTop: 20,
+},
+});
 
 const Rating = ({ bandName, onSubmitBehaviour }) => {
+  const classes = useStyle();
   const [band, setBand] = useState(bandName);
   const [festival, setFestival] = useState('');
   const [year, setYear] = useState('');
@@ -40,8 +46,8 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
 
   return (
     <form id={band ? `rating-form-${band}` : 'rating-form'} onSubmit={submitRating}>
-      <Grid className="rating-container" container justify="center" alignItems="center" spacing={5}>
-        <Grid item lg={2} xs={12}>
+      <Grid className={classes.root} container justify="center" alignItems="center" spacing={5}>
+        <Grid item xs={12}>
           <TextField
             id={bandName ? `${bandName}-band` : 'band'}
             name="band"
@@ -54,7 +60,7 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
             onChange={(event) => setBand(event.target.value)}
           />
         </Grid>
-        <Grid item lg={2} xs={12}>
+        <Grid item xs={12}>
           <TextField
             id={bandName ? `${bandName}-festival` : 'festival'}
             name="festival"
@@ -66,7 +72,7 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
             onChange={(event) => setFestival(event.target.value)}
           />
         </Grid>
-        <Grid item lg={1} xs={12}>
+        <Grid item xs={12}>
           <TextField
             id={bandName ? `${bandName}-year` : 'year'}
             name="year"
@@ -78,14 +84,14 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
             onChange={(event) => setYear(event.target.value)}
           />
         </Grid>
-        <Grid item className="rating-rating">
+        <Grid item>
           <RatingMaterialUI
             name={bandName ? `${bandName}-rating` : 'rating'}
             value={rating}
             onChange={(event, value) => setRating(value)}
           />
         </Grid>
-        <Grid item lg={4} xs={12}>
+        <Grid item xs={12}>
           <TextField
             id={bandName ? `${bandName}-comment` : 'comment'}
             name="comment"
@@ -96,7 +102,7 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
             onChange={(event) => setComment(event.target.value)}
           />
         </Grid>
-        <Grid item lg={1}>
+        <Grid item>
           <Button type="submit" variant="outlined">Submit</Button>
         </Grid>
       </Grid>
