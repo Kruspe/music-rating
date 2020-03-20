@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Storage } from 'aws-amplify';
-import Rating from '../../rating';
+import { Grid } from '@material-ui/core';
 import UserContext from '../../context/UserContext';
-import './wacken.css';
+import EstimationCard from '../../estimationCard';
 
 const EstimateWacken = () => {
   const [bandsToBeRated, setBandsToBeRated] = useState([]);
@@ -18,26 +18,27 @@ const EstimateWacken = () => {
       const wackenBands = await getWackenBands();
       const ratedBandNames = ratedBands.map((ratedBand) => ratedBand.band);
       setBandsToBeRated(wackenBands
-        .filter((wackenBand) => !ratedBandNames.includes(wackenBand.name)));
+        .filter((wackenBand) => !ratedBandNames.includes(wackenBand.artist)));
     };
     getUnratedWackenBands();
   }, [ratedBands]);
 
   return (
-    <>
+    <Grid container>
       {bandsToBeRated.map((bandToBeRated) => (
-        <div key={bandToBeRated.name} className="estimate-wacken">
-          <img src={bandToBeRated.image} alt={bandToBeRated.name} width="250px" height="250px" />
-          <Rating
-            key={bandToBeRated.name}
-            bandName={bandToBeRated.name}
-            onSubmitBehaviour={() => setBandsToBeRated(
-              bandsToBeRated.filter((band) => band.name !== bandToBeRated.name),
-            )}
+        <Grid key={bandToBeRated.artist} item xs={12} sm={12} md={4} lg={3} xl={2}>
+          <EstimationCard
+            artist={bandToBeRated.artist}
+            image={bandToBeRated.image}
+            submitCallback={(artist) => {
+              setBandsToBeRated(
+                bandsToBeRated.filter((band) => band.artist !== artist),
+              );
+            }}
           />
-        </div>
+        </Grid>
       ))}
-    </>
+    </Grid>
   );
 };
 

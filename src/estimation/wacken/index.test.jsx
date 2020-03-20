@@ -11,29 +11,16 @@ describe('EstimateWacken', () => {
     beforeEach(() => {
       jest.spyOn(Storage, 'get').mockResolvedValueOnce('www.link-to-json.com');
     });
-    const expectAllRatingFieldsToBeVisible = (getAllByLabelText) => {
-      getAllByLabelText(/festival \*/i).forEach((festivalField) => {
-        expect(festivalField).toBeVisible();
-      });
-      getAllByLabelText(/year \*/i).forEach((yearField) => {
-        expect(yearField).toBeVisible();
-      });
-      getAllByLabelText(/1 star/i).forEach((ratingField) => {
-        expect(ratingField).toBeVisible();
-      });
-      getAllByLabelText(/comment/i).forEach((commentField) => {
-        expect(commentField).toBeVisible();
-      });
-    };
-
     it('should display unrated bands', async () => {
       global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(
         [
-          { name: 'Bloodbath', image: 'bloodbathImage' },
-          { name: 'Megadeth', image: 'megadethImage' },
-          { name: 'Vader', image: 'vaderImage' }],
+          { artist: 'Bloodbath', image: 'bloodbathImage' },
+          { artist: 'Megadeth', image: 'megadethImage' },
+          { artist: 'Vader', image: 'vaderImage' }],
       )));
-      const { getAllByLabelText, getByAltText } = render(
+      const {
+        getByText, queryByText, getByAltText, queryByAltText,
+      } = render(
         <UserContext.Provider value={{ ratedBands: [{ band: 'Bloodbath' }] }}>
           <EstimateWacken />
         </UserContext.Provider>,
@@ -44,19 +31,17 @@ describe('EstimateWacken', () => {
         expect(global.fetch).toHaveBeenCalledWith('www.link-to-json.com',
           { headers: { 'Content-Type': 'application/json' } });
       });
-      expectAllRatingFieldsToBeVisible(getAllByLabelText);
-      const bandFields = getAllByLabelText(/band/i);
-      expect(bandFields).toHaveLength(2);
-      expect(bandFields[0]).toHaveValue('Megadeth');
-      expect(bandFields[1]).toHaveValue('Vader');
+      expect(queryByText(/bloodbath/i)).toBeNull();
+      expect(getByText('Megadeth')).toBeVisible();
+      expect(getByText('Vader')).toBeVisible();
+      expect(queryByAltText(/bloodbath/i)).toBeNull();
       expect(getByAltText('Megadeth')).toBeVisible();
       expect(getByAltText('Vader')).toBeVisible();
     });
     it('should remove unrated band after rating', async () => {
       global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(
         [
-          { name: 'Bloodbath', image: 'bloodbathImage' },
-          { name: 'Vader', image: 'vaderImage' }],
+          { artist: 'Vader', image: 'vaderImage' }],
       )));
       const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
       const expectedInit = {
@@ -66,14 +51,14 @@ describe('EstimateWacken', () => {
         },
       };
       const {
-        findByLabelText, getByLabelText, getByText, queryByLabelText,
+        findByText, getByLabelText, getByText, queryByText,
       } = render(
-        <UserContext.Provider value={{ userId: 'userId', jwtToken: 'token', ratedBands: [{ band: 'Bloodbath' }] }}>
+        <UserContext.Provider value={{ userId: 'userId', jwtToken: 'token', ratedBands: [] }}>
           <EstimateWacken />
         </UserContext.Provider>,
       );
-
-      expect(await findByLabelText(/band/i)).toHaveValue('Vader');
+      expect(await findByText(/vader/i)).toBeVisible();
+      fireEvent.click(getByText(/vader/i));
       fireEvent.change(getByLabelText(/festival \*/i), { target: { value: 'Wacken' } });
       fireEvent.change(getByLabelText(/year \*/i), { target: { value: '2015' } });
       fireEvent.click(getByLabelText(/5 star/i));
@@ -83,7 +68,7 @@ describe('EstimateWacken', () => {
       });
       await wait(() => expect(postSpy).toHaveBeenCalledTimes(1));
       await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
-      expect(queryByLabelText(/band/i)).not.toBeInTheDocument();
+      expect(queryByText(/band/i)).not.toBeInTheDocument();
     });
   });
 });
