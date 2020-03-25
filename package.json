@@ -6,7 +6,7 @@
     "@material-ui/core": "^4.9.7",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.46",
-    "aws-amplify": "^2.2.6",
+    "aws-amplify": "^2.2.7",
     "aws-amplify-react": "^3.1.3",
     "material-table": "^1.57.2",
     "prop-types": "^15.7.2",
