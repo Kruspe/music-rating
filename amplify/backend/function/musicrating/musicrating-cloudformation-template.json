@@ -76,7 +76,7 @@
 				"Runtime": "nodejs10.x",
 				"Timeout": "25",
 				"Code": {
-					"S3Bucket": "music-rating-dev-20191026021858-deployment",
+					"S3Bucket": "amplify-music-rating-prod-230658-deployment",
 					"S3Key": "amplify-builds/musicrating-724433395a646e6c5243-build.zip"
 				}
 			}

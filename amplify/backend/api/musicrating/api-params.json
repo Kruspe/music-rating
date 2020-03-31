@@ -18,8 +18,8 @@
     "privacy": {
         "auth": 0,
         "unauth": 0,
-        "authRoleName": "music-rating-dev-20191026021858-authRole",
-        "unAuthRoleName": "music-rating-dev-20191026021858-unauthRole"
+        "authRoleName": "amplify-music-rating-prod-230658-authRole",
+        "unAuthRoleName": "amplify-music-rating-prod-230658-unauthRole"
     },
     "dependsOn": [
         {
@@ -31,5 +31,5 @@
             ]
         }
     ],
-    "uuid": "7e32e5f5"
+    "uuid": "399165a3"
 }
