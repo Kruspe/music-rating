@@ -22,38 +22,24 @@ describe('App', () => {
       jest.spyOn(Auth, 'currentSession').mockResolvedValue(currentSessionMock);
     });
 
-    const isOverviewVisible = async (findByPlaceholderText, findByText, findByLabelText) => {
-      expect(await findByPlaceholderText(/search/i)).toBeVisible();
-      expect(await findByText(/bloodbath/i)).toBeVisible();
-      expect(await findByText(/^wacken$/i)).toBeVisible();
-      expect(await findByText(/2015/)).toBeVisible();
-      expect(await findByLabelText(/5 stars/i)).toBeVisible();
-      expect(await findByText(/10 rows/i)).toBeVisible();
-    };
-
     const isEstimateWackenVisible = async (findByText, findByAltText) => {
       expect(await findByAltText('Vader')).toBeVisible();
       expect(await findByText('Vader')).toBeVisible();
     };
 
     it('should render overview', async () => {
-      const { findByPlaceholderText, findByText, findByLabelText } = render(<App authState="signedIn" />);
-      await isOverviewVisible(findByPlaceholderText, findByText, findByLabelText);
+      const { findByText } = render(<App authState="signedIn" />);
+      expect(await findByText(/OverviewPage/i)).toBeVisible();
     });
 
-    it('should switch between overview, rating and estimation', async () => {
+    it('should switch to wacken tab when clicked', async () => {
       jest.spyOn(Storage, 'get').mockResolvedValueOnce('www.link-to-json.com');
       global.fetch = jest.fn().mockResolvedValueOnce(new Response(JSON.stringify(
         [
           { artist: 'Vader', image: 'vaderImage' }],
       )));
-      const {
-        findByText, getByText,
-        findByPlaceholderText, findByLabelText, findByAltText,
-      } = render(<App authState="signedIn" />);
+      const { getByText, findByText, findByAltText } = render(<App authState="signedIn" />);
 
-      fireEvent.click(getByText(/overview/i));
-      await isOverviewVisible(findByPlaceholderText, findByText, findByLabelText);
       fireEvent.click(getByText(/estimate wacken/i));
       await isEstimateWackenVisible(findByText, findByAltText);
     });
