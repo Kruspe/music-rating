@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Storage } from 'aws-amplify';
 import { Grid } from '@material-ui/core';
 import UserContext from '../../context/UserContext';
-import EstimationCard from '../../estimationCard';
+import EstimationCard from '../../components/estimationCard';
 
 const EstimateWacken = () => {
   const [bandsToBeRated, setBandsToBeRated] = useState([]);

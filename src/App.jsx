@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import awsExports from './aws-exports';
 import './App.css';
-import TabBar from './TabBar';
+import TabBar from './tabs/TabBar';
 import UserProvider from './provider/UserProvider';
 
 Amplify.configure(awsExports);
