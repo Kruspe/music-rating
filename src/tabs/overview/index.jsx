@@ -5,7 +5,7 @@ import MaterialTable from 'material-table';
 import {
   ArrowUpward, ChevronLeft, ChevronRight, Clear, FirstPage, LastPage, Search,
 } from '@material-ui/icons';
-import UserContext from '../context/UserContext';
+import UserContext from '../../context/UserContext';
 
 const tableIcons = {
   /* eslint-disable react/jsx-props-no-spreading */

@@ -4,7 +4,7 @@ import { Grid, TextField } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { API } from 'aws-amplify';
 import PropTypes from 'prop-types';
-import UserContext from '../context/UserContext';
+import UserContext from '../../context/UserContext';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyle = makeStyles({

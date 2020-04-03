@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Tabs, Tab } from '@material-ui/core';
 import Overview from './overview';
-import EstimateWacken from './estimation/wacken';
+import EstimateWacken from './wacken';
 
 const TabBar = () => {
   const [tab, setTab] = useState(0);

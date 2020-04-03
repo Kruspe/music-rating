@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, render, wait } from '@testing-library/react';
 import { API } from 'aws-amplify';
 import Rating from './index';
-import UserContext from '../context/UserContext';
+import UserContext from '../../context/UserContext';
 
 describe('Rating', () => {
   const isFormInEmptyState = (getByLabelText) => {
