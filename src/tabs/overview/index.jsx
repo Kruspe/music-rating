@@ -2,10 +2,10 @@ import React, { useContext } from 'react';
 import UserContext from '../../context/UserContext';
 
 const Overview = () => {
-  const { ratedBands } = useContext(UserContext);
+  const { ratedArtists } = useContext(UserContext);
   return (
     <>
-      {ratedBands && <p>OverviewPage</p>}
+      {ratedArtists && <p>OverviewPage</p>}
     </>
   );
 };

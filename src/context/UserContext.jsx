@@ -1,7 +1,7 @@
 import React from 'react';
 
 const UserContext = React.createContext({
-  userId: '', jwtToken: '', ratedBands: [],
+  userId: '', jwtToken: '', ratedArtists: [],
 });
 
 export default UserContext;

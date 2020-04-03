@@ -6,7 +6,7 @@ import UserContext from '../context/UserContext';
 const UserProvider = ({ children }) => {
   const [jwtToken, setJwtToken] = useState('');
   const [userId, setUserId] = useState('');
-  const [ratedBands, setRatedBands] = useState([]);
+  const [ratedArtists, setRatedArtists] = useState([]);
 
   useEffect(() => {
     const getJwtToken = async () => {
@@ -23,7 +23,7 @@ const UserProvider = ({ children }) => {
 
   useEffect(() => {
     const getRatedBands = async () => {
-      setRatedBands(await API.get('musicrating',
+      setRatedArtists(await API.get('musicrating',
         `/api/v1/ratings/bands/${userId}`, {
           header: { Authorization: `Bearer ${jwtToken}` },
         }));
@@ -34,7 +34,7 @@ const UserProvider = ({ children }) => {
   }, [jwtToken, userId]);
 
   return (
-    <UserContext.Provider value={{ jwtToken, userId, ratedBands }}>
+    <UserContext.Provider value={{ jwtToken, userId, ratedArtists }}>
       {children}
     </UserContext.Provider>
   );
