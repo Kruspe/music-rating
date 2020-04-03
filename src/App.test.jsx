@@ -12,7 +12,7 @@ describe('App', () => {
   });
 
   it('should render TabBar when signedIn', async () => {
-    jest.spyOn(API, 'get').mockResolvedValue([{
+    const getRatedArtistsSpy = jest.spyOn(API, 'get').mockResolvedValue([{
       band: 'Bloodbath', festival: 'Wacken', year: 2015, rating: 5, comment: 'comment',
     }]);
     const currentSessionMock = {
@@ -24,5 +24,6 @@ describe('App', () => {
 
     const { findByText } = render(<App authState="signedIn" />);
     expect(await findByText('TabBar')).toBeVisible();
+    expect(getRatedArtistsSpy).toHaveBeenCalledTimes(1);
   });
 });
