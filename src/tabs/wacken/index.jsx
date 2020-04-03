@@ -6,7 +6,7 @@ import EstimationCard from '../../components/estimationCard';
 
 const EstimateWacken = () => {
   const [bandsToBeRated, setBandsToBeRated] = useState([]);
-  const { ratedBands } = useContext(UserContext);
+  const { ratedArtists } = useContext(UserContext);
   useEffect(() => {
     const getWackenBands = async () => {
       const wackenBandsUrl = await Storage.get('wacken.json');
@@ -16,12 +16,12 @@ const EstimateWacken = () => {
 
     const getUnratedWackenBands = async () => {
       const wackenBands = await getWackenBands();
-      const ratedBandNames = ratedBands.map((ratedBand) => ratedBand.band);
+      const ratedArtistNames = ratedArtists.map((ratedArtist) => ratedArtist.band);
       setBandsToBeRated(wackenBands
-        .filter((wackenBand) => !ratedBandNames.includes(wackenBand.artist)));
+        .filter((wackenBand) => !ratedArtistNames.includes(wackenBand.artist)));
     };
     getUnratedWackenBands();
-  }, [ratedBands]);
+  }, [ratedArtists]);
 
   return (
     <Grid container>

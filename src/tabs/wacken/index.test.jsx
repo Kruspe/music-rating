@@ -21,7 +21,7 @@ describe('EstimateWacken', () => {
       const {
         getByText, queryByText, getByAltText, queryByAltText,
       } = render(
-        <UserContext.Provider value={{ ratedBands: [{ band: 'Bloodbath' }] }}>
+        <UserContext.Provider value={{ ratedArtists: [{ band: 'Bloodbath' }] }}>
           <EstimateWacken />
         </UserContext.Provider>,
       );
@@ -53,7 +53,7 @@ describe('EstimateWacken', () => {
       const {
         findByText, getByLabelText, getByText, queryByText,
       } = render(
-        <UserContext.Provider value={{ userId: 'userId', jwtToken: 'token', ratedBands: [] }}>
+        <UserContext.Provider value={{ userId: 'userId', jwtToken: 'token', ratedArtists: [] }}>
           <EstimateWacken />
         </UserContext.Provider>,
       );
