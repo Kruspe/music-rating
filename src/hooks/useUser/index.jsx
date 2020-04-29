@@ -18,8 +18,7 @@ const getRatedArtists = async (key, userId, token) => API.get('musicrating',
 const useUser = () => {
   const { data: userId } = useQuery('userId', getUserId);
   const { data: token } = useQuery('token', getToken);
-  const { data: ratedArtists } = useQuery(userId && token && ['ratedArtists', userId, token], getRatedArtists);
-
+  const { data: ratedArtists = [] } = useQuery(userId && token && ['ratedArtists', userId, token], getRatedArtists);
   return { userId, token, ratedArtists };
 };
 
