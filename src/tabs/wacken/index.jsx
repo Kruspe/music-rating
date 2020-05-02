@@ -1,26 +1,27 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Storage } from 'aws-amplify';
 import { Grid } from '@material-ui/core';
-import UserContext from '../../context/UserContext';
 import EstimationCard from '../../components/estimationCard';
+import useRating from '../../hooks/useRating';
 
-const EstimateWacken = () => {
+const Wacken = () => {
+  const wackenBands = useRef([]);
   const [bandsToBeRated, setBandsToBeRated] = useState([]);
-  const { ratedArtists } = useContext(UserContext);
+  const { data: ratedArtists } = useRating();
   useEffect(() => {
     const getWackenBands = async () => {
       const wackenBandsUrl = await Storage.get('wacken.json');
       const response = await fetch(wackenBandsUrl, { headers: { 'Content-Type': 'application/json' } });
-      return response.json();
+      wackenBands.current = await response.json();
     };
-
-    const getUnratedWackenBands = async () => {
-      const wackenBands = await getWackenBands();
+    getWackenBands();
+  }, []);
+  useEffect(() => {
+    if (ratedArtists) {
       const ratedArtistNames = ratedArtists.map((ratedArtist) => ratedArtist.band);
-      setBandsToBeRated(wackenBands
+      setBandsToBeRated(wackenBands.current
         .filter((wackenBand) => !ratedArtistNames.includes(wackenBand.artist)));
-    };
-    getUnratedWackenBands();
+    }
   }, [ratedArtists]);
 
   return (
@@ -42,4 +43,4 @@ const EstimateWacken = () => {
   );
 };
 
-export default EstimateWacken;
+export default Wacken;
