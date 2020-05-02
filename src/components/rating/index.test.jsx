@@ -33,10 +33,6 @@ describe('Rating', () => {
   });
 
   describe('submit', () => {
-    const postSpy = jest.spyOn(API, 'post').mockImplementation((f) => f);
-    beforeEach(() => {
-      postSpy.mockClear();
-    });
     const fillRatingFields = (getByLabelText) => {
       fireEvent.change(getByLabelText(/band \*/i), { target: { value: 'Bloodbath' } });
       fireEvent.change(getByLabelText(/festival \*/i), { target: { value: 'Wacken' } });
@@ -64,8 +60,8 @@ describe('Rating', () => {
       fillRatingFields(getByLabelText);
       fireEvent.submit(getByText(/submit/i));
 
-      await wait(() => expect(postSpy).toHaveBeenCalledTimes(1));
-      await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
+      await wait(() => expect(API.post).toHaveBeenCalledTimes(1));
+      await wait(() => expect(API.post).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
       await wait(() => expect(onSubmitBehaviourMock).toHaveBeenCalledTimes(1));
       isFormInEmptyState(getByLabelText);
     });
@@ -85,8 +81,8 @@ describe('Rating', () => {
       fillRatingFields(getByLabelText);
       fireEvent.change(getByLabelText(/comment/i), { target: { value: '' } });
       fireEvent.submit(getByText(/submit/i));
-      await wait(() => expect(postSpy).toHaveBeenCalledTimes(1));
-      await wait(() => expect(postSpy).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
+      await wait(() => expect(API.post).toHaveBeenCalledTimes(1));
+      await wait(() => expect(API.post).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
     });
     it('should require band, festival and year', () => {
       const { getByLabelText, getByText } = render(
@@ -99,7 +95,7 @@ describe('Rating', () => {
       expect(getByLabelText(/band \*/i)).toBeRequired();
       expect(getByLabelText(/festival \*/i)).toBeRequired();
       expect(getByLabelText(/year \*/i)).toBeRequired();
-      expect(postSpy).not.toHaveBeenCalled();
+      expect(API.post).not.toHaveBeenCalled();
     });
   });
 });
