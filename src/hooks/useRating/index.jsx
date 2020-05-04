@@ -8,7 +8,7 @@ const getRatedArtists = async (key, userId, token) => (API.get('musicrating',
 
 const useRating = () => {
   const { userId, token } = useUser();
-  return useQuery(userId.data && token.data && ['ratedArtists', userId.data, token.data], getRatedArtists);
+  return useQuery(userId.data && token.data && 'ratedArtists', [userId.data, token.data], getRatedArtists);
 };
 
 export default useRating;
