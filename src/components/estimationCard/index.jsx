@@ -20,10 +20,9 @@ const useStyle = makeStyles({
   },
 });
 
-const EstimationCard = (props) => {
+const EstimationCard = ({ artist, image }) => {
   const classes = useStyle();
   const [isRatingVisible, setIsRatingVisible] = useState(false);
-  const { artist, image, submitCallback } = props;
 
   return (
     <>
@@ -32,10 +31,7 @@ const EstimationCard = (props) => {
         {image && <img className={classes.image} src={image} alt={artist} />}
       </button>
       {isRatingVisible && (
-      <Rating
-        bandName={artist}
-        onSubmitBehaviour={() => submitCallback(artist)}
-      />
+      <Rating bandName={artist} />
       )}
     </>
   );
@@ -44,7 +40,6 @@ const EstimationCard = (props) => {
 EstimationCard.propTypes = {
   artist: PropTypes.string.isRequired,
   image: PropTypes.string,
-  submitCallback: PropTypes.func.isRequired,
 };
 
 EstimationCard.defaultProps = {

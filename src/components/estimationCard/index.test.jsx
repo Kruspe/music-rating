@@ -1,18 +1,19 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import EstimationCard from './index';
 
+jest.mock('../rating', () => () => (<p>Rating</p>));
+
 describe('EstimationCard', () => {
-  describe('without image', () => {
-    it('should show artist name', () => {
-      const { getByText } = render(<EstimationCard artist="Bloodbath" />);
-      const artistName = getByText('Bloodbath');
-      expect(artistName).toBeVisible();
-    });
-    it('should show artist name and image', () => {
-      const { getByText, getByRole } = render(<EstimationCard artist="Bloodbath" image="BloodbathImage" />);
-      expect(getByText('Bloodbath')).toBeVisible();
-      expect(getByRole('img')).toHaveAttribute('src', 'BloodbathImage');
-    });
+  it('should show artist name and display rating when clicked', () => {
+    render(<EstimationCard artist="Bloodbath" />);
+    fireEvent.click(screen.getByText('Bloodbath'));
+    expect(screen.getByText('Rating')).toBeVisible();
+  });
+  it('should show artist name and image', () => {
+    render(<EstimationCard artist="Bloodbath" image="BloodbathImage" />);
+    fireEvent.click(screen.getByText('Bloodbath'));
+    expect(screen.getByRole('img')).toHaveAttribute('src', 'BloodbathImage');
+    expect(screen.getByText('Rating')).toBeVisible();
   });
 });
