@@ -1,100 +1,124 @@
 import React from 'react';
-import { fireEvent, render, wait } from '@testing-library/react';
 import { API } from 'aws-amplify';
+import { queryCache } from 'react-query';
+import {
+  fireEvent, render, wait, screen,
+} from '@testing-library/react';
 import Rating from './index';
-import UserContext from '../../context/UserContext';
+import useUser from '../../hooks/useUser';
+import useRating from '../../hooks/useRating';
+
+jest.mock('../../hooks/useUser');
+
+const renderWithUseRating = () => {
+  const Wrapper = () => {
+    useRating();
+    return (<Rating />);
+  };
+  return render(<Wrapper />);
+};
 
 describe('Rating', () => {
-  const isFormInEmptyState = (getByLabelText) => {
-    const bandField = getByLabelText(/band \*/i);
+  const expectFormToBeEmpty = () => {
+    const bandField = screen.getByLabelText(/band \*/i);
     expect(bandField).toHaveValue('');
     expect(bandField).not.toHaveAttribute('readOnly');
-    expect(getByLabelText(/festival \*/i)).toHaveValue('');
-    expect(getByLabelText(/year \*/i)).toHaveValue('');
-    expect(getByLabelText(/1 star/i)).toBeChecked();
-    expect(getByLabelText(/comment/i)).toHaveValue('');
+    expect(screen.getByLabelText(/festival \*/i)).toHaveValue('');
+    expect(screen.getByLabelText(/year \*/i)).toHaveValue('');
+    expect(screen.getByLabelText(/1 star/i)).toBeChecked();
+    expect(screen.getByLabelText(/comment/i)).toHaveValue('');
   };
 
-  it('should display empty form', () => {
-    const { getByLabelText } = render(<Rating />);
-    isFormInEmptyState(getByLabelText);
+  beforeEach(() => {
+    useUser.mockReturnValue({ userId: { data: 'userId' }, token: { data: 'token' } });
   });
 
-  it('should display form with disabled band field filled in band name', () => {
-    const { getByLabelText } = render(<Rating bandName="Bloodbath" />);
-    const bandField = getByLabelText(/band/i);
+  it('should display empty form', () => {
+    render(<Rating />);
+    expectFormToBeEmpty();
+  });
+
+  it('should prefill artist field and make it readonly', () => {
+    render(<Rating bandName="Bloodbath" />);
+    const bandField = screen.getByLabelText(/band/i);
     expect(bandField).toHaveValue('Bloodbath');
     expect(bandField).toHaveAttribute('readOnly');
     expect(bandField).not.toBeRequired();
-    expect(getByLabelText(/festival \*/i)).toHaveValue('');
-    expect(getByLabelText(/year \*/i)).toHaveValue('');
-    expect(getByLabelText(/1 star/i)).toBeChecked();
-    expect(getByLabelText(/comment/i)).toHaveValue('');
+    expect(screen.getByLabelText(/festival \*/i)).toHaveValue('');
+    expect(screen.getByLabelText(/year \*/i)).toHaveValue('');
+    expect(screen.getByLabelText(/1 star/i)).toBeChecked();
+    expect(screen.getByLabelText(/comment/i)).toHaveValue('');
   });
 
   describe('submit', () => {
-    const fillRatingFields = (getByLabelText) => {
-      fireEvent.change(getByLabelText(/band \*/i), { target: { value: 'Bloodbath' } });
-      fireEvent.change(getByLabelText(/festival \*/i), { target: { value: 'Wacken' } });
-      fireEvent.change(getByLabelText(/year \*/i), { target: { value: '2015' } });
-      fireEvent.click(getByLabelText(/5 star/i));
-      fireEvent.change(getByLabelText(/comment/i), { target: { value: 'comment' } });
+    const fillRatingFields = () => {
+      fireEvent.change(screen.getByLabelText(/band \*/i), { target: { value: 'Bloodbath' } });
+      fireEvent.change(screen.getByLabelText(/festival \*/i), { target: { value: 'Wacken' } });
+      fireEvent.change(screen.getByLabelText(/year \*/i), { target: { value: '2015' } });
+      fireEvent.click(screen.getByLabelText(/5 star/i));
+      fireEvent.change(screen.getByLabelText(/comment/i), { target: { value: 'comment' } });
     };
 
-    it('should enter data, save it and call onSubmitBehaviour ', async () => {
+    it.each([
+      { userId: { data: 'userId' }, token: { data: undefined } },
+      { userId: { data: undefined }, token: { data: 'token' } },
+    ])('should not post rating when useUser returns %j', (useUserResponse) => {
+      useUser.mockReturnValue(useUserResponse);
+      render(<Rating />);
+      fillRatingFields();
+      fireEvent.submit(screen.getByText(/submit/i));
+
+      expect(API.post).not.toHaveBeenCalled();
+      expect(screen.getByLabelText(/band \*/i)).toHaveValue('Bloodbath');
+      expect(screen.getByLabelText(/festival \*/i)).toHaveValue('Wacken');
+      expect(screen.getByLabelText(/year \*/i)).toHaveValue('2015');
+      expect(screen.getByLabelText(/5 star/i)).toBeChecked();
+      expect(screen.getByLabelText(/comment/i)).toHaveValue('comment');
+    });
+
+    it('should submit rating and fetch ratings again', async () => {
       const expectedInit = {
         header: { Authorization: 'Bearer token' },
         body: {
           user: 'userId', band: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5, comment: 'comment',
         },
       };
-      const onSubmitBehaviourMock = jest.fn();
-
-      const {
-        getByLabelText, getByText,
-      } = render(
-        <UserContext.Provider value={{ userId: 'userId', jwtToken: 'token' }}>
-          <Rating onSubmitBehaviour={onSubmitBehaviourMock} />
-        </UserContext.Provider>,
-      );
-      fillRatingFields(getByLabelText);
-      fireEvent.submit(getByText(/submit/i));
-
-      await wait(() => expect(API.post).toHaveBeenCalledTimes(1));
+      renderWithUseRating();
+      await wait(() => expect(API.get).toHaveBeenCalledTimes(1));
+      fillRatingFields();
+      await wait(() => expect(queryCache.getQuery('ratedArtists').state.isStale).toBeTruthy());
+      fireEvent.submit(screen.getByText(/submit/i));
       await wait(() => expect(API.post).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
-      await wait(() => expect(onSubmitBehaviourMock).toHaveBeenCalledTimes(1));
-      isFormInEmptyState(getByLabelText);
+      expect(API.post).toHaveBeenCalledTimes(1);
+      await wait(() => expect(API.get).toHaveBeenCalledTimes(2));
+      expectFormToBeEmpty();
     });
-    it('should not try to save empty comment', async () => {
+
+    it('should submit rating without comment', async () => {
       const expectedInit = {
         header: { Authorization: 'Bearer token' },
         body: {
           user: 'userId', band: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5,
         },
       };
-
-      const { getByLabelText, getByText } = render(
-        <UserContext.Provider value={{ userId: 'userId', jwtToken: 'token' }}>
-          <Rating />
-        </UserContext.Provider>,
-      );
-      fillRatingFields(getByLabelText);
-      fireEvent.change(getByLabelText(/comment/i), { target: { value: '' } });
-      fireEvent.submit(getByText(/submit/i));
-      await wait(() => expect(API.post).toHaveBeenCalledTimes(1));
+      renderWithUseRating();
+      await wait(() => expect(API.get).toHaveBeenCalledTimes(1));
+      fillRatingFields();
+      fireEvent.change(screen.getByLabelText(/comment/i), { target: { value: '' } });
+      await wait(() => expect(queryCache.getQuery('ratedArtists').state.isStale).toBeTruthy());
+      fireEvent.submit(screen.getByText(/submit/i));
       await wait(() => expect(API.post).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
+      expect(API.post).toHaveBeenCalledTimes(1);
+      await wait(() => expect(API.get).toHaveBeenCalledTimes(2));
+      expectFormToBeEmpty();
     });
     it('should require band, festival and year', () => {
-      const { getByLabelText, getByText } = render(
-        <UserContext.Provider value={{ userId: 'userId', jwtToken: 'token' }}>
-          <Rating />
-        </UserContext.Provider>,
-      );
-      fireEvent.submit(getByText(/submit/i));
+      render(<Rating />);
+      fireEvent.submit(screen.getByText(/submit/i));
 
-      expect(getByLabelText(/band \*/i)).toBeRequired();
-      expect(getByLabelText(/festival \*/i)).toBeRequired();
-      expect(getByLabelText(/year \*/i)).toBeRequired();
+      expect(screen.getByLabelText(/band \*/i)).toBeRequired();
+      expect(screen.getByLabelText(/festival \*/i)).toBeRequired();
+      expect(screen.getByLabelText(/year \*/i)).toBeRequired();
       expect(API.post).not.toHaveBeenCalled();
     });
   });

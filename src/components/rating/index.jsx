@@ -1,29 +1,42 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Rating as RatingMaterialUI } from '@material-ui/lab';
 import { Grid, TextField } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { API } from 'aws-amplify';
 import PropTypes from 'prop-types';
-import UserContext from '../../context/UserContext';
 import { makeStyles } from '@material-ui/core/styles';
+import { queryCache, useMutation } from 'react-query';
+import useUser from '../../hooks/useUser';
 
 const useStyle = makeStyles({
   root: {
     paddingTop: 20,
-},
+  },
 });
 
-const Rating = ({ bandName, onSubmitBehaviour }) => {
-  const classes = useStyle();
-  const [band, setBand] = useState(bandName);
+const addRating = async ({
+  artist: band, festival, year, rating, comment, userId, token,
+}) => (API.post('musicrating', '/api/v1/ratings/bands', {
+  header: { Authorization: `Bearer ${token.data}` },
+  body: {
+    user: userId.data, band, festival, year, rating, comment: comment || undefined,
+  },
+}));
+
+const Rating = ({ bandName }) => {
+  const [artist, setArtist] = useState(bandName);
   const [festival, setFestival] = useState('');
   const [year, setYear] = useState('');
   const [rating, setRating] = useState(1);
   const [comment, setComment] = useState('');
-  const { userId, jwtToken } = useContext(UserContext);
+  const { userId, token } = useUser();
+  const classes = useStyle();
+  const [mutate] = useMutation(addRating, {
+    onSuccess: () => queryCache.refetchQueries('ratedArtists'),
+  });
 
   const resetRating = () => {
-    setBand('');
+    setArtist('');
     setFestival('');
     setYear('');
     setRating(1);
@@ -32,20 +45,18 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
 
   const submitRating = async (event) => {
     event.preventDefault();
-    if (band && band.trim()) {
-      await API.post('musicrating', '/api/v1/ratings/bands', {
-        header: { Authorization: `Bearer ${jwtToken}` },
-        body: {
-          user: userId, band, festival, year, rating, comment: comment || undefined,
-        },
-      });
-      resetRating();
-      onSubmitBehaviour();
+    if (userId.data && token.data) {
+      if (artist && artist.trim()) {
+        await mutate({
+          artist, festival, year, rating, comment, userId, token,
+        });
+        resetRating();
+      }
     }
   };
 
   return (
-    <form id={band ? `rating-form-${band}` : 'rating-form'} onSubmit={submitRating}>
+    <form id={artist ? `rating-form-${artist}` : 'rating-form'} onSubmit={submitRating}>
       <Grid className={classes.root} container justify="center" alignItems="center" spacing={5}>
         <Grid item xs={12}>
           <TextField
@@ -56,8 +67,8 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
             InputProps={{ readOnly: !!bandName }}
             variant="outlined"
             label="Band"
-            value={band}
-            onChange={(event) => setBand(event.target.value)}
+            value={artist}
+            onChange={(event) => setArtist(event.target.value)}
           />
         </Grid>
         <Grid item xs={12}>
@@ -112,12 +123,10 @@ const Rating = ({ bandName, onSubmitBehaviour }) => {
 
 Rating.propTypes = {
   bandName: PropTypes.string,
-  onSubmitBehaviour: PropTypes.func,
 };
 
 Rating.defaultProps = {
   bandName: '',
-  onSubmitBehaviour: () => {},
 };
 
 export default Rating;
