@@ -80,7 +80,7 @@ describe('Rating', () => {
       const expectedInit = {
         header: { Authorization: 'Bearer token' },
         body: {
-          user: 'userId', band: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5, comment: 'comment',
+          userId: 'userId', band: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5, comment: 'comment',
         },
       };
       renderWithUseRating();
@@ -98,7 +98,7 @@ describe('Rating', () => {
       const expectedInit = {
         header: { Authorization: 'Bearer token' },
         body: {
-          user: 'userId', band: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5,
+          userId: 'userId', band: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5,
         },
       };
       renderWithUseRating();

@@ -19,7 +19,7 @@ const addRating = async ({
 }) => (API.post('musicrating', '/api/v1/ratings/bands', {
   header: { Authorization: `Bearer ${token.data}` },
   body: {
-    user: userId.data, band, festival, year, rating, comment: comment || undefined,
+    userId: userId.data, band, festival, year, rating, comment: comment || undefined,
   },
 }));
 
