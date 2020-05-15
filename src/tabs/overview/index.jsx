@@ -1,13 +1,5 @@
-import React, { useContext } from 'react';
-import UserContext from '../../context/UserContext';
+import React from 'react';
 
-const Overview = () => {
-  const { ratedArtists } = useContext(UserContext);
-  return (
-    <>
-      {ratedArtists && <p>OverviewPage</p>}
-    </>
-  );
-};
+const Overview = () => (<p>OverviewPage</p>);
 
 export default Overview;

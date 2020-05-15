@@ -13,6 +13,8 @@ describe('TabBar', () => {
 
     fireEvent.click(screen.getByText(/estimate wacken/i));
     expect(await screen.findByAltText('Vader')).toBeVisible();
-    expect(await screen.findByText('Vader')).toBeVisible();
+    expect(screen.getByAltText('Megadeth')).toBeVisible();
+    expect(screen.getByText('Vader')).toBeVisible();
+    expect(screen.getByText('Megadeth')).toBeVisible();
   });
 });
