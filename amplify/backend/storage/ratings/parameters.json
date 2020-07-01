@@ -1,0 +1,7 @@
+{
+    "tableName": "ratings",
+    "partitionKeyName": "userId",
+    "partitionKeyType": "S",
+    "sortKeyName": "artist",
+    "sortKeyType": "S"
+}

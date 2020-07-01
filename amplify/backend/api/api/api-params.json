@@ -2,29 +2,29 @@
     "paths": [
         {
             "name": "/api/v1/ratings/bands",
-            "lambdaFunction": "musicrating",
+            "lambdaFunction": "ratings",
             "privacy": {
                 "open": true
             }
         }
     ],
-    "resourceName": "musicrating",
-    "apiName": "musicrating",
+    "resourceName": "api",
+    "apiName": "api",
     "functionArns": [
         {
-            "lambdaFunction": "musicrating"
+            "lambdaFunction": "ratings"
         }
     ],
     "privacy": {
         "auth": 0,
         "unauth": 0,
-        "authRoleName": "amplify-music-rating-prod-230658-authRole",
-        "unAuthRoleName": "amplify-music-rating-prod-230658-unauthRole"
+        "authRoleName": "amplify-musicrating-prod-132445-authRole",
+        "unAuthRoleName": "amplify-musicrating-prod-132445-unauthRole"
     },
     "dependsOn": [
         {
             "category": "function",
-            "resourceName": "musicrating",
+            "resourceName": "ratings",
             "attributes": [
                 "Name",
                 "Arn"

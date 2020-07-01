@@ -1,36 +1,29 @@
 {
 	"hosting": {
-		"S3AndCloudFront": {
-			"service": "S3AndCloudFront",
-			"providerPlugin": "awscloudformation"
-		}
-	},
-	"auth": {
-		"musicrating2485f76f": {
-			"service": "Cognito",
-			"providerPlugin": "awscloudformation",
-			"dependsOn": []
+		"amplifyhosting": {
+			"service": "amplifyhosting",
+			"type": "cicd"
 		}
 	},
 	"storage": {
-		"musicrating": {
-			"service": "DynamoDB",
+		"festivals": {
+			"service": "S3",
 			"providerPlugin": "awscloudformation"
 		},
-		"festivalBands": {
-			"service": "S3",
+		"ratings": {
+			"service": "DynamoDB",
 			"providerPlugin": "awscloudformation"
 		}
 	},
 	"function": {
-		"musicrating": {
+		"ratings": {
 			"build": true,
 			"providerPlugin": "awscloudformation",
 			"service": "Lambda",
 			"dependsOn": [
 				{
 					"category": "storage",
-					"resourceName": "musicrating",
+					"resourceName": "ratings",
 					"attributes": [
 						"Name",
 						"Arn"
@@ -44,19 +37,27 @@
 		}
 	},
 	"api": {
-		"musicrating": {
+		"api": {
 			"service": "API Gateway",
 			"providerPlugin": "awscloudformation",
 			"dependsOn": [
 				{
 					"category": "function",
-					"resourceName": "musicrating",
+					"resourceName": "ratings",
 					"attributes": [
 						"Name",
 						"Arn"
 					]
 				}
 			]
+		}
+	},
+	"auth": {
+		"musicratingee1f3274": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": [],
+			"customAuth": false
 		}
 	}
 }

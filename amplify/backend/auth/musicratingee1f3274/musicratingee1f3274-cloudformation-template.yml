@@ -74,6 +74,9 @@ Parameters:
   userpoolClientSetAttributes:
     Type: String
             
+  sharedId:
+    Type: String
+              
   resourceName:
     Type: String
               
@@ -82,16 +85,10 @@ Parameters:
                                       
   useDefault:
     Type: String
-              
-  triggers:
-    Type: String
-                    
-  parentStack:
-    Type: String
-                
-  permissions:
+                      
+  userPoolGroupList:
     Type: CommaDelimitedList
-              
+                          
   dependsOn:
     Type: CommaDelimitedList
     
@@ -106,7 +103,7 @@ Resources:
   # Created to allow the UserPool SMS Config to publish via the Simple Notification Service during MFA Process
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, 'musicr2485f76f_sns-role', !Join ['',['musicr2485f76f_sns-role', '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, 'musicree1f3274_sns-role', !Join ['',[ 'sns', 'ee1f3274', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument: 
         Version: "2012-10-17"
         Statement: 
@@ -118,10 +115,10 @@ Resources:
               - "sts:AssumeRole"
             Condition: 
               StringEquals:
-                sts:ExternalId: musicr2485f76f_role_external_id
+                sts:ExternalId: musicree1f3274_role_external_id
       Policies: 
         - 
-          PolicyName: musicr2485f76f-sns-policy
+          PolicyName: musicree1f3274-sns-policy
           PolicyDocument: 
             Version: "2012-10-17"
             Statement: 
@@ -167,27 +164,15 @@ Resources:
       SmsVerificationMessage: !Ref smsVerificationMessage
       SmsConfiguration: 
         SnsCallerArn: !GetAtt SNSRole.Arn
-        ExternalId: musicr2485f76f_role_external_id
+        ExternalId: musicree1f3274_role_external_id
     
-  
-    
-    
-  
-    
-    
-  
-  
-   
-    
-  # Updating lambda role with permissions to Cognito
-  
   
   UserPoolClientWeb:
   # Created provide application access to user pool
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: musicr2485f76f_app_clientWeb
+      ClientName: musicree1f3274_app_clientWeb
       
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
       UserPoolId: !Ref UserPool
@@ -197,7 +182,7 @@ Resources:
   # Depends on UserPool for ID reference
     Type: "AWS::Cognito::UserPoolClient"
     Properties:
-      ClientName: musicr2485f76f_app_client
+      ClientName: musicree1f3274_app_client
       
       GenerateSecret: !Ref userpoolClientGenerateSecret
       RefreshTokenValidity: !Ref userpoolClientRefreshTokenValidity
@@ -208,7 +193,7 @@ Resources:
   # Created to execute Lambda which gets userpool app client config values
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',[!Ref userpoolClientLambdaRole, '-', !Ref env]]]
+      RoleName: !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',['upClientLambdaRole', 'ee1f3274', !Select [3, !Split ['-', !Ref 'AWS::StackName']], '-', !Ref env]]]
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -262,9 +247,9 @@ Resources:
   # Marked as depending on UserPoolClientRole for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: musicr2485f76f_userpoolclient_lambda_iam_policy
+      PolicyName: musicree1f3274_userpoolclient_lambda_iam_policy
       Roles: 
-        - !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',[!Ref userpoolClientLambdaRole, '-', !Ref env]]]
+        - !Ref UserPoolClientRole
       PolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -279,9 +264,9 @@ Resources:
   # Marked as depending on UserPoolClientLambdaPolicy for easier to understand CFN sequencing
     Type: 'AWS::IAM::Policy'
     Properties:
-      PolicyName: musicr2485f76f_userpoolclient_lambda_log_policy
+      PolicyName: musicree1f3274_userpoolclient_lambda_log_policy
       Roles: 
-        - !If [ShouldNotCreateEnvResources, !Ref userpoolClientLambdaRole, !Join ['',[!Ref userpoolClientLambdaRole, '-', !Ref env]]]
+        - !Ref UserPoolClientRole
       PolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -319,7 +304,7 @@ Resources:
   # Always created
     Type: AWS::Cognito::IdentityPool
     Properties: 
-      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'musicrating2485f76f_identitypool_2485f76f', !Join ['',['musicrating2485f76f_identitypool_2485f76f', '__', !Ref env]]]
+      IdentityPoolName: !If [ShouldNotCreateEnvResources, 'musicratingee1f3274_identitypool_ee1f3274', !Join ['',['musicratingee1f3274_identitypool_ee1f3274', '__', !Ref env]]]
       
       CognitoIdentityProviders:
         - ClientId:  !Ref UserPoolClient

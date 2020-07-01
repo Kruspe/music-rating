@@ -40,12 +40,12 @@
                 "AttributeDefinitions": [
                   
                   {
-                      "AttributeName": "user",
+                      "AttributeName": "userId",
                       "AttributeType": "S"
                   }  , 
                   
                   {
-                      "AttributeName": "band",
+                      "AttributeName": "artist",
                       "AttributeType": "S"
                   } 
                   
@@ -53,12 +53,12 @@
                 "KeySchema": [
                   
                   {
-                    "AttributeName": "user",
+                    "AttributeName": "userId",
                     "KeyType": "HASH"
                   }  , 
                   
                   {
-                    "AttributeName": "band",
+                    "AttributeName": "artist",
                     "KeyType": "RANGE"
                   } 
                   

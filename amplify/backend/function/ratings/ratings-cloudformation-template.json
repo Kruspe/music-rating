@@ -10,13 +10,13 @@
 		"env": {
 			"Type": "String"
 		},
-		"storagemusicratingName": {
+		"storageratingsName": {
 			"Type": "String",
-			"Default": "storagemusicratingName"
+			"Default": "storageratingsName"
 		},
-		"storagemusicratingArn": {
+		"storageratingsArn": {
 			"Type": "String",
-			"Default": "storagemusicratingArn"
+			"Default": "storageratingsArn"
 		}
 	},
 	"Conditions": {
@@ -41,12 +41,12 @@
 				"FunctionName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"musicrating",
+						"ratings",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"musicrating",
+									"ratings",
 									"-",
 									{
 										"Ref": "env"
@@ -75,8 +75,8 @@
 				"Runtime": "nodejs12.x",
 				"Timeout": "25",
 				"Code": {
-					"S3Bucket": "amplify-music-rating-prod-230658-deployment",
-					"S3Key": "amplify-builds/musicrating-464a54636b3941377133-build.zip"
+					"S3Bucket": "amplify-musicrating-prod-132445-deployment",
+					"S3Key": "amplify-builds/ratings-7666755037784b316931-build.zip"
 				}
 			}
 		},
@@ -86,12 +86,12 @@
 				"RoleName": {
 					"Fn::If": [
 						"ShouldNotCreateEnvResources",
-						"musicratingLambdaRole281c15c6",
+						"musicratingLambdaRoled3159d14",
 						{
 							"Fn::Join": [
 								"",
 								[
-									"musicratingLambdaRole281c15c6",
+									"musicratingLambdaRoled3159d14",
 									"-",
 									{
 										"Ref": "env"
@@ -171,14 +171,14 @@
 							],
 							"Resource": [
 								{
-									"Ref": "storagemusicratingArn"
+									"Ref": "storageratingsArn"
 								},
 								{
 									"Fn::Join": [
 										"/",
 										[
 											{
-												"Ref": "storagemusicratingArn"
+												"Ref": "storageratingsArn"
 											},
 											"index/*"
 										]

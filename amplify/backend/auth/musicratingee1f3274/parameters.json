@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "musicrating2485f76f_identitypool_2485f76f",
+    "identityPoolName": "musicratingee1f3274_identitypool_ee1f3274",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "musicr2485f76f",
-    "userPoolName": "musicrating2485f76f_userpool_2485f76f",
+    "resourceNameTruncated": "musicree1f3274",
+    "userPoolName": "musicratingee1f3274_userpool_ee1f3274",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -28,9 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "musicr2485f76f_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "musicree1f3274_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "resourceName": "musicrating2485f76f",
+    "sharedId": "ee1f3274",
+    "resourceName": "musicratingee1f3274",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -45,10 +46,6 @@
         ]
     },
     "useDefault": "default",
-    "triggers": "{}",
-    "parentStack": {
-        "Ref": "AWS::StackId"
-    },
-    "permissions": [],
+    "userPoolGroupList": [],
     "dependsOn": []
 }
