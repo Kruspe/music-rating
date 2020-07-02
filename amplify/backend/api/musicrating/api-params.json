@@ -2,17 +2,17 @@
     "paths": [
         {
             "name": "/api/v1/ratings/bands",
-            "lambdaFunction": "ratings",
+            "lambdaFunction": "musicrating",
             "privacy": {
                 "open": true
             }
         }
     ],
-    "resourceName": "api",
-    "apiName": "api",
+    "resourceName": "musicrating",
+    "apiName": "musicrating",
     "functionArns": [
         {
-            "lambdaFunction": "ratings"
+            "lambdaFunction": "musicrating"
         }
     ],
     "privacy": {
@@ -24,7 +24,7 @@
     "dependsOn": [
         {
             "category": "function",
-            "resourceName": "ratings",
+            "resourceName": "musicrating",
             "attributes": [
                 "Name",
                 "Arn"

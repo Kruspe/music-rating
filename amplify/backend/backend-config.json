@@ -10,20 +10,20 @@
 			"service": "S3",
 			"providerPlugin": "awscloudformation"
 		},
-		"ratings": {
+		"musicrating": {
 			"service": "DynamoDB",
 			"providerPlugin": "awscloudformation"
 		}
 	},
 	"function": {
-		"ratings": {
+		"musicrating": {
 			"build": true,
 			"providerPlugin": "awscloudformation",
 			"service": "Lambda",
 			"dependsOn": [
 				{
 					"category": "storage",
-					"resourceName": "ratings",
+					"resourceName": "musicrating",
 					"attributes": [
 						"Name",
 						"Arn"
@@ -37,13 +37,13 @@
 		}
 	},
 	"api": {
-		"api": {
+		"musicrating": {
 			"service": "API Gateway",
 			"providerPlugin": "awscloudformation",
 			"dependsOn": [
 				{
 					"category": "function",
-					"resourceName": "ratings",
+					"resourceName": "musicrating",
 					"attributes": [
 						"Name",
 						"Arn"

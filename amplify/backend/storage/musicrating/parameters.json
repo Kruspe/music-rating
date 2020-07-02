@@ -1,5 +1,5 @@
 {
-    "tableName": "ratings",
+    "tableName": "musicrating",
     "partitionKeyName": "userId",
     "partitionKeyType": "S",
     "sortKeyName": "artist",
