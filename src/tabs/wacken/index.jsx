@@ -1,28 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Storage } from 'aws-amplify';
 import { Grid } from '@material-ui/core';
+import { useQuery } from 'react-query';
 import EstimationCard from '../../components/estimationCard';
 import useRating from '../../hooks/useRating';
 
+const getWackenBands = async () => {
+  const wackenBandsUrl = await Storage.get('wacken.json');
+  const response = await fetch(wackenBandsUrl, { headers: { 'Content-Type': 'application/json' } });
+  return response.json();
+};
+
 const Wacken = () => {
-  const wackenBands = useRef([]);
   const [bandsToBeRated, setBandsToBeRated] = useState([]);
   const { data: ratedArtists } = useRating();
+  const { data: wackenBands } = useQuery('wackenBands', getWackenBands);
+
   useEffect(() => {
-    const getWackenBands = async () => {
-      const wackenBandsUrl = await Storage.get('wacken.json');
-      const response = await fetch(wackenBandsUrl, { headers: { 'Content-Type': 'application/json' } });
-      wackenBands.current = await response.json();
-    };
-    getWackenBands();
-  }, []);
-  useEffect(() => {
-    if (ratedArtists) {
+    if (ratedArtists && wackenBands) {
       const ratedArtistNames = ratedArtists.map((ratedArtist) => ratedArtist.band);
-      setBandsToBeRated(wackenBands.current
+      setBandsToBeRated(wackenBands
         .filter((wackenBand) => !ratedArtistNames.includes(wackenBand.artist)));
     }
-  }, [ratedArtists]);
+  }, [ratedArtists, wackenBands]);
 
   return (
     <Grid container>
