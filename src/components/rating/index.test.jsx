@@ -80,7 +80,7 @@ describe('Rating', () => {
       const expectedInit = {
         header: { Authorization: 'Bearer token' },
         body: {
-          userId: 'userId', band: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5, comment: 'comment',
+          userId: 'userId', artist: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5, comment: 'comment',
         },
       };
       renderWithUseRating();
@@ -98,7 +98,7 @@ describe('Rating', () => {
       const expectedInit = {
         header: { Authorization: 'Bearer token' },
         body: {
-          userId: 'userId', band: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5,
+          userId: 'userId', artist: 'Bloodbath', festival: 'Wacken', year: '2015', rating: 5,
         },
       };
       renderWithUseRating();
@@ -112,7 +112,7 @@ describe('Rating', () => {
       await wait(() => expect(API.get).toHaveBeenCalledTimes(2));
       expectFormToBeEmpty();
     });
-    it('should require band, festival and year', () => {
+    it('should require artist, festival and year', () => {
       render(<Rating />);
       fireEvent.submit(screen.getByText(/submit/i));
 

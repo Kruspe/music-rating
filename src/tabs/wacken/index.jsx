@@ -18,7 +18,7 @@ const Wacken = () => {
 
   useEffect(() => {
     if (ratedArtists && wackenBands) {
-      const ratedArtistNames = ratedArtists.map((ratedArtist) => ratedArtist.band);
+      const ratedArtistNames = ratedArtists.map((ratedArtist) => ratedArtist.artist);
       setBandsToBeRated(wackenBands
         .filter((wackenBand) => !ratedArtistNames.includes(wackenBand.artist)));
     }

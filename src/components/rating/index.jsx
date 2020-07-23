@@ -15,11 +15,11 @@ const useStyle = makeStyles({
 });
 
 const addRating = async ({
-  artist: band, festival, year, rating, comment, userId, token,
+  artist, festival, year, rating, comment, userId, token,
 }) => (API.post('musicrating', '/api/v1/ratings/bands', {
   header: { Authorization: `Bearer ${token.data}` },
   body: {
-    userId: userId.data, band, festival, year, rating, comment: comment || undefined,
+    userId: userId.data, artist, festival, year, rating, comment: comment || undefined,
   },
 }));
 

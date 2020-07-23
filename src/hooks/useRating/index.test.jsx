@@ -23,7 +23,7 @@ describe('useRating', () => {
     useUser.mockReturnValue({ userId: { data: 'userId' }, token: { data: 'token' } });
     render(<UseRatingHookExample />);
     expect(await screen.findByText(`Ratings:${JSON.stringify([{
-      band: 'Bloodbath',
+      artist: 'Bloodbath',
       festival: 'Wacken',
       year: 2015,
       rating: 5,
