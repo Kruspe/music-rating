@@ -32,7 +32,7 @@ const Rating = ({ bandName }) => {
   const { userId, token } = useUser();
   const classes = useStyle();
   const [mutate] = useMutation(addRating, {
-    onSuccess: () => queryCache.refetchQueries('ratedArtists'),
+    onSuccess: () => queryCache.invalidateQueries('ratedArtists'),
   });
 
   const resetRating = () => {
