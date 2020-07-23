@@ -7,7 +7,7 @@ jest.mock('./tabs/TabBar', () => (() => (<p>TabBar</p>)));
 describe('App', () => {
   it('should render no content when not signedIn', () => {
     const { container } = render(<App authState="signIn" />);
-    expect(container).toBeEmpty();
+    expect(container).toBeEmptyDOMElement();
   });
 
   it('should render TabBar when signedIn', async () => {
