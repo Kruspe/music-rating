@@ -1,10 +1,10 @@
 import '@testing-library/jest-dom/extend-expect';
-import { queryCache } from 'react-query';
+import { queryCaches } from 'react-query';
 import { API, Auth, Storage } from 'aws-amplify';
 import { apiGetMock, apiPostMock, fetchMock, storageGetMock } from './test/mocks';
 
 beforeEach(() => {
-  queryCache.clear();
+  queryCaches.forEach((queryCache) => queryCache.clear());
 
   window.fetch = jest.fn().mockImplementation(fetchMock);
 
