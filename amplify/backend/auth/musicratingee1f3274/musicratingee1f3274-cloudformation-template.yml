@@ -344,7 +344,9 @@ Outputs :
   
   
   
-  
+  UserPoolArn:
+    Value: !GetAtt 'UserPool.Arn'
+    Description: ARN for the user pool
   UserPoolId:
     Value: !Ref 'UserPool'
     Description:  Id for the user pool

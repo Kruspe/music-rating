@@ -1,7 +1,7 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "API Gateway resource stack creation using Amplify CLI",
-    
+
     "Parameters": {
         "authRoleName": {
             "Type":  "String"
@@ -12,22 +12,17 @@
         "env": {
             "Type": "String"
         },
-    
-    
-          "functionmusicratingName": {
-            "Type": "String",
-            "Default": "functionmusicratingName"
-          },
-        
-          
-          "functionmusicratingArn": {
-            "Type": "String",
-            "Default": "functionmusicratingArn"
-          }
-        
-          
-          
-    
+        "functionmusicratingName": {
+          "Type": "String",
+          "Default": "functionmusicratingName"
+        },
+        "functionmusicratingArn": {
+          "Type": "String",
+          "Default": "functionmusicratingArn"
+        },
+        "authmusicratingee1f3274UserPoolArn": {
+          "Type": "String"
+        }
     },
      "Conditions": {
         "ShouldNotCreateEnvResources": {
@@ -40,11 +35,6 @@
         }
     },
     "Resources": {
-        
-        
-        
-        
-        
       "musicrating": {
         "Type": "AWS::ApiGateway::RestApi",
         "Properties": {
@@ -89,7 +79,6 @@
               "https"
             ],
             "paths": {
-              
               "/api/v1/ratings/bands": {
                 "options": {
                   "consumes": [
@@ -157,7 +146,6 @@
                       }
                     }
                   },
-                  
                   "x-amazon-apigateway-integration": {
                     "responses": {
                       "default": {
@@ -173,12 +161,9 @@
                               "Ref": "AWS::Region"
                             },
                             ":lambda:path/2015-03-31/functions/",
-                            
                             {
-                                
                                 "Ref": "functionmusicratingArn"
                             },
-                            
                             "/invocations"
                           ]
                         ]
@@ -256,7 +241,6 @@
                       }
                     }
                   },
-                  
                   "x-amazon-apigateway-integration": {
                     "responses": {
                       "default": {
@@ -272,12 +256,9 @@
                             "Ref": "AWS::Region"
                           },
                           ":lambda:path/2015-03-31/functions/",
-                          
                           {
-                            
                             "Ref": "functionmusicratingArn"
                           },
-                          
                           "/invocations"
                         ]
                       ]
@@ -287,15 +268,13 @@
                     "type": "aws_proxy"
                   }
                 }
-              }   
-              
+              }
             },
             "securityDefinitions": {
-              "sigv4": {
+              "CognitoUserPool": {
                 "type": "apiKey",
                 "name": "Authorization",
-                "in": "header",
-                "x-amazon-apigateway-authtype": "awsSigv4"
+                "in": "header"
               }
             },
             "definitions": {
@@ -328,10 +307,21 @@
           "FailOnWarnings": true
         }
       },
+      "Authorizer": {
+        "Type": "AWS::ApiGateway::Authorizer",
+        "Properties": {
+          "RestApiId": {
+            "Ref": "musicrating"
+          },
+          "ProviderARNs": [{
+            "Ref": "authmusicratingee1f3274UserPoolArn"
+          }],
+          "Type": "COGNITO_USER_POOLS",
+          "IdentitySource": "method.request.header.Authorization",
+          "Name": "MusicRatingUser"
+        }
 
-                  
-        
-        
+      },
         "functionmusicratingPermissionmusicrating": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
@@ -339,7 +329,6 @@
                     {
                         "Ref":  "functionmusicratingName"
                     },
-                    
                     "Action": "lambda:InvokeFunction",
                 "Principal": "apigateway.amazonaws.com",
                 "SourceArn": {
@@ -364,9 +353,6 @@
                 }
             }
         },
-        
-        
-        
       "DeploymentAPIGWmusicrating": {
         "Type": "AWS::ApiGateway::Deployment",
         "Properties": {
@@ -374,10 +360,10 @@
           "StageName": {
             "Fn::If": [
               "ShouldNotCreateEnvResources",
-              "Prod", 
+              "Prod",
               {
                 "Ref": "env"
-              } 
+              }
             ]
           },
           "RestApiId": {

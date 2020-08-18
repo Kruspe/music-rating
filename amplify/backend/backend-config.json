@@ -48,6 +48,11 @@
 						"Name",
 						"Arn"
 					]
+				},
+				{
+					"category": "auth",
+					"resourceName": "musicratingee1f3274",
+					"attributes": ["UserPoolArn"]
 				}
 			]
 		}
