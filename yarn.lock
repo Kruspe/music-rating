@@ -11378,12 +11378,10 @@ react-native-get-random-values@^1.4.0:
   dependencies:
     fast-base64-decode "^1.0.0"
 
-react-query@^2.5.14:
-  version "2.5.14"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.5.14.tgz#690bd85c83fafe8dd6453a6cafb922d475a1eea4"
-  integrity sha512-uXitanViwKKKSgpEDQZLoABziZwlF9rerDJ1qundfaVYyI2bg20AglZTT9AbMoMsd9F/okhYtB0GFUkK8bOQqg==
-  dependencies:
-    ts-toolbelt "^6.9.4"
+react-query@^2.8.0:
+  version "2.8.0"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.8.0.tgz#7c4c39c9344b99d3af5646f95267adf57e6b16fd"
+  integrity sha512-V9lwIA18MKY/sm3WNGHQOQvRGKI3ywlaoy5UejhBontoIljAjbvmffEUvJIvLTu3pymNG7QIVQV6jjBo6G9sCA==
 
 react-scripts@3.4.3:
   version "3.4.3"
@@ -13016,11 +13014,6 @@ ts-pnp@1.1.6, ts-pnp@^1.1.6:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/ts-pnp/-/ts-pnp-1.1.6.tgz#389a24396d425a0d3162e96d2b4638900fdc289a"
   integrity sha512-CrG5GqAAzMT7144Cl+UIFP7mz/iIhiy+xQ6GGcnjTezhALT02uPMRw7tgDSESgB5MsfKt55+GPWw4ir1kVtMIQ==
-
-ts-toolbelt@^6.9.4:
-  version "6.9.4"
-  resolved "https://registry.yarnpkg.com/ts-toolbelt/-/ts-toolbelt-6.9.4.tgz#cc3a070d99c557c552b4f69e36f13d430c47a760"
-  integrity sha512-muRZZqfOTOVvLk5cdnp7YWm6xX+kD/WL2cS/L4zximBRcbQSuMoTbQQ2ZZBVMs1gB0EZw1qThP+HrIQB35OmEw==
 
 tsconfig-paths@^3.9.0:
   version "3.9.0"
