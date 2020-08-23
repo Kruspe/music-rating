@@ -11346,10 +11346,10 @@ react-native-get-random-values@^1.4.0:
   dependencies:
     fast-base64-decode "^1.0.0"
 
-react-query@^2.9.0:
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.9.0.tgz#b9f5923f955ff069e50fc2dbebf77650acc3013f"
-  integrity sha512-iZW2F3+agbs4u+JZtED2obwepdluwNFzUFcsvfhMadiiyDEbKkB24HauKbkBOHKMBPTC21oxu5LCTEr2YeJvlA==
+react-query@^2.10.0:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.10.0.tgz#5bc08bc868fa476d9718e41b80484e564b4f26b0"
+  integrity sha512-d+JaJmUEroUofjQgYW7hETTvayy8C2y75oBxMj9sdJteI9TFCSgafoWLbwkD/a6Q5KAzHeD7+40n2y22nn1eDA==
 
 react-scripts@3.4.3:
   version "3.4.3"
