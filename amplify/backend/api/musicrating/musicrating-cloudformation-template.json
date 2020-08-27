@@ -41,64 +41,100 @@
           "Description": "",
           "Name": "musicrating",
           "Body": {
-            "swagger": "2.0",
+            "openapi": "3.0.3",
             "info": {
               "version": "2018-05-24T17:52:00Z",
               "title": "musicrating"
             },
-            "host": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "apigateway.",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ".amazonaws.com"
-                  ]
-                ]
-              },
-            "basePath": {
-              "Fn::If": [
-                "ShouldNotCreateEnvResources",
-                "/Prod",
-                {
+            "servers": [
+              {
+                "url": {
                   "Fn::Join": [
-                      "",
-                      [
-                          "/",
+                    "https://",
+                    [
+                      "apigateway.",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ".amazonaws.com",
+                      {
+                        "Fn::If": [
+                          "ShouldNotCreateEnvResources",
+                          "/Prod",
                           {
-                              "Ref": "env"
+                            "Fn::Join": [
+                              "",
+                              [
+                                "/",
+                                {
+                                  "Ref": "env"
+                                }
+                              ]
+                            ]
                           }
-                      ]
+                        ]
+                      }
+                    ]
                   ]
-                } 
-              ]
-            },
-            "schemes": [
-              "https"
+                }
+              }
             ],
+            "components": {
+              "securitySchemes": {
+                "MusicRatingUser": {
+                  "type": "http",
+                  "scheme": "bearer",
+                  "bearerFormat": "JWT"
+                }
+              },
+              "schemas": {
+                "RequestSchema": {
+                  "type": "object",
+                  "required": [
+                    "request"
+                  ],
+                  "properties": {
+                    "request": {
+                      "type": "string"
+                    }
+                  },
+                  "title": "Request Schema"
+                },
+                "ResponseSchema": {
+                  "type": "object",
+                  "required": [
+                    "response"
+                  ],
+                  "properties": {
+                    "response": {
+                      "type": "string"
+                    }
+                  },
+                  "title": "Response Schema"
+                }
+              }
+            },
             "paths": {
               "/api/v1/ratings/bands": {
                 "options": {
-                  "consumes": [
-                    "application/json"
-                  ],
-                  "produces": [
-                    "application/json"
-                  ],
                   "responses": {
                     "200": {
                       "description": "200 response",
                       "headers": {
                         "Access-Control-Allow-Origin": {
-                          "type": "string"
+                          "schema": {
+                            "type": "string"
+                          }
                         },
                         "Access-Control-Allow-Methods": {
-                          "type": "string"
+                          "schema": {
+                            "type": "string"
+                          }
                         },
                         "Access-Control-Allow-Headers": {
-                          "type": "string"
+                          "schema": {
+                            "type": "string"
+                          }
                         }
                       }
                     }
@@ -134,7 +170,7 @@
                       "name": "RequestSchema",
                       "required": false,
                       "schema": {
-                        "$ref": "#/definitions/RequestSchema"
+                        "$ref": "#/components/schemas/RequestSchema"
                       }
                     }
                   ],
@@ -142,7 +178,7 @@
                     "200": {
                       "description": "200 response",
                       "schema": {
-                        "$ref": "#/definitions/ResponseSchema"
+                        "$ref": "#/components/schemas/ResponseSchema"
                       }
                     }
                   },
@@ -173,136 +209,9 @@
                     "type": "aws_proxy"
                   }
                 }
-              },
-              "/api/v1/ratings/bands/{proxy+}": {
-                "options": {
-                  "consumes": [
-                    "application/json"
-                  ],
-                  "produces": [
-                    "application/json"
-                  ],
-                  "responses": {
-                    "200": {
-                      "description": "200 response",
-                      "headers": {
-                        "Access-Control-Allow-Origin": {
-                          "type": "string"
-                        },
-                        "Access-Control-Allow-Methods": {
-                          "type": "string"
-                        },
-                        "Access-Control-Allow-Headers": {
-                          "type": "string"
-                        }
-                      }
-                    }
-                  },
-                  "x-amazon-apigateway-integration": {
-                    "responses": {
-                      "default": {
-                        "statusCode": "200",
-                        "responseParameters": {
-                          "method.response.header.Access-Control-Allow-Methods": "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'",
-                          "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
-                          "method.response.header.Access-Control-Allow-Origin": "'*'"
-                        }
-                      }
-                    },
-                    "requestTemplates": {
-                      "application/json": "{\"statusCode\": 200}"
-                    },
-                    "passthroughBehavior": "when_no_match",
-                    "type": "mock"
-                  }
-                },
-                "x-amazon-apigateway-any-method": {
-                  "consumes": [
-                    "application/json"
-                  ],
-                  "produces": [
-                    "application/json"
-                  ],
-                  "parameters": [
-                    {
-                      "in": "body",
-                      "name": "RequestSchema",
-                      "required": false,
-                      "schema": {
-                        "$ref": "#/definitions/RequestSchema"
-                      }
-                    }
-                  ],
-                  "responses": {
-                    "200": {
-                      "description": "200 response",
-                      "schema": {
-                        "$ref": "#/definitions/ResponseSchema"
-                      }
-                    }
-                  },
-                  "x-amazon-apigateway-integration": {
-                    "responses": {
-                      "default": {
-                        "statusCode": "200"
-                      }
-                    },
-                    "uri": {
-                      "Fn::Join": [
-                        "",
-                        [
-                          "arn:aws:apigateway:",
-                          {
-                            "Ref": "AWS::Region"
-                          },
-                          ":lambda:path/2015-03-31/functions/",
-                          {
-                            "Ref": "functionmusicratingArn"
-                          },
-                          "/invocations"
-                        ]
-                      ]
-                    },
-                    "passthroughBehavior": "when_no_match",
-                    "httpMethod": "POST",
-                    "type": "aws_proxy"
-                  }
-                }
               }
             },
-            "securityDefinitions": {
-              "CognitoUserPool": {
-                "type": "apiKey",
-                "name": "Authorization",
-                "in": "header"
-              }
-            },
-            "definitions": {
-              "RequestSchema": {
-                "type": "object",
-                "required": [
-                  "request"
-                ],
-                "properties": {
-                  "request": {
-                    "type": "string"
-                  }
-                },
-                "title": "Request Schema"
-              },
-              "ResponseSchema": {
-                "type": "object",
-                "required": [
-                  "response"
-                ],
-                "properties": {
-                  "response": {
-                    "type": "string"
-                  }
-                },
-                "title": "Response Schema"
-              }
-            }
+            "security": ["MusicRatingUser"]
           },
           "FailOnWarnings": true
         }
@@ -325,7 +234,7 @@
         "functionmusicratingPermissionmusicrating": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
-                "FunctionName": 
+                "FunctionName":
                     {
                         "Ref":  "functionmusicratingName"
                     },
