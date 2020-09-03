@@ -103,11 +103,6 @@
                       }
                     }
                   },
-                  "security": [
-                    {
-                      "CognitoUserPool": []
-                    }
-                  ],
                   "x-amazon-apigateway-integration": {
                     "responses": {
                       "default": {
@@ -151,6 +146,11 @@
                       }
                     }
                   },
+                  "security": [
+                    {
+                      "CognitoUserPool": []
+                    }
+                  ],
                   "x-amazon-apigateway-integration": {
                     "responses": {
                       "default": {
@@ -246,6 +246,11 @@
                       }
                     }
                   },
+                  "security": [
+                    {
+                      "CognitoUserPool": []
+                    }
+                  ],
                   "x-amazon-apigateway-integration": {
                     "responses": {
                       "default": {
