@@ -72,7 +72,7 @@
                           }
                       ]
                   ]
-                } 
+                }
               ]
             },
             "schemes": [
@@ -103,6 +103,11 @@
                       }
                     }
                   },
+                  "security": [
+                    {
+                      "CognitoUserPool": []
+                    }
+                  ],
                   "x-amazon-apigateway-integration": {
                     "responses": {
                       "default": {
@@ -274,7 +279,16 @@
               "CognitoUserPool": {
                 "type": "apiKey",
                 "name": "Authorization",
-                "in": "header"
+                "in": "header",
+                "x-amazon-apigateway-authtype": "cognito_user_pools",
+                "x-amazon-apigateway-authorizer": {
+                  "type": "cognito_user_pools",
+                  "providerARNs": [
+                    {
+                      "Ref": "authmusicratingee1f3274UserPoolArn"
+                    }
+                  ]
+                }
               }
             },
             "definitions": {
@@ -325,7 +339,7 @@
         "functionmusicratingPermissionmusicrating": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
-                "FunctionName": 
+                "FunctionName":
                     {
                         "Ref":  "functionmusicratingName"
                     },
