@@ -321,21 +321,6 @@
           "FailOnWarnings": true
         }
       },
-      "Authorizer": {
-        "Type": "AWS::ApiGateway::Authorizer",
-        "Properties": {
-          "RestApiId": {
-            "Ref": "musicrating"
-          },
-          "ProviderARNs": [{
-            "Ref": "authmusicratingee1f3274UserPoolArn"
-          }],
-          "Type": "COGNITO_USER_POOLS",
-          "IdentitySource": "method.request.header.Authorization",
-          "Name": "MusicRatingUser"
-        }
-
-      },
         "functionmusicratingPermissionmusicrating": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
