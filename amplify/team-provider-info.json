@@ -1,26 +1,26 @@
 {
-    "prod": {
-        "awscloudformation": {
-            "AuthRoleName": "amplify-musicrating-prod-132445-authRole",
-            "UnauthRoleArn": "arn:aws:iam::025007687265:role/amplify-musicrating-prod-132445-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::025007687265:role/amplify-musicrating-prod-132445-authRole",
-            "Region": "eu-west-1",
-            "DeploymentBucketName": "amplify-musicrating-prod-132445-deployment",
-            "UnauthRoleName": "amplify-musicrating-prod-132445-unauthRole",
-            "StackName": "amplify-musicrating-prod-132445",
-            "StackId": "arn:aws:cloudformation:eu-west-1:025007687265:stack/amplify-musicrating-prod-132445/797253e0-bb8d-11ea-89f6-026197c942fe",
-            "AmplifyAppId": "d3vcp8fqcm7bsi"
-        },
-        "categories": {
-            "hosting": {
-                "amplifyhosting": {
-                    "appId": "d3vcp8fqcm7bsi",
-                    "type": "cicd"
-                }
-            },
-            "auth": {
-                "musicratingee1f3274": {}
-            }
+  "prod": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-musicrating-prod-132445-authRole",
+      "UnauthRoleArn": "arn:aws:iam::025007687265:role/amplify-musicrating-prod-132445-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::025007687265:role/amplify-musicrating-prod-132445-authRole",
+      "Region": "eu-west-1",
+      "DeploymentBucketName": "amplify-musicrating-prod-132445-deployment",
+      "UnauthRoleName": "amplify-musicrating-prod-132445-unauthRole",
+      "StackName": "amplify-musicrating-prod-132445",
+      "StackId": "arn:aws:cloudformation:eu-west-1:025007687265:stack/amplify-musicrating-prod-132445/797253e0-bb8d-11ea-89f6-026197c942fe",
+      "AmplifyAppId": "d3vcp8fqcm7bsi"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d3vcp8fqcm7bsi",
+          "type": "cicd"
         }
+      },
+      "auth": {
+        "musicratingee1f3274": {}
+      }
     }
+  }
 }
