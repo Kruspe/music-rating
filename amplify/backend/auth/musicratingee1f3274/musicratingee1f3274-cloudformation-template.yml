@@ -332,7 +332,13 @@ Resources:
           unauthenticated: !Ref unauthRoleArn
           authenticated: !Ref authRoleArn
     DependsOn: IdentityPool
-  
+
+  ResourceServer:
+    Type: AWS::Cognito::UserPoolResourceServer
+    Properties:
+      Identifier: 'https://musicrating.rocks'
+      Name: 'MusicRating'
+      UserPoolId: !Ref 'UserPool'
 
 Outputs :
   
