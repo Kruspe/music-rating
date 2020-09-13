@@ -148,7 +148,7 @@
                   },
                   "security": [
                     {
-                      "CognitoUserPool": []
+                      "CognitoUserPool": ["https://musicrating.rocks"]
                     }
                   ],
                   "x-amazon-apigateway-integration": {
@@ -248,7 +248,7 @@
                   },
                   "security": [
                     {
-                      "CognitoUserPool": []
+                      "CognitoUserPool": ["https://musicrating.rocks"]
                     }
                   ],
                   "x-amazon-apigateway-integration": {
