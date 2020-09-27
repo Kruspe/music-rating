@@ -86,7 +86,6 @@ describe('Rating', () => {
       renderWithUseRating();
       await wait(() => expect(API.get).toHaveBeenCalledTimes(1));
       fillRatingFields();
-      await wait(() => expect(queryCache.getQuery('ratedArtists').state.isStale).toBeTruthy());
       fireEvent.submit(screen.getByText(/submit/i));
       await wait(() => expect(API.post).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
       expect(API.post).toHaveBeenCalledTimes(1);
@@ -105,7 +104,6 @@ describe('Rating', () => {
       await wait(() => expect(API.get).toHaveBeenCalledTimes(1));
       fillRatingFields();
       fireEvent.change(screen.getByLabelText(/comment/i), { target: { value: '' } });
-      await wait(() => expect(queryCache.getQuery('ratedArtists').state.isStale).toBeTruthy());
       fireEvent.submit(screen.getByText(/submit/i));
       await wait(() => expect(API.post).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
       expect(API.post).toHaveBeenCalledTimes(1);
