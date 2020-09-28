@@ -1,7 +1,7 @@
 {
     "paths": [
         {
-            "name": "/api/v1/ratings/bands",
+            "name": "/api/v1/ratings",
             "lambdaFunction": "musicrating",
             "privacy": {
                 "open": true
@@ -30,5 +30,6 @@
                 "Arn"
             ]
         }
-    ]
+    ],
+    "uuid": "91d2d305"
 }

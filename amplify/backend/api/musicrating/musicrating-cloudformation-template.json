@@ -1,7 +1,7 @@
 {
     "AWSTemplateFormatVersion": "2010-09-09",
     "Description": "API Gateway resource stack creation using Amplify CLI",
-
+    
     "Parameters": {
         "authRoleName": {
             "Type":  "String"
@@ -12,17 +12,25 @@
         "env": {
             "Type": "String"
         },
-        "functionmusicratingName": {
-          "Type": "String",
-          "Default": "functionmusicratingName"
-        },
-        "functionmusicratingArn": {
-          "Type": "String",
-          "Default": "functionmusicratingArn"
-        },
-        "authmusicratingee1f3274UserPoolArn": {
-          "Type": "String"
-        }
+    
+    
+          "functionmusicratingName": {
+            "Type": "String",
+            "Default": "functionmusicratingName"
+          },
+        
+          
+          "functionmusicratingArn": {
+            "Type": "String",
+            "Default": "functionmusicratingArn"
+          },
+          "authmusicratingee1f3274UserPoolArn": {
+            "Type": "String"
+          }
+        
+          
+          
+    
     },
      "Conditions": {
         "ShouldNotCreateEnvResources": {
@@ -35,6 +43,11 @@
         }
     },
     "Resources": {
+        
+        
+        
+        
+        
       "musicrating": {
         "Type": "AWS::ApiGateway::RestApi",
         "Properties": {
@@ -72,14 +85,15 @@
                           }
                       ]
                   ]
-                }
+                } 
               ]
             },
             "schemes": [
               "https"
             ],
             "paths": {
-              "/api/v1/ratings/bands": {
+              
+              "/api/v1/ratings": {
                 "options": {
                   "consumes": [
                     "application/json"
@@ -166,9 +180,12 @@
                               "Ref": "AWS::Region"
                             },
                             ":lambda:path/2015-03-31/functions/",
+                            
                             {
+                                
                                 "Ref": "functionmusicratingArn"
                             },
+                            
                             "/invocations"
                           ]
                         ]
@@ -179,7 +196,7 @@
                   }
                 }
               },
-              "/api/v1/ratings/bands/{proxy+}": {
+              "/api/v1/ratings/{proxy+}": {
                 "options": {
                   "consumes": [
                     "application/json"
@@ -266,9 +283,12 @@
                             "Ref": "AWS::Region"
                           },
                           ":lambda:path/2015-03-31/functions/",
+                          
                           {
+                            
                             "Ref": "functionmusicratingArn"
                           },
+                          
                           "/invocations"
                         ]
                       ]
@@ -278,7 +298,8 @@
                     "type": "aws_proxy"
                   }
                 }
-              }
+              }   
+              
             },
             "securityDefinitions": {
               "CognitoUserPool": {
@@ -326,13 +347,18 @@
           "FailOnWarnings": true
         }
       },
+
+                  
+        
+        
         "functionmusicratingPermissionmusicrating": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
-                "FunctionName":
+                "FunctionName": 
                     {
                         "Ref":  "functionmusicratingName"
                     },
+                    
                     "Action": "lambda:InvokeFunction",
                 "Principal": "apigateway.amazonaws.com",
                 "SourceArn": {
@@ -357,17 +383,20 @@
                 }
             }
         },
-      "DeploymentAPIGWmusicrating": {
+        
+        
+        
+      "DeploymentAPIGWmusicrating91d2d305": {
         "Type": "AWS::ApiGateway::Deployment",
         "Properties": {
           "Description": "The Development stage deployment of your API.",
           "StageName": {
             "Fn::If": [
               "ShouldNotCreateEnvResources",
-              "Prod",
+              "Prod", 
               {
                 "Ref": "env"
-              }
+              } 
             ]
           },
           "RestApiId": {
