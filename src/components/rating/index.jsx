@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Rating as RatingMaterialUI } from '@material-ui/lab';
 import { Grid, TextField } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import { API } from 'aws-amplify';
+import { API, Auth } from 'aws-amplify';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { queryCache, useMutation } from 'react-query';
@@ -15,13 +15,17 @@ const useStyle = makeStyles({
 });
 
 const addRating = async ({
-  artist, festival, year, rating, comment, userId, token,
-}) => (API.post('musicrating', '/api/v1/ratings/bands', {
-  header: { Authorization: `Bearer ${token.data}` },
-  body: {
-    userId: userId.data, artist, festival, year, rating, comment: comment || undefined,
-  },
-}));
+  artist, festival, year, rating, comment, userId,
+}) => {
+  const currentSession = await Auth.currentSession();
+  const token = currentSession.getAccessToken().getJwtToken();
+  return API.post('musicrating', '/api/v1/ratings/bands', {
+    header: { Authorization: `Bearer ${token}` },
+    body: {
+      userId: userId.data, artist, festival, year, rating, comment: comment || undefined,
+    },
+  });
+};
 
 const Rating = ({ bandName }) => {
   const [artist, setArtist] = useState(bandName);
@@ -29,7 +33,7 @@ const Rating = ({ bandName }) => {
   const [year, setYear] = useState('');
   const [rating, setRating] = useState(1);
   const [comment, setComment] = useState('');
-  const { userId, token } = useUser();
+  const { userId } = useUser();
   const classes = useStyle();
   const [mutate] = useMutation(addRating, {
     onSuccess: () => queryCache.invalidateQueries('ratedArtists'),
@@ -45,10 +49,10 @@ const Rating = ({ bandName }) => {
 
   const submitRating = async (event) => {
     event.preventDefault();
-    if (userId.data && token.data) {
+    if (userId.data) {
       if (artist && artist.trim()) {
         await mutate({
-          artist, festival, year, rating, comment, userId, token,
+          artist, festival, year, rating, comment, userId,
         });
         resetRating();
       }

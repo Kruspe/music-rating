@@ -6,15 +6,9 @@ const getUserId = async () => {
   return id;
 };
 
-const getToken = async () => {
-  const currentSession = await Auth.currentSession();
-  return currentSession.getAccessToken().getJwtToken();
-};
-
 const useUser = () => {
   const userId = useQuery('userId', getUserId);
-  const token = useQuery('token', getToken);
-  return { userId, token };
+  return { userId };
 };
 
 export default useUser;

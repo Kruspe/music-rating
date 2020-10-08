@@ -1,8 +1,7 @@
 import React from 'react';
 import { API } from 'aws-amplify';
-import { queryCache } from 'react-query';
 import {
-  fireEvent, render, wait, screen,
+  fireEvent, render, screen, wait,
 } from '@testing-library/react';
 import Rating from './index';
 import useUser from '../../hooks/useUser';
@@ -30,7 +29,7 @@ describe('Rating', () => {
   };
 
   beforeEach(() => {
-    useUser.mockReturnValue({ userId: { data: 'userId' }, token: { data: 'token' } });
+    useUser.mockReturnValue({ userId: { data: 'userId' } });
   });
 
   it('should display empty form', () => {
@@ -59,11 +58,8 @@ describe('Rating', () => {
       fireEvent.change(screen.getByLabelText(/comment/i), { target: { value: 'comment' } });
     };
 
-    it.each([
-      { userId: { data: 'userId' }, token: { data: undefined } },
-      { userId: { data: undefined }, token: { data: 'token' } },
-    ])('should not post rating when useUser returns %j', (useUserResponse) => {
-      useUser.mockReturnValue(useUserResponse);
+    it('should not post rating when userId is undefined', () => {
+      useUser.mockReturnValue({ userId: { data: undefined } });
       render(<Rating />);
       fillRatingFields();
       fireEvent.submit(screen.getByText(/submit/i));

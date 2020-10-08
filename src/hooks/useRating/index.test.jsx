@@ -20,7 +20,7 @@ const UseRatingHookExample = () => {
 
 describe('useRating', () => {
   it('should return mocked ratings', async () => {
-    useUser.mockReturnValue({ userId: { data: 'userId' }, token: { data: 'token' } });
+    useUser.mockReturnValue({ userId: { data: 'userId' } });
     render(<UseRatingHookExample />);
     expect(await screen.findByText(`Ratings:${JSON.stringify([{
       artist: 'Bloodbath',
@@ -35,12 +35,7 @@ describe('useRating', () => {
     expect(API.get).toHaveBeenCalledTimes(1);
   });
   it('should return no ratings when userId is undefined', () => {
-    useUser.mockReturnValue({ userId: { data: undefined }, token: { data: 'token' } });
-    render(<UseRatingHookExample />);
-    expect(screen.getByText('Ratings:'));
-  });
-  it('should return no ratings when token is undefined', () => {
-    useUser.mockReturnValue({ userId: { data: 'userId' }, token: { data: undefined } });
+    useUser.mockReturnValue({ userId: { data: undefined } });
     render(<UseRatingHookExample />);
     expect(screen.getByText('Ratings:'));
   });
