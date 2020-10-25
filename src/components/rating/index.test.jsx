@@ -1,7 +1,7 @@
 import React from 'react';
 import { API } from 'aws-amplify';
 import {
-  fireEvent, render, screen, wait,
+  fireEvent, render, screen, waitFor,
 } from '@testing-library/react';
 import Rating from './index';
 import useUser from '../../hooks/useUser';
@@ -80,12 +80,12 @@ describe('Rating', () => {
         },
       };
       renderWithUseRating();
-      await wait(() => expect(API.get).toHaveBeenCalledTimes(1));
+      await waitFor(() => expect(API.get).toHaveBeenCalledTimes(1));
       fillRatingFields();
       fireEvent.submit(screen.getByText(/submit/i));
-      await wait(() => expect(API.post).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
+      await waitFor(() => expect(API.post).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
       expect(API.post).toHaveBeenCalledTimes(1);
-      await wait(() => expect(API.get).toHaveBeenCalledTimes(2));
+      await waitFor(() => expect(API.get).toHaveBeenCalledTimes(2));
       expectFormToBeEmpty();
     });
 
@@ -97,13 +97,13 @@ describe('Rating', () => {
         },
       };
       renderWithUseRating();
-      await wait(() => expect(API.get).toHaveBeenCalledTimes(1));
+      await waitFor(() => expect(API.get).toHaveBeenCalledTimes(1));
       fillRatingFields();
       fireEvent.change(screen.getByLabelText(/comment/i), { target: { value: '' } });
       fireEvent.submit(screen.getByText(/submit/i));
-      await wait(() => expect(API.post).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
+      await waitFor(() => expect(API.post).toHaveBeenCalledWith('musicrating', '/api/v1/ratings/bands', expectedInit));
       expect(API.post).toHaveBeenCalledTimes(1);
-      await wait(() => expect(API.get).toHaveBeenCalledTimes(2));
+      await waitFor(() => expect(API.get).toHaveBeenCalledTimes(2));
       expectFormToBeEmpty();
     });
     it('should require artist, festival and year', () => {

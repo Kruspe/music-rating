@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import EstimationCard from './index';
 
-jest.mock('../rating', () => () => (<p>Rating</p>));
+jest.mock('../rating', () => () => 'Rating');
 
 describe('EstimationCard', () => {
   it('should show artist name and display rating when clicked', () => {
