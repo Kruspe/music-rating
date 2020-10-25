@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-jest.mock('./tabs/TabBar', () => (() => (<p>TabBar</p>)));
+jest.mock('./tabs/TabBar', () => () => 'TabBar');
 
 describe('App', () => {
   it('should render no content when not signedIn', () => {

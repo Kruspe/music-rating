@@ -1,16 +1,16 @@
 import React from 'react';
 import {
-  fireEvent, render, screen, wait,
+  fireEvent, render, screen, waitFor,
 } from '@testing-library/react';
 import Wacken from './index';
 
-jest.mock('../../components/rating', () => (() => (<p>Rating</p>)));
+jest.mock('../../components/rating', () => () => 'Rating');
 
 describe('Wacken', () => {
   it('should display unrated artists and rating', async () => {
     render(<Wacken />);
 
-    await wait(() => {
+    await waitFor(() => {
       expect(window.fetch).toHaveBeenCalledWith('wackenLink',
         { headers: { 'Content-Type': 'application/json' } });
     });
