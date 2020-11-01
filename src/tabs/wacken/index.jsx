@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Storage } from 'aws-amplify';
 import { Grid } from '@material-ui/core';
 import { useQuery } from 'react-query';

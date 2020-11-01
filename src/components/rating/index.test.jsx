@@ -1,4 +1,3 @@
-import React from 'react';
 import { API } from 'aws-amplify';
 import {
   fireEvent, render, screen, waitFor,

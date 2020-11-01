@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Rating as RatingMaterialUI } from '@material-ui/lab';
 import { Grid, TextField } from '@material-ui/core';
 import Button from '@material-ui/core/Button';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { API } from 'aws-amplify';
 import useUser from '../useUser';
