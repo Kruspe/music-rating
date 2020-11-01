@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "musicratingee1f3274_identitypool_ee1f3274",
+    "identityPoolName": "musicratingacfdf280_identitypool_acfdf280",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "musicree1f3274",
-    "userPoolName": "musicratingee1f3274_userpool_ee1f3274",
+    "resourceNameTruncated": "musicracfdf280",
+    "userPoolName": "musicratingacfdf280_userpool_acfdf280",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -28,10 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "musicree1f3274_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "musicracfdf280_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "ee1f3274",
-    "resourceName": "musicratingee1f3274",
+    "sharedId": "acfdf280",
+    "resourceName": "musicratingacfdf280",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -46,6 +46,12 @@
         ]
     },
     "useDefault": "default",
+    "triggers": "{}",
     "userPoolGroupList": [],
+    "serviceName": "Cognito",
+    "parentStack": {
+        "Ref": "AWS::StackId"
+    },
+    "permissions": [],
     "dependsOn": []
 }
