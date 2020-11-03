@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "musicratingee1f3274_identitypool_ee1f3274",
+    "identityPoolName": "musicrating6aaa519d_identitypool_6aaa519d",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "musicree1f3274",
-    "userPoolName": "musicratingee1f3274_userpool_ee1f3274",
+    "resourceNameTruncated": "musicr6aaa519d",
+    "userPoolName": "musicrating6aaa519d_userpool_6aaa519d",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -28,10 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "musicree1f3274_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "musicr6aaa519d_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "ee1f3274",
-    "resourceName": "musicratingee1f3274",
+    "sharedId": "6aaa519d",
+    "resourceName": "musicrating6aaa519d",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -47,5 +47,6 @@
     },
     "useDefault": "default",
     "userPoolGroupList": [],
+    "serviceName": "Cognito",
     "dependsOn": []
 }

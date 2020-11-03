@@ -28,7 +28,7 @@ const partitionKeyType = "S";
 const sortKeyName = "artist";
 const sortKeyType = "S";
 const hasSortKey = sortKeyName !== "";
-const path = "/api/v1/ratings/bands";
+const path = "/api/v1/ratings";
 const UNAUTH = 'UNAUTH';
 const hashKeyPath = '/:' + partitionKeyName;
 const sortKeyPath = hasSortKey ? '/:' + sortKeyName : '';

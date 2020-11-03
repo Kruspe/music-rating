@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Lambda resource stack creation using Amplify CLI",
+  "Description": "Lambda Function resource stack creation using Amplify CLI",
   "Parameters": {
     "CloudWatchRule": {
       "Type": "String",
@@ -41,12 +41,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "musicrating",
+            "MusicRating",
             {
               "Fn::Join": [
                 "",
                 [
-                  "musicrating",
+                  "MusicRating",
                   "-",
                   {
                     "Ref": "env"
@@ -73,10 +73,11 @@
           ]
         },
         "Runtime": "nodejs12.x",
+        "Layers": [],
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-musicrating-prod-132445-deployment",
-          "S3Key": "amplify-builds/musicrating-6375636345324e456f69-build.zip"
+          "S3Key": "amplify-builds/MusicRating-6c56494b433341426545-build.zip"
         }
       }
     },
@@ -86,12 +87,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "musicratingLambdaRole5aeb7e62",
+            "musicratingLambdaRole0d8df1c0",
             {
               "Fn::Join": [
                 "",
                 [
-                  "musicratingLambdaRole5aeb7e62",
+                  "musicratingLambdaRole0d8df1c0",
                   "-",
                   {
                     "Ref": "env"
