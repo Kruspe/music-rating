@@ -27,7 +27,7 @@ describe('useRating', () => {
       year: 2015,
       rating: 5,
       comment: 'comment',
-    }])}`));
+    }])}`)).toBeVisible();
     expect(API.get).toHaveBeenCalledWith('musicrating',
       '/api/v1/ratings/bands/userId',
       { header: { Authorization: 'Bearer token' } });
@@ -36,6 +36,6 @@ describe('useRating', () => {
   it('should return no ratings when userId is undefined', () => {
     useUser.mockReturnValue({ userId: { data: undefined } });
     render(<UseRatingHookExample />);
-    expect(screen.getByText('Ratings:'));
+    expect(screen.getByText('Ratings:')).toBeVisible();
   });
 });
