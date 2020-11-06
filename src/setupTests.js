@@ -5,7 +5,9 @@
 import '@testing-library/jest-dom';
 import { queryCaches } from 'react-query';
 import { API, Auth, Storage } from 'aws-amplify';
-import { apiGetMock, apiPostMock, fetchMock, storageGetMock } from './test/mocks';
+import {
+  apiGetMock, apiPostMock, fetchMock, storageGetMock,
+} from './test/mocks';
 
 beforeEach(() => {
   queryCaches.forEach((queryCache) => queryCache.clear());
@@ -14,11 +16,16 @@ beforeEach(() => {
 
   jest.spyOn(API, 'get').mockImplementation(apiGetMock);
   jest.spyOn(API, 'post').mockImplementation(apiPostMock);
+
   jest.spyOn(Auth, 'currentUserInfo').mockResolvedValue({ id: 'userId' });
   const currentSessionMock = {
     getAccessToken: () => ({ getJwtToken: () => ('token') }),
   };
   jest.spyOn(Auth, 'currentSession').mockResolvedValue(currentSessionMock);
+  const Username = 'username';
+  jest.spyOn(Auth, 'signIn').mockResolvedValueOnce({ Username });
+  jest.spyOn(Auth, 'signUp').mockResolvedValueOnce({ user: { Username } });
+
   jest.spyOn(Storage, 'get').mockImplementation(storageGetMock);
 });
 

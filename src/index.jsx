@@ -2,11 +2,11 @@ import { StrictMode } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import AppWithAuthentication from './AppWithAuthentication';
+import App from './App';
 
 ReactDOM.render(
   <StrictMode>
-    <AppWithAuthentication />
+    <App />
   </StrictMode>,
   document.getElementById('root'),
 );
