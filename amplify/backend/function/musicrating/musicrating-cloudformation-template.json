@@ -41,12 +41,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "MusicRating",
+            "musicrating",
             {
               "Fn::Join": [
                 "",
                 [
-                  "MusicRating",
+                  "musicrating",
                   "-",
                   {
                     "Ref": "env"
@@ -77,7 +77,7 @@
         "Timeout": "25",
         "Code": {
           "S3Bucket": "amplify-musicrating-prod-132445-deployment",
-          "S3Key": "amplify-builds/MusicRating-6c56494b433341426545-build.zip"
+          "S3Key": "amplify-builds/musicrating-706b556f705973707170-build.zip"
         }
       }
     },
@@ -87,12 +87,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "musicratingLambdaRole0d8df1c0",
+            "musicratingLambdaRoleb445202c",
             {
               "Fn::Join": [
                 "",
                 [
-                  "musicratingLambdaRole0d8df1c0",
+                  "musicratingLambdaRoleb445202c",
                   "-",
                   {
                     "Ref": "env"

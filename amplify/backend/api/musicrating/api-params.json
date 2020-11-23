@@ -2,18 +2,18 @@
     "paths": [
         {
             "name": "/api/v1/ratings",
-            "lambdaFunction": "MusicRating",
+            "lambdaFunction": "musicrating",
             "privacy": {
                 "open": true
             },
             "policyResourceName": "/api/v1/ratings"
         }
     ],
-    "resourceName": "MusicRating",
-    "apiName": "MusicRating",
+    "resourceName": "musicrating",
+    "apiName": "musicrating",
     "functionArns": [
         {
-            "lambdaFunction": "MusicRating"
+            "lambdaFunction": "musicrating"
         }
     ],
     "privacy": {
@@ -25,7 +25,7 @@
     "dependsOn": [
         {
             "category": "function",
-            "resourceName": "MusicRating",
+            "resourceName": "musicrating",
             "attributes": [
                 "Name",
                 "Arn"

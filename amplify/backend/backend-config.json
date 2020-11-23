@@ -16,7 +16,7 @@
     }
   },
   "function": {
-    "MusicRating": {
+    "musicrating": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda",
@@ -37,23 +37,30 @@
     }
   },
   "api": {
-    "MusicRating": {
+    "musicrating": {
       "service": "API Gateway",
       "providerPlugin": "awscloudformation",
       "dependsOn": [
         {
           "category": "function",
-          "resourceName": "MusicRating",
+          "resourceName": "musicrating",
           "attributes": [
             "Name",
             "Arn"
+          ]
+        },
+        {
+          "category": "auth",
+          "resourceName": "musicrating08435df0",
+          "attributes": [
+            "UserPoolArn"
           ]
         }
       ]
     }
   },
   "auth": {
-    "musicrating6aaa519d": {
+    "musicrating08435df0": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],

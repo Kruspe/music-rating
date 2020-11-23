@@ -4,5 +4,11 @@
     },
     "unauthRoleName": {
         "Ref": "UnauthRoleName"
+    },
+    "authmusicrating08435df0UserPoolArn": {
+        "Fn::GetAtt": [
+            "authmusicrating08435df0",
+            "Outputs.UserPoolArn"
+        ]
     }
 }

@@ -14,15 +14,20 @@
         },
     
     
-          "functionMusicRatingName": {
+          "functionmusicratingName": {
             "Type": "String",
-            "Default": "functionMusicRatingName"
+            "Default": "functionmusicratingName"
           },
         
           
-          "functionMusicRatingArn": {
+          "functionmusicratingArn": {
             "Type": "String",
-            "Default": "functionMusicRatingArn"
+            "Default": "functionmusicratingArn"
+          },
+
+
+          "authmusicrating08435df0UserPoolArn": {
+            "Type": "String"
           }
         
           
@@ -45,16 +50,16 @@
         
         
         
-      "MusicRating": {
+      "musicrating": {
         "Type": "AWS::ApiGateway::RestApi",
         "Properties": {
           "Description": "",
-          "Name": "MusicRating",
+          "Name": "musicrating",
           "Body": {
             "swagger": "2.0",
             "info": {
               "version": "2018-05-24T17:52:00Z",
-              "title": "MusicRating"
+              "title": "musicrating"
             },
             "host": {
                 "Fn::Join": [
@@ -157,7 +162,11 @@
                       }
                     }
                   },
-                  
+                  "security": [
+                    {
+                      "MusicRatingUsers": []
+                    }
+                  ],
                   "x-amazon-apigateway-integration": {
                     "responses": {
                       "default": {
@@ -176,7 +185,7 @@
                             
                             {
                                 
-                                "Ref": "functionMusicRatingArn"
+                                "Ref": "functionmusicratingArn"
                             },
                             
                             "/invocations"
@@ -256,7 +265,11 @@
                       }
                     }
                   },
-                  
+                  "security": [
+                    {
+                      "MusicRatingUsers": []
+                    }
+                  ],
                   "x-amazon-apigateway-integration": {
                     "responses": {
                       "default": {
@@ -275,7 +288,7 @@
                           
                           {
                             
-                            "Ref": "functionMusicRatingArn"
+                            "Ref": "functionmusicratingArn"
                           },
                           
                           "/invocations"
@@ -291,11 +304,19 @@
               
             },
             "securityDefinitions": {
-              "sigv4": {
+              "MusicRatingUsers": {
                 "type": "apiKey",
                 "name": "Authorization",
                 "in": "header",
-                "x-amazon-apigateway-authtype": "awsSigv4"
+                "x-amazon-apigateway-authtype": "cognito_user_pools",
+                "x-amazon-apigateway-authorizer": {
+                  "type": "cognito_user_pools",
+                  "providerARNs": [
+                    {
+                      "Ref": "authmusicrating08435df0UserPoolArn"
+                    }
+                  ]
+                }
               }
             },
             "definitions": {
@@ -332,12 +353,12 @@
                   
         
         
-        "functionMusicRatingPermissionMusicRating": {
+        "functionmusicratingPermissionmusicrating": {
             "Type": "AWS::Lambda::Permission",
             "Properties": {
                 "FunctionName": 
                     {
-                        "Ref":  "functionMusicRatingName"
+                        "Ref":  "functionmusicratingName"
                     },
                     
                     "Action": "lambda:InvokeFunction",
@@ -356,7 +377,7 @@
                             },
                             ":",
                             {
-                                "Ref": "MusicRating"
+                                "Ref": "musicrating"
                             },
                             "/*/*/*"
                         ]
@@ -367,7 +388,7 @@
         
         
         
-      "DeploymentAPIGWMusicRating": {
+      "DeploymentAPIGWmusicrating": {
         "Type": "AWS::ApiGateway::Deployment",
         "Properties": {
           "Description": "The Development stage deployment of your API.",
@@ -381,7 +402,7 @@
             ]
           },
           "RestApiId": {
-            "Ref": "MusicRating"
+            "Ref": "musicrating"
           }
         }
       }
@@ -389,15 +410,15 @@
     "Outputs": {
         "RootUrl": {
             "Description": "Root URL of the API gateway",
-            "Value": {"Fn::Join": ["", ["https://", {"Ref": "MusicRating"}, ".execute-api.", {"Ref": "AWS::Region"}, ".amazonaws.com/", {"Fn::If": ["ShouldNotCreateEnvResources","Prod", {"Ref": "env"} ]}]]}
+            "Value": {"Fn::Join": ["", ["https://", {"Ref": "musicrating"}, ".execute-api.", {"Ref": "AWS::Region"}, ".amazonaws.com/", {"Fn::If": ["ShouldNotCreateEnvResources","Prod", {"Ref": "env"} ]}]]}
         },
         "ApiName": {
           "Description": "API Friendly name",
-          "Value": "MusicRating"
+          "Value": "musicrating"
         },
         "ApiId": {
           "Description": "API ID (prefix of API URL)",
-          "Value": {"Ref": "MusicRating"}
+          "Value": {"Ref": "musicrating"}
         }
     }
   }
