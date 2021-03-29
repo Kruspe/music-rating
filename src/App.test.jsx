@@ -11,8 +11,8 @@ describe('App', () => {
     render(<App />);
     const usernameField = screen.getByLabelText(/username/i);
     const passwordField = screen.getByLabelText(/password/i);
-    await userEvent.type(usernameField, username);
-    await userEvent.type(passwordField, password);
+    userEvent.type(usernameField, username);
+    userEvent.type(passwordField, password);
 
     expect(usernameField).toHaveValue(username);
     expect(passwordField).toHaveValue(password);
