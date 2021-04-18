@@ -2,7 +2,8 @@ pull_request_rules:
   - name: Automatic merge dependency updates
     conditions:
       - label=dependencies
-      - check-success=Dependency-Update
+      - check-success=build (14.x)
+      - check-success=build (15.x)
     actions:
       merge:
         method: rebase
