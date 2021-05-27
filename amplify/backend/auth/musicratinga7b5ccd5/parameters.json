@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "musicrating08435df0_identitypool_08435df0",
+    "identityPoolName": "musicratinga7b5ccd5_identitypool_a7b5ccd5",
     "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "musicr08435df0",
-    "userPoolName": "musicrating08435df0_userpool_08435df0",
+    "resourceNameTruncated": "musicra7b5ccd5",
+    "userPoolName": "musicratinga7b5ccd5_userpool_a7b5ccd5",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -20,7 +20,7 @@
     "requiredAttributes": [
         "email"
     ],
-    "userpoolClientGenerateSecret": true,
+    "userpoolClientGenerateSecret": false,
     "userpoolClientRefreshTokenValidity": 30,
     "userpoolClientWriteAttributes": [
         "email"
@@ -28,10 +28,10 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "musicr08435df0_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "musicra7b5ccd5_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "08435df0",
-    "resourceName": "musicrating08435df0",
+    "sharedId": "a7b5ccd5",
+    "resourceName": "musicratinga7b5ccd5",
     "authSelections": "identityPoolAndUserPool",
     "authRoleArn": {
         "Fn::GetAtt": [
@@ -46,7 +46,14 @@
         ]
     },
     "useDefault": "default",
+    "triggers": "{}",
     "userPoolGroupList": [],
     "serviceName": "Cognito",
+    "usernameCaseSensitive": false,
+    "parentStack": {
+        "Ref": "AWS::StackId"
+    },
+    "breakCircularDependency": true,
+    "permissions": [],
     "dependsOn": []
 }

@@ -1,7 +1,7 @@
 {
-    "bucketName": "festivals",
-    "authPolicyName": "s3_amplify_47463d7e",
-    "unauthPolicyName": "s3_amplify_47463d7e",
+    "bucketName": "musicrating-festivalbands",
+    "authPolicyName": "s3_amplify_a21b349d",
+    "unauthPolicyName": "s3_amplify_a21b349d",
     "authRoleName": {
         "Ref": "AuthRoleName"
     },
@@ -17,15 +17,15 @@
         "s3:ListBucket"
     ],
     "s3PermissionsAuthenticatedPublic": "s3:GetObject",
-    "s3PublicPolicy": "Public_policy_e40cb780",
+    "s3PublicPolicy": "Public_policy_6b4b777f",
     "s3PermissionsAuthenticatedUploads": "DISALLOW",
-    "s3UploadsPolicy": "Uploads_policy_e40cb780",
+    "s3UploadsPolicy": "Uploads_policy_6b4b777f",
     "s3PermissionsAuthenticatedProtected": "s3:GetObject",
-    "s3ProtectedPolicy": "Protected_policy_e40cb780",
+    "s3ProtectedPolicy": "Protected_policy_6b4b777f",
     "s3PermissionsAuthenticatedPrivate": "s3:GetObject",
-    "s3PrivatePolicy": "Private_policy_e40cb780",
+    "s3PrivatePolicy": "Private_policy_6b4b777f",
     "AuthenticatedAllowList": "ALLOW",
-    "s3ReadPolicy": "read_policy_e40cb780",
+    "s3ReadPolicy": "read_policy_6b4b777f",
     "s3PermissionsGuestPublic": "DISALLOW",
     "s3PermissionsGuestUploads": "DISALLOW",
     "GuestAllowList": "DISALLOW",
