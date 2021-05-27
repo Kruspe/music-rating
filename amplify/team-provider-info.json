@@ -14,6 +14,12 @@
     "categories": {
       "auth": {
         "musicratinga7b5ccd5": {}
+      },
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "d2bskphn79wv28",
+          "type": "cicd"
+        }
       }
     }
   }
