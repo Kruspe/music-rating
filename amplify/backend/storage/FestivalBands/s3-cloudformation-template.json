@@ -642,14 +642,20 @@
 		}
 	},
 	"Outputs": {
+		"BucketArn": {
+			"Value": {
+				"Fn::GetAtt": [ "S3Bucket", "Arn" ]
+			},
+			"Description": "BucketArn for the S3 bucket",
+			"Export" : {
+				"Name" : "MusicRating-FestivalBandsBucketArn"
+			}
+		},
 		"BucketName": {
 			"Value": {
 				"Ref": "S3Bucket"
 			},
-			"Description": "Bucket name for the S3 bucket",
-			"Export" : {
-				"Name" : "MusicRating-FestivalBandsBucket"
-			}
+			"Description": "Bucket name for the S3 bucket"
 		},
 		"Region": {
 			"Value": {
