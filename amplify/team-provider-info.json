@@ -1,25 +1,25 @@
 {
   "prod": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-musicrating-prod-222335-authRole",
-      "UnauthRoleArn": "arn:aws:iam::025007687265:role/amplify-musicrating-prod-222335-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::025007687265:role/amplify-musicrating-prod-222335-authRole",
+      "AuthRoleName": "amplify-musicrating-prod-111923-authRole",
+      "UnauthRoleArn": "arn:aws:iam::025007687265:role/amplify-musicrating-prod-111923-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::025007687265:role/amplify-musicrating-prod-111923-authRole",
       "Region": "eu-west-1",
-      "DeploymentBucketName": "amplify-musicrating-prod-222335-deployment",
-      "UnauthRoleName": "amplify-musicrating-prod-222335-unauthRole",
-      "StackName": "amplify-musicrating-prod-222335",
-      "StackId": "arn:aws:cloudformation:eu-west-1:025007687265:stack/amplify-musicrating-prod-222335/6bff4d30-bf29-11eb-bf94-0a847aceeafb",
-      "AmplifyAppId": "d2bskphn79wv28"
+      "DeploymentBucketName": "amplify-musicrating-prod-111923-deployment",
+      "UnauthRoleName": "amplify-musicrating-prod-111923-unauthRole",
+      "StackName": "amplify-musicrating-prod-111923",
+      "StackId": "arn:aws:cloudformation:eu-west-1:025007687265:stack/amplify-musicrating-prod-111923/76842750-c2ba-11eb-9d80-068fd60448d1",
+      "AmplifyAppId": "d1nzjx4ssv5ymj"
     },
     "categories": {
-      "auth": {
-        "musicratinga7b5ccd5": {}
-      },
       "hosting": {
         "amplifyhosting": {
-          "appId": "d2bskphn79wv28",
+          "appId": "d1nzjx4ssv5ymj",
           "type": "cicd"
         }
+      },
+      "auth": {
+        "musicrating2a74214c": {}
       }
     }
   }
