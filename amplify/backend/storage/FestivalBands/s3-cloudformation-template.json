@@ -82,7 +82,7 @@
 		"triggerFunction": {
 			"Type": "String"
 		}
-	
+
 
 	},
 	"Conditions": {
@@ -162,7 +162,7 @@
 	"Resources": {
 		"S3Bucket": {
 			"Type": "AWS::S3::Bucket",
-		    
+
 			"DeletionPolicy" : "Retain",
 			"Properties": {
 				"BucketName": {
@@ -200,7 +200,7 @@
                         }
                     ]
                 },
-                
+
 				"CorsConfiguration": {
 					"CorsRules": [
 						{
@@ -230,8 +230,8 @@
 				}
 			}
 		},
-      
-	    
+
+
 		"S3AuthPublicPolicy": {
 			"DependsOn": [
 				"S3Bucket"
@@ -648,14 +648,17 @@
 			},
 			"Description": "BucketArn for the S3 bucket",
 			"Export" : {
-				"Name" : "MusicRating-FestivalBandsBucketArn"
+				"Name": "MusicRating-FestivalBandsBucketArn"
 			}
 		},
 		"BucketName": {
 			"Value": {
 				"Ref": "S3Bucket"
 			},
-			"Description": "Bucket name for the S3 bucket"
+			"Description": "Bucket name for the S3 bucket",
+			"Export": {
+				"Name": "MusicRating-FestivalBandsBucketName"
+			}
 		},
 		"Region": {
 			"Value": {
