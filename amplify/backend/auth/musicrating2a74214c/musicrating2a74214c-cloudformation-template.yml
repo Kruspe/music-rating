@@ -403,10 +403,6 @@ Outputs :
     Description:  Id for the identity pool
   IdentityPoolName:
     Value: !GetAtt IdentityPool.Name
-  
-  
-  
-  
   UserPoolId:
     Value: !Ref 'UserPool'
     Description:  Id for the user pool
@@ -424,10 +420,3 @@ Outputs :
   AppClientSecret:
     Value: !GetAtt UserPoolClientInputs.appSecret
     Condition: ShouldOutputAppClientSecrets
-  
-  
-  
-  
-  
-  
-  

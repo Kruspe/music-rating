@@ -1,28 +1,22 @@
 {
-    "AWSTemplateFormatVersion": "2010-09-09",
-    "Description": "API Gateway resource stack creation using Amplify CLI",
-    
-    "Parameters": {
-        "env": {
-            "Type": "String"
-        },
-    
-    
-          "functionRatingsName": {
-            "Type": "String",
-            "Default": "functionRatingsName"
-          },
-
-          
-          "functionRatingsArn": {
-            "Type": "String",
-            "Default": "functionRatingsArn"
-          }
-
-          
-          
-    
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "API Gateway resource stack creation using Amplify CLI",
+  "Parameters": {
+    "env": {
+      "Type": "String"
     },
+    "functionRatingsName": {
+      "Type": "String",
+      "Default": "functionRatingsName"
+    },
+    "functionRatingsArn": {
+      "Type": "String",
+      "Default": "functionRatingsArn"
+    },
+    "authmusicrating2a74214cUserPoolArn": {
+      "Type": "String"
+    }
+  },
      "Conditions": {
         "ShouldNotCreateEnvResources": {
             "Fn::Equals": [
@@ -125,6 +119,11 @@
                   }
                 },
                 "x-amazon-apigateway-any-method": {
+                  "security": [
+                    {
+                      "MusicRatingUserPool": ["user-data"]
+                    }
+                  ],
                   "consumes": [
                     "application/json"
                   ],
@@ -283,11 +282,19 @@
               
             },
             "securityDefinitions": {
-              "sigv4": {
+              "MusicRatingUserPool": {
                 "type": "apiKey",
                 "name": "Authorization",
                 "in": "header",
-                "x-amazon-apigateway-authtype": "awsSigv4"
+                "x-amazon-apigateway-authtype": "cognito_user_pools",
+                "x-amazon-apigateway-authorizer": {
+                  "type": "cognito_user_pools",
+                  "providerARNs": [
+                    {
+                      "Ref": "authmusicrating2a74214cUserPoolArn"
+                    }
+                  ]
+                }
               }
             },
             "definitions": {

@@ -57,6 +57,11 @@
             "Name",
             "Arn"
           ]
+        },
+        {
+          "category": "auth",
+          "resourceName": "musicrating2a74214c",
+          "attributes": ["UserPoolArn"]
         }
       ]
     }
