@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "storage": {
+      "Ratings": [
+        "create",
+        "read",
+        "update",
+        "delete"
+      ]
+    }
+  },
+  "lambdaLayers": []
+}
