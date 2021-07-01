@@ -10,14 +10,7 @@
       "providerPlugin": "awscloudformation"
     }
   },
-  "auth": {
-    "musicrating2a74214c": {
-      "service": "Cognito",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [],
-      "customAuth": false
-    }
-  },
+  "auth": {},
   "storage": {
     "FestivalBands": {
       "service": "S3",
@@ -28,42 +21,6 @@
       "providerPlugin": "awscloudformation"
     }
   },
-  "function": {
-    "Ratings": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda",
-      "dependsOn": [
-        {
-          "category": "storage",
-          "resourceName": "Ratings",
-          "attributes": [
-            "Name",
-            "Arn"
-          ]
-        }
-      ]
-    }
-  },
-  "api": {
-    "Ratings": {
-      "service": "API Gateway",
-      "providerPlugin": "awscloudformation",
-      "dependsOn": [
-        {
-          "category": "function",
-          "resourceName": "Ratings",
-          "attributes": [
-            "Name",
-            "Arn"
-          ]
-        },
-        {
-          "category": "auth",
-          "resourceName": "musicrating2a74214c",
-          "attributes": ["UserPoolArn"]
-        }
-      ]
-    }
-  }
+  "function": {},
+  "api": {}
 }

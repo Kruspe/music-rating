@@ -1,8 +1,0 @@
-{
-  "authmusicrating2a74214cUserPoolArn": {
-    "Fn::GetAtt": [
-      "authmusicrating2a74214c",
-      "Outputs.UserPoolArn"
-    ]
-  }
-}
