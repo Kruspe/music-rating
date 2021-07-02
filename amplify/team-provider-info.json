@@ -17,6 +17,9 @@
           "appId": "d1nzjx4ssv5ymj",
           "type": "cicd"
         }
+      },
+      "auth": {
+        "musicrating2063da7d": {}
       }
     }
   }

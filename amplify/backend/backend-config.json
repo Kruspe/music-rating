@@ -10,14 +10,17 @@
       "providerPlugin": "awscloudformation"
     }
   },
-  "auth": {},
+  "auth": {
+    "musicrating2063da7d": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  },
   "storage": {
     "FestivalBands": {
       "service": "S3",
-      "providerPlugin": "awscloudformation"
-    },
-    "Ratings": {
-      "service": "DynamoDB",
       "providerPlugin": "awscloudformation"
     }
   },
