@@ -1,10 +1,17 @@
 import Amplify from 'aws-amplify';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import awsExports from './aws-exports';
 import './App.css';
 
 Amplify.configure(awsExports);
 
-const App = () => (<div>Hello World</div>);
+const queryClient = new QueryClient();
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <div>Hello World</div>
+  </QueryClientProvider>
+);
 
 export default App;

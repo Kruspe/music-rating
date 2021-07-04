@@ -3,13 +3,10 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
-import { queryCaches } from 'react-query';
 import { API, Auth, Storage } from 'aws-amplify';
 import { graphqlMock, fetchMock, storageGetMock } from './test/mocks';
 
 beforeEach(() => {
-  queryCaches.forEach((queryCache) => queryCache.clear());
-
   window.fetch = jest.fn().mockImplementation(fetchMock);
 
   jest.spyOn(API, 'graphql').mockImplementation(graphqlMock);
