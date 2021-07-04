@@ -5,17 +5,14 @@
 import '@testing-library/jest-dom';
 import { queryCaches } from 'react-query';
 import { API, Auth, Storage } from 'aws-amplify';
-import {
-  apiGetMock, apiPostMock, fetchMock, storageGetMock,
-} from './test/mocks';
+import { graphqlMock, fetchMock, storageGetMock } from './test/mocks';
 
 beforeEach(() => {
   queryCaches.forEach((queryCache) => queryCache.clear());
 
   window.fetch = jest.fn().mockImplementation(fetchMock);
 
-  jest.spyOn(API, 'get').mockImplementation(apiGetMock);
-  jest.spyOn(API, 'post').mockImplementation(apiPostMock);
+  jest.spyOn(API, 'graphql').mockImplementation(graphqlMock);
 
   jest.spyOn(Auth, 'currentUserInfo').mockResolvedValue({ id: 'userId' });
   const currentSessionMock = {

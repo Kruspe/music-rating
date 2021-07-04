@@ -1,20 +1,19 @@
 /* eslint no-console: 0 */
-export const apiGetMock = (apiName, path, ...args) => {
-  if (path === '/api/v1/ratings/bands/userId') {
+
+const getOperationAndName = (options) => {
+  const split = options.query.split(/\s+/);
+  return { operation: split[1], name: split[2].slice(0, -1) };
+};
+
+export const graphqlMock = (options, ...args) => {
+  const { operation, name } = getOperationAndName(options);
+  if (name === 'ListRatings') {
     return Promise.resolve([{
       artist: 'Bloodbath', festival: 'Wacken', year: 2015, rating: 5, comment: 'comment',
     }]);
   }
-  console.warn(`API GET request not mocked for [${apiName}, ${path}]`, ...args);
-  return new Error('API GET request not mocked');
-};
-
-export const apiPostMock = (apiName, path, ...args) => {
-  if (path === '/api/v1/ratings/bands') {
-    return Promise.resolve('Success');
-  }
-  console.warn(`API POST request not mocked for [${apiName}, ${path}]`, ...args);
-  return new Error('API POST request not mocked');
+  console.warn(`API GraphQl ${operation} not mocked for [${name} with ${options.variables}]`, ...args);
+  return new Error('API GraphQl request not mocked');
 };
 
 export const storageGetMock = (key, ...args) => {

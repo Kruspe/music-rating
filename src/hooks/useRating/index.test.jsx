@@ -1,9 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { API } from 'aws-amplify';
-import useUser from '../useUser';
 import useRating from './index';
-
-jest.mock('../useUser');
 
 const UseRatingHookExample = () => {
   const { data: ratings } = useRating();
@@ -19,7 +15,6 @@ const UseRatingHookExample = () => {
 
 describe('useRating', () => {
   it('should return mocked ratings', async () => {
-    useUser.mockReturnValue({ userId: { data: 'userId' } });
     render(<UseRatingHookExample />);
     expect(await screen.findByText(`Ratings:${JSON.stringify([{
       artist: 'Bloodbath',
@@ -28,14 +23,5 @@ describe('useRating', () => {
       rating: 5,
       comment: 'comment',
     }])}`)).toBeVisible();
-    expect(API.get).toHaveBeenCalledWith('musicrating',
-      '/api/v1/ratings/bands/userId',
-      { header: { Authorization: 'Bearer token' } });
-    expect(API.get).toHaveBeenCalledTimes(1);
-  });
-  it('should return no ratings when userId is undefined', () => {
-    useUser.mockReturnValue({ userId: { data: undefined } });
-    render(<UseRatingHookExample />);
-    expect(screen.getByText('Ratings:')).toBeVisible();
   });
 });
