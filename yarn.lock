@@ -146,10 +146,18 @@
     events "^3.1.0"
     sinon "^7.5.0"
 
-"@aws-amplify/ui-components@1.7.6", "@aws-amplify/ui-components@^1.7.6":
+"@aws-amplify/ui-components@1.7.6":
   version "1.7.6"
   resolved "https://registry.yarnpkg.com/@aws-amplify/ui-components/-/ui-components-1.7.6.tgz#b272afab36e0128e5077f0e9e749e90cdd10e29f"
   integrity sha512-dXhhzZbQK4ghy5/xzibg4M6i5NpQInhsfpFY3soNAom45SXILRJ5z1iQDLZJ/Z/TIs91XBUlO8bEgJbe2GAsTA==
+  dependencies:
+    qrcode "^1.4.4"
+    uuid "^8.2.0"
+
+"@aws-amplify/ui-components@^1.7.7":
+  version "1.7.7"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/ui-components/-/ui-components-1.7.7.tgz#f8738e548801c1f255d7dc3c7d1359b76a52b289"
+  integrity sha512-kUn7zYb8cgfM3Cc91rHKzmunIi3YivF1ivZ5o2BO1XC9uCC1MtgwU4gPde6VUh3oMe75bJEgu4IiFE2OeVwqEQ==
   dependencies:
     qrcode "^1.4.4"
     uuid "^8.2.0"
