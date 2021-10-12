@@ -1,7 +1,0 @@
-type Rating @model @auth(rules: [{ allow: owner }]) {
-  artist: ID!
-  year: Int
-  festival: String
-  comment: String
-  rating: Int
-}

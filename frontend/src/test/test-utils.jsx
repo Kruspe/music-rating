@@ -1,4 +1,5 @@
 /* eslint react/prop-types: 0 */
+/* eslint import/no-extraneous-dependencies: 0 */
 
 import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
