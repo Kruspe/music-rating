@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 import fetchMock from './test/mocks';
 
 beforeEach(() => {
-  window.fetch = jest.fn().mockImplementation(fetchMock());
+  window.fetch = jest.fn().mockImplementation(fetchMock);
 });
 
 afterEach(() => {

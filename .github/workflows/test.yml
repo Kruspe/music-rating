@@ -11,8 +11,11 @@ on:
       - reopened
 
 jobs:
-  build:
+  test-frontend:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
     strategy:
       matrix:
         node-version: [ 14.x, 15.x ]
@@ -22,6 +25,5 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: cd frontend
       - run: yarn
       - run: yarn test

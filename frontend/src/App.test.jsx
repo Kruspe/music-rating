@@ -3,8 +3,6 @@ import { QueryClientProvider } from 'react-query';
 import App from './App';
 
 jest.mock('react-query');
-jest.mock('@aws-amplify/ui-react');
-jest.mock('@aws-amplify/ui-components');
 
 beforeEach(() => {
   QueryClientProvider.mockImplementation(({ children }) => (
