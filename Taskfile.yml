@@ -1,0 +1,18 @@
+version: '3'
+
+tasks:
+
+
+  backend-deploy:
+    dir: aws
+    deps: [backend-build]
+    cmds:
+    - aws cloudformation deploy --template-file cloudformation.yml --parameter-overrides ParamBackendVersion={{.VERSION_ID}} --stack-name MusicRating --capabilities CAPABILITY_IAM --profile music-rating
+    vars:
+      VERSION_ID:
+        sh: aws s3api put-object --bucket music-rating-deployment-bucket --key bootstrap.zip --body ../backend/out/bootstrap.zip --profile music-rating | jq -r .VersionId
+  backend-build:
+    dir: backend
+    cmds:
+      - GOOS=linux GOARCH=amd64 go build -mod=vendor -o out/bootstrap main.go
+      - zip -j out/bootstrap.zip out/bootstrap

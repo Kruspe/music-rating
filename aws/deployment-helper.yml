@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: MusicRating Deployment Utils
+Resources:
+  DeploymentBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: music-rating-deployment-bucket
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+  DeploymentUser:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: MusicRating-Deployment
+      Policies:
+      - PolicyName: deployment
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - 's3:PutObject'
+            Resource: !Sub
+            - ${BucketArn}/bootstrap.zip
+            - { BucketArn: !GetAtt [ DeploymentBucket, Arn ] }
+      - PolicyName: services
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - 'apigateway:*'
+            - 'cloudformation:*'
+            - 'dynamodb:*'
+            - 'iam:*'
+            - 'lambda:*'
+            - 's3:*'
+            Resource: '*'
+
+
