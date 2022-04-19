@@ -35,6 +35,7 @@ Resources:
             Action:
             - 'apigateway:*'
             - 'cloudformation:*'
+            - 'cognito-idp:*'
             - 'dynamodb:*'
             - 'iam:*'
             - 'lambda:*'
