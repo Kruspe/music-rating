@@ -8,10 +8,12 @@ Resources:
   DomainCertificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
-      DomainName: '*.musicrating.rocks'
+      DomainName: musicrating.rocks
       DomainValidationOptions:
-      - DomainName: !Sub '*.musicrating.rocks'
+      - DomainName: musicrating.rocks
         HostedZoneId: !Ref DomainHostedZone
+      SubjectAlternativeNames:
+      - '*.musicrating.rocks'
       ValidationMethod: DNS
   DomainCertificateParameter:
     Type: AWS::SSM::Parameter
