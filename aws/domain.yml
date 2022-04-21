@@ -4,4 +4,20 @@ Resources:
   DomainHostedZone:
     Type: AWS::Route53::HostedZone
     Properties:
-      Name: www.musicrating.rocks.
+      Name: musicrating.rocks
+  DomainCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: '*.musicrating.rocks'
+      DomainValidationOptions:
+      - DomainName: !Sub '*.musicrating.rocks'
+        HostedZoneId: !Ref DomainHostedZone
+      ValidationMethod: DNS
+  DomainCertificateParameter:
+    Type: AWS::SSM::Parameter
+    DependsOn: DomainCertificate
+    Properties:
+      Description: MusicRating certificate ARN
+      Name: '/domain/musicrating.rocks/certificate'
+      Type: String
+      Value: !Ref DomainCertificate
