@@ -1,25 +1,29 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: MusicRating Domain
+Parameters:
+  ParamDomainName:
+    Type: String
+
 Resources:
   DomainHostedZone:
     Type: AWS::Route53::HostedZone
     Properties:
-      Name: musicrating.rocks
+      Name: !Ref ParamDomainName
   DomainCertificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
-      DomainName: musicrating.rocks
+      DomainName: !Ref ParamDomainName
       DomainValidationOptions:
-      - DomainName: musicrating.rocks
+      - DomainName: !Ref ParamDomainName
         HostedZoneId: !Ref DomainHostedZone
       SubjectAlternativeNames:
-      - '*.musicrating.rocks'
+      - !Sub '*.${ParamDomainName}'
       ValidationMethod: DNS
   DomainCertificateParameter:
     Type: AWS::SSM::Parameter
     DependsOn: DomainCertificate
     Properties:
       Description: MusicRating certificate ARN
-      Name: '/domain/musicrating.rocks/certificate'
+      Name: !Sub '/domain/${ParamDomainName}/certificate'
       Type: String
       Value: !Ref DomainCertificate
