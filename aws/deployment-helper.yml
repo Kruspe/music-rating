@@ -39,6 +39,7 @@ Resources:
             - 'dynamodb:*'
             - 'iam:*'
             - 'lambda:*'
+            - 'route53:*'
             - 'ssm:*'
             - 's3:*'
             Resource: '*'
