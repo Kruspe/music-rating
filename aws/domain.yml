@@ -9,6 +9,15 @@ Resources:
     Type: AWS::Route53::HostedZone
     Properties:
       Name: !Ref ParamDomainName
+  DomainHostedZoneParameter:
+    Type: AWS::SSM::Parameter
+    DependsOn: DomainHostedZone
+    Properties:
+      Description: MusicRating HostedZone Id
+      Name: !Sub '/domain/${ParamDomainName}/hosted-zone'
+      Type: String
+      Value: !Ref DomainHostedZone
+
   DomainCertificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
