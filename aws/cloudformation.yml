@@ -8,19 +8,13 @@ Parameters:
     Type: String
   ParamDomainHostedZoneId:
     Type: AWS::SSM::Parameter::Value<String>
-  ParamDomainCertificateArn:
+  ParamEUDomainCertificateArn:
     Type: AWS::SSM::Parameter::Value<String>
+  ParamUSDomainCertificateArn:
+    Type: String
+    Default: arn:aws:acm:us-east-1:025007687265:certificate/c595d43c-8f4d-480f-b2ab-4dab9cc2936f
 
 Resources:
-  WildCardARecord:
-    Type: AWS::Route53::RecordSet
-    Properties:
-      AliasTarget:
-        DNSName: !GetAtt [ ApiDomain, RegionalDomainName ]
-        HostedZoneId: !GetAtt [ ApiDomain, RegionalHostedZoneId ]
-      HostedZoneId: !Ref ParamDomainHostedZoneId
-      Name: !Sub '*.${ParamDomainName}'
-      Type: A
   ExactARecord:
     Type: AWS::Route53::RecordSet
     Properties:
@@ -42,7 +36,7 @@ Resources:
     Properties:
       DomainName: !Ref ParamDomainName
       DomainNameConfigurations:
-      - CertificateArn: !Ref ParamDomainCertificateArn
+      - CertificateArn: !Ref ParamEUDomainCertificateArn
   ApiStage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
@@ -152,13 +146,10 @@ Resources:
         - Name: verified_email
           Priority: 1
       AliasAttributes:
-      - preferred_username
+      - email
+      AutoVerifiedAttributes:
       - email
       Schema:
-      - AttributeDataType: String
-        Mutable: true
-        Name: preferred_username
-        Required: true
       - AttributeDataType: String
         Mutable: true
         Name: email
@@ -169,9 +160,21 @@ Resources:
     Properties:
       AllowedOAuthFlows:
       - code
+      AllowedOAuthFlowsUserPoolClient: true
       AllowedOAuthScopes: [openid]
-      CallbackURLs: [https://musicrating.rocks]
+      CallbackURLs: [https://musicrating.rocks/]
       GenerateSecret: TRUE
+      PreventUserExistenceErrors: ENABLED
+      SupportedIdentityProviders:
+      - COGNITO
+      UserPoolId: !Ref UserPool
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    DependsOn: [ExactARecord]
+    Properties:
+      CustomDomainConfig:
+        CertificateArn: !Ref ParamUSDomainCertificateArn
+      Domain: !Sub auth.${ParamDomainName}
       UserPoolId: !Ref UserPool
 
 

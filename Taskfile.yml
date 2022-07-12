@@ -5,13 +5,13 @@ tasks:
     dir: aws
     deps: [backend-build]
     cmds:
-    - aws cloudformation deploy --template-file cloudformation.yml --stack-name MusicRating --capabilities CAPABILITY_IAM
+    - aws cloudformation deploy --template-file cloudformation.yml --stack-name MusicRating-App --capabilities CAPABILITY_IAM
       --parameter-overrides 
       ParamDomainName={{.DOMAIN_NAME}}
       ParamBackendVersion={{.BACKEND_VERSION_ID}}
       ParamDomainHostedZoneId=/domain/{{.DOMAIN_NAME}}/hosted-zone
-      ParamDomainCertificateArn=/domain/{{.DOMAIN_NAME}}/certificate
-       --profile music-rating
+      ParamEUDomainCertificateArn=/domain/{{.DOMAIN_NAME}}/certificate
+      --profile music-rating
     vars:
       BACKEND_VERSION_ID:
         sh: aws s3api put-object --bucket music-rating-deployment-bucket --key backend.zip --body ../backend/out/backend.zip --profile music-rating | jq -r .VersionId
