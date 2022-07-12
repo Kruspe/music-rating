@@ -17,22 +17,3 @@ Resources:
       Name: !Sub '/domain/${ParamDomainName}/hosted-zone'
       Type: String
       Value: !Ref DomainHostedZone
-
-  DomainCertificate:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
-      DomainName: !Ref ParamDomainName
-      DomainValidationOptions:
-      - DomainName: !Ref ParamDomainName
-        HostedZoneId: !Ref DomainHostedZone
-      SubjectAlternativeNames:
-      - !Sub '*.${ParamDomainName}'
-      ValidationMethod: DNS
-  DomainCertificateParameter:
-    Type: AWS::SSM::Parameter
-    DependsOn: DomainCertificate
-    Properties:
-      Description: MusicRating certificate ARN
-      Name: !Sub '/domain/${ParamDomainName}/certificate'
-      Type: String
-      Value: !Ref DomainCertificate

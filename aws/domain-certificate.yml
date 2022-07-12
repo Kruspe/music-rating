@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: MusicRating Domain Certificate for CloudFront
+Parameters:
+  ParamDomainName:
+    Type: String
+  ParamDomainHostedZone:
+    Type: AWS::Route53::HostedZone::Id
+
+Resources:
+  DomainCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref ParamDomainName
+      DomainValidationOptions:
+      - DomainName: !Ref ParamDomainName
+        HostedZoneId: !Ref ParamDomainHostedZone
+      SubjectAlternativeNames:
+      - !Sub '*.${ParamDomainName}'
+      ValidationMethod: DNS
