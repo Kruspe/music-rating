@@ -6,25 +6,39 @@ Parameters:
     Type: String
   ParamBackendVersion:
     Type: String
-  ParamDomainHostedZoneId:
+  ParamDeploymentBucketDomainName:
+    Type: AWS::SSM::Parameter::Value<String>
+  ParamDeploymentBucketName:
     Type: AWS::SSM::Parameter::Value<String>
   ParamEUDomainCertificateArn:
     Type: AWS::SSM::Parameter::Value<String>
+  ParamDomainHostedZoneId:
+    Type: AWS::SSM::Parameter::Value<String>
   ParamUSDomainCertificateArn:
     Type: String
-    Default: arn:aws:acm:us-east-1:025007687265:certificate/c595d43c-8f4d-480f-b2ab-4dab9cc2936f
+    Default: arn:aws:acm:us-east-1:025007687265:certificate/358b0e42-a466-40fe-959f-13ac2d513eb2
+  ParamClientId:
+    Type: String
 
 Resources:
-  ExactARecord:
-    Type: AWS::Route53::RecordSet
+  # Database
+  Table:
+    Type: AWS::DynamoDB::Table
     Properties:
-      AliasTarget:
-        DNSName: !GetAtt [ ApiDomain, RegionalDomainName ]
-        HostedZoneId: !GetAtt [ ApiDomain, RegionalHostedZoneId ]
-      HostedZoneId: !Ref ParamDomainHostedZoneId
-      Name: !Ref ParamDomainName
-      Type: A
+      AttributeDefinitions:
+      - AttributeName: PK
+        AttributeType: S
+      - AttributeName: SK
+        AttributeType: S
+      KeySchema:
+      - AttributeName: PK
+        KeyType: HASH
+      - AttributeName: SK
+        KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TableName: MusicRating
 
+  # Backend
   Api:
     Type: AWS::ApiGatewayV2::Api
     Properties:
@@ -49,7 +63,16 @@ Resources:
       ApiId: !Ref Api
       DomainName: !Ref ApiDomain
       Stage: !Ref ApiStage
-
+  ApiBackendAuthorizer:
+    Type: AWS::ApiGatewayV2::Authorizer
+    Properties:
+      ApiId: !Ref Api
+      AuthorizerType: JWT
+      IdentitySource: [ $request.header.Authorization ]
+      JwtConfiguration:
+        Audience: [ !Ref ParamClientId ]
+        Issuer: https://musicrating.eu.auth0.com
+      Name: MusicRatingUsers
   ApiBackendIntegration:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
@@ -65,33 +88,6 @@ Resources:
       AuthorizationType: JWT
       RouteKey: $default
       Target: !Join [ '/', [ integrations, !Ref ApiBackendIntegration ] ]
-  ApiBackendAuthorizer:
-    Type: AWS::ApiGatewayV2::Authorizer
-    Properties:
-      ApiId: !Ref Api
-      AuthorizerType: JWT
-      IdentitySource: [$request.header.Authorization]
-      JwtConfiguration:
-        Audience: [!Ref UserPoolClient]
-        Issuer: !Sub https://cognito-idp.${AWS::Region}.amazonaws.com/${UserPool}
-      Name: MusicRatingUsers
-
-  Table:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      AttributeDefinitions:
-      - AttributeName: PK
-        AttributeType: S
-      - AttributeName: SK
-        AttributeType: S
-      KeySchema:
-      - AttributeName: PK
-        KeyType: HASH
-      - AttributeName: SK
-        KeyType: RANGE
-      BillingMode: PAY_PER_REQUEST
-      TableName: MusicRating
-
   BackendLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -138,44 +134,64 @@ Resources:
       SourceArn: !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/$default/$default
       FunctionName: !Ref BackendLambda
 
-  UserPool:
-    Type: AWS::Cognito::UserPool
+  # Frontend
+  CFDistribution:
+    Type: AWS::CloudFront::Distribution
+    DependsOn:
+    - CFOriginAccessControl
     Properties:
-      AccountRecoverySetting:
-        RecoveryMechanisms:
-        - Name: verified_email
-          Priority: 1
-      AliasAttributes:
-      - email
-      AutoVerifiedAttributes:
-      - email
-      Schema:
-      - AttributeDataType: String
-        Mutable: true
-        Name: email
-        Required: true
-      UserPoolName: MusicRating
-  UserPoolClient:
-    Type: AWS::Cognito::UserPoolClient
+      DistributionConfig:
+        Aliases: [!Ref ParamDomainName]
+        DefaultCacheBehavior:
+          AllowedMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized
+          OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf # CORS-S3Origin
+          TargetOriginId: MusicRatingOrigin
+          ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: frontend/index.html
+        Enabled: true
+        Origins:
+        - DomainName: !Ref ParamDeploymentBucketDomainName
+          Id: MusicRatingOrigin
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          AcmCertificateArn: !Ref ParamUSDomainCertificateArn
+          MinimumProtocolVersion: TLSv1.2_2021
+          SslSupportMethod: sni-only
+  CFOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
     Properties:
-      AllowedOAuthFlows:
-      - implicit
-      AllowedOAuthFlowsUserPoolClient: true
-      AllowedOAuthScopes: [openid]
-      CallbackURLs: [https://musicrating.rocks/]
-      GenerateSecret: TRUE
-      PreventUserExistenceErrors: ENABLED
-      SupportedIdentityProviders:
-      - COGNITO
-      UserPoolId: !Ref UserPool
-  UserPoolDomain:
-    Type: AWS::Cognito::UserPoolDomain
-    DependsOn: [ExactARecord]
+      OriginAccessControlConfig:
+        DisplayName: access-to-music-rating-frontend
+        OriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+  DeploymentBucketPolicy:
+    Type: AWS::S3::BucketPolicy
     Properties:
-      CustomDomainConfig:
-        CertificateArn: !Ref ParamUSDomainCertificateArn
-      Domain: !Sub auth.${ParamDomainName}
-      UserPoolId: !Ref UserPool
-
-
-
+      Bucket: !Ref ParamDeploymentBucketName
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - cloudfront.amazonaws.com
+          Action:
+          - 's3:GetObject'
+          Resource: !Join [ '', [ 'arn:aws:s3:::', !Ref ParamDeploymentBucketName, '/frontend/*' ] ]
+          Condition:
+            StringEquals:
+              AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${CFDistribution}'
+  ARecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget:
+        DNSName: !GetAtt [ CFDistribution, DomainName ]
+        HostedZoneId: Z2FDTNDATAQYW2 # Default CloudFront HostedZone
+      HostedZoneId: !Ref ParamDomainHostedZoneId
+      Name: !Ref ParamDomainName
+      Type: A

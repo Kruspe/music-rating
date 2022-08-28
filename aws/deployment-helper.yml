@@ -12,6 +12,22 @@ Resources:
         BlockPublicPolicy: TRUE
         IgnorePublicAcls: TRUE
         RestrictPublicBuckets: TRUE
+  DeploymentBucketNameParameter:
+    Type: AWS::SSM::Parameter
+    DependsOn: DeploymentBucket
+    Properties:
+      Description: Deployment Bucket Name
+      Name: '/deployment-bucket/name'
+      Type: String
+      Value: !Ref DeploymentBucket
+  DeploymentBucketDomainNameParameter:
+    Type: AWS::SSM::Parameter
+    DependsOn: DeploymentBucket
+    Properties:
+      Description: Deployment Bucket Regional Domain Name
+      Name: '/deployment-bucket/regional-domain-name'
+      Type: String
+      Value: !GetAtt [ DeploymentBucket, RegionalDomainName ]
   DeploymentUser:
     Type: AWS::IAM::User
     Properties:
@@ -44,5 +60,3 @@ Resources:
             - 'ssm:*'
             - 's3:*'
             Resource: '*'
-
-

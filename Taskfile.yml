@@ -3,14 +3,17 @@ version: '3'
 tasks:
   deploy:
     dir: aws
-    deps: [backend-build]
+    deps: [backend-build, frontend-build]
     cmds:
     - aws cloudformation deploy --template-file cloudformation.yml --stack-name MusicRating-App --capabilities CAPABILITY_IAM
       --parameter-overrides 
-      ParamDomainName={{.DOMAIN_NAME}}
+      ParamDomainName={{.REACT_APP_DOMAIN_NAME}}
       ParamBackendVersion={{.BACKEND_VERSION_ID}}
-      ParamDomainHostedZoneId=/domain/{{.DOMAIN_NAME}}/hosted-zone
-      ParamEUDomainCertificateArn=/domain/{{.DOMAIN_NAME}}/certificate
+      ParamDeploymentBucketDomainName=/deployment-bucket/regional-domain-name
+      ParamDeploymentBucketName=/deployment-bucket/name
+      ParamDomainHostedZoneId=/domain/{{.REACT_APP_DOMAIN_NAME}}/hosted-zone
+      ParamEUDomainCertificateArn=/domain/{{.REACT_APP_DOMAIN_NAME}}/certificate
+      ParamClientId={{.REACT_APP_CLIENT_ID}}
       --profile music-rating
     vars:
       BACKEND_VERSION_ID:
@@ -21,4 +24,10 @@ tasks:
     cmds:
     - GOOS=linux GOARCH=amd64 go build -mod=vendor -o out/bootstrap main.go
     - zip -j out/backend.zip out/bootstrap
+  frontend-build:
+    dir: frontend
+    cmds:
+    - yarn
+    - yarn build
+    - aws s3 cp ../frontend/build s3://music-rating-deployment-bucket/frontend --recursive --profile music-rating
 
