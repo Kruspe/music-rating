@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
-import { QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { Auth0Provider } from '@auth0/auth0-react';
 import Login from './login';
 import App from './App';
 
-jest.mock('react-query');
+jest.mock('@tanstack/react-query');
 jest.mock('@auth0/auth0-react');
 jest.mock('./login');
 
