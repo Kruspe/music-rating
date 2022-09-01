@@ -1,10 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: MusicRating Deployment Utils
 Resources:
-  DeploymentBucket:
+  DeploymentBucketBackend:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: music-rating-deployment-bucket
+      BucketName: music-rating-deployment-bucket-backend
       VersioningConfiguration:
         Status: Enabled
       PublicAccessBlockConfiguration:
@@ -12,37 +12,40 @@ Resources:
         BlockPublicPolicy: TRUE
         IgnorePublicAcls: TRUE
         RestrictPublicBuckets: TRUE
-  DeploymentBucketNameParameter:
-    Type: AWS::SSM::Parameter
-    DependsOn: DeploymentBucket
+
+  # Frontend
+  DeploymentBucketFrontend:
+    Type: AWS::S3::Bucket
     Properties:
-      Description: Deployment Bucket Name
-      Name: '/deployment-bucket/name'
-      Type: String
-      Value: !Ref DeploymentBucket
-  DeploymentBucketDomainNameParameter:
+      BucketName: music-rating-deployment-bucket-frontend
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+  DeploymentBucketFrontendNameParameter:
     Type: AWS::SSM::Parameter
-    DependsOn: DeploymentBucket
+    DependsOn: DeploymentBucketFrontend
     Properties:
-      Description: Deployment Bucket Regional Domain Name
-      Name: '/deployment-bucket/regional-domain-name'
+      Description: Frontend Deployment Bucket Name
+      Name: '/deployment-bucket-frontend/name'
       Type: String
-      Value: !GetAtt [ DeploymentBucket, RegionalDomainName ]
+      Value: !Ref DeploymentBucketFrontend
+  DeploymentBucketFrontendDomainNameParameter:
+    Type: AWS::SSM::Parameter
+    DependsOn: DeploymentBucketFrontend
+    Properties:
+      Description: Frontend Deployment Bucket Regional Domain Name
+      Name: '/deployment-bucket-frontend/regional-domain-name'
+      Type: String
+      Value: !GetAtt [ DeploymentBucketFrontend, RegionalDomainName ]
+
+  # Deployment-User
   DeploymentUser:
     Type: AWS::IAM::User
     Properties:
       UserName: MusicRating-Deployment
       Policies:
-      - PolicyName: deployment
-        PolicyDocument:
-          Version: '2012-10-17'
-          Statement:
-          - Effect: Allow
-            Action:
-            - 's3:PutObject'
-            Resource: !Sub
-            - ${BucketArn}/bootstrap.zip
-            - { BucketArn: !GetAtt [ DeploymentBucket, Arn ] }
       - PolicyName: services
         PolicyDocument:
           Version: '2012-10-17'

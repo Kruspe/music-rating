@@ -9,15 +9,15 @@ tasks:
       --parameter-overrides 
       ParamDomainName={{.REACT_APP_DOMAIN_NAME}}
       ParamBackendVersion={{.BACKEND_VERSION_ID}}
-      ParamDeploymentBucketDomainName=/deployment-bucket/regional-domain-name
-      ParamDeploymentBucketName=/deployment-bucket/name
+      ParamDeploymentBucketDomainName=/deployment-bucket-frontend/regional-domain-name
+      ParamDeploymentBucketName=/deployment-bucket-frontend/name
       ParamDomainHostedZoneId=/domain/{{.REACT_APP_DOMAIN_NAME}}/hosted-zone
       ParamEUDomainCertificateArn=/domain/{{.REACT_APP_DOMAIN_NAME}}/certificate
       ParamClientId={{.REACT_APP_CLIENT_ID}}
       --profile music-rating
     vars:
       BACKEND_VERSION_ID:
-        sh: aws s3api put-object --bucket music-rating-deployment-bucket --key backend.zip --body ../backend/out/backend.zip --profile music-rating | jq -r .VersionId
+        sh: aws s3api put-object --bucket music-rating-deployment-bucket-backend --key backend.zip --body ../backend/out/backend.zip --profile music-rating | jq -r .VersionId
 
   backend-build:
     dir: backend
@@ -29,5 +29,5 @@ tasks:
     cmds:
     - yarn
     - yarn build
-    - aws s3 cp ../frontend/build s3://music-rating-deployment-bucket/frontend --recursive --profile music-rating
+    - aws s3 cp ../frontend/build s3://music-rating-deployment-bucket-frontend --recursive --profile music-rating
 
