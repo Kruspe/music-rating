@@ -9,8 +9,8 @@ tasks:
       --parameter-overrides 
       ParamDomainName={{.REACT_APP_DOMAIN_NAME}}
       ParamBackendVersion={{.BACKEND_VERSION_ID}}
-      ParamDeploymentBucketDomainName=/deployment-bucket-frontend/regional-domain-name
-      ParamDeploymentBucketName=/deployment-bucket-frontend/name
+      ParamDeploymentBucketFrontendDomainName=/deployment-bucket-frontend/regional-domain-name
+      ParamDeploymentBucketFrontendName=/deployment-bucket-frontend/name
       ParamDomainHostedZoneId=/domain/{{.REACT_APP_DOMAIN_NAME}}/hosted-zone
       ParamEUDomainCertificateArn=/domain/{{.REACT_APP_DOMAIN_NAME}}/certificate
       ParamClientId={{.REACT_APP_CLIENT_ID}}

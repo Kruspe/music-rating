@@ -6,9 +6,9 @@ Parameters:
     Type: String
   ParamBackendVersion:
     Type: String
-  ParamDeploymentBucketDomainName:
+  ParamDeploymentBucketFrontendDomainName:
     Type: AWS::SSM::Parameter::Value<String>
-  ParamDeploymentBucketName:
+  ParamDeploymentBucketFrontendName:
     Type: AWS::SSM::Parameter::Value<String>
   ParamEUDomainCertificateArn:
     Type: AWS::SSM::Parameter::Value<String>
@@ -120,7 +120,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Code:
-        S3Bucket: music-rating-deployment-bucket
+        S3Bucket: music-rating-deployment-bucket-backend
         S3Key: backend.zip
         S3ObjectVersion: !Ref ParamBackendVersion
       Handler: bootstrap
@@ -138,7 +138,7 @@ Resources:
   CFDistribution:
     Type: AWS::CloudFront::Distribution
     DependsOn:
-    - CFOriginAccessControl
+    - CFOriginAccessIdentity
     Properties:
       DistributionConfig:
         Aliases: [!Ref ParamDomainName]
@@ -151,41 +151,37 @@ Resources:
           OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf # CORS-S3Origin
           TargetOriginId: MusicRatingOrigin
           ViewerProtocolPolicy: redirect-to-https
-        DefaultRootObject: frontend/index.html
+        DefaultRootObject: index.html
         Enabled: true
         Origins:
-        - DomainName: !Ref ParamDeploymentBucketDomainName
+        - DomainName: !Ref ParamDeploymentBucketFrontendDomainName
           Id: MusicRatingOrigin
+          S3OriginConfig:
+            OriginAccessIdentity:  !Sub "origin-access-identity/cloudfront/${CFOriginAccessIdentity}"
         PriceClass: PriceClass_100
         ViewerCertificate:
           AcmCertificateArn: !Ref ParamUSDomainCertificateArn
           MinimumProtocolVersion: TLSv1.2_2021
           SslSupportMethod: sni-only
-  CFOriginAccessControl:
-    Type: AWS::CloudFront::OriginAccessControl
+  CFOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
-      OriginAccessControlConfig:
-        DisplayName: access-to-music-rating-frontend
-        OriginType: s3
-        SigningBehavior: always
-        SigningProtocol: sigv4
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: Access to MusicRating frontend src
   DeploymentBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref ParamDeploymentBucketName
+      Bucket: !Ref ParamDeploymentBucketFrontendName
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
         - Effect: Allow
           Principal:
-            Service:
-            - cloudfront.amazonaws.com
+            AWS:
+            - !Sub "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CFOriginAccessIdentity}"
           Action:
           - 's3:GetObject'
-          Resource: !Join [ '', [ 'arn:aws:s3:::', !Ref ParamDeploymentBucketName, '/frontend/*' ] ]
-          Condition:
-            StringEquals:
-              AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${CFDistribution}'
+          Resource: !Join [ '', [ 'arn:aws:s3:::', !Ref ParamDeploymentBucketFrontendName, '/*' ] ]
   ARecord:
     Type: AWS::Route53::RecordSet
     Properties:
