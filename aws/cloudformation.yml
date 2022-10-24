@@ -16,7 +16,7 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
   ParamUSDomainCertificateArn:
     Type: String
-    Default: arn:aws:acm:us-east-1:025007687265:certificate/358b0e42-a466-40fe-959f-13ac2d513eb2
+    Default: arn:aws:acm:us-east-1:025007687265:certificate/35c5dd65-a764-4df2-85b4-e92305a5804f
   ParamClientId:
     Type: String
 

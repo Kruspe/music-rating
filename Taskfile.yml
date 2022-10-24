@@ -28,6 +28,6 @@ tasks:
     dir: frontend
     cmds:
     - yarn
-    - yarn build
+    - REACT_APP_DOMAIN_NAME={{.REACT_APP_DOMAIN_NAME}} REACT_APP_CLIENT_ID={{.REACT_APP_CLIENT_ID}} yarn build
     - aws s3 cp ../frontend/build s3://music-rating-deployment-bucket-frontend --recursive --profile music-rating
 
