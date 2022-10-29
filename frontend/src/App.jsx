@@ -19,6 +19,8 @@ function App() {
       clientId={process.env.REACT_APP_CLIENT_ID}
       redirectUri={process.env.REACT_APP_DOMAIN_NAME.includes('localhost')
         ? process.env.REACT_APP_DOMAIN_NAME : `https://${process.env.REACT_APP_DOMAIN_NAME}`}
+      audience={process.env.REACT_APP_DOMAIN_NAME.includes('localhost')
+        ? process.env.REACT_APP_DOMAIN_NAME : `https://api.${process.env.REACT_APP_DOMAIN_NAME}`}
     >
       <ThemeProvider theme={darkTheme}>
         <QueryClientProvider client={queryClient}>
