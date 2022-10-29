@@ -157,12 +157,21 @@ Resources:
         - DomainName: !Ref ParamDeploymentBucketFrontendDomainName
           Id: MusicRatingOrigin
           S3OriginConfig:
-            OriginAccessIdentity:  !Sub "origin-access-identity/cloudfront/${CFOriginAccessIdentity}"
+            OriginAccessIdentity:  ''
+          OriginAccessControlId: !GetAtt [ CFOriginAccessControl, Id ]
         PriceClass: PriceClass_100
         ViewerCertificate:
           AcmCertificateArn: !Ref ParamUSDomainCertificateArn
           MinimumProtocolVersion: TLSv1.2_2021
           SslSupportMethod: sni-only
+  CFOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: MusicRating-AccessControl
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
   CFOriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
@@ -177,11 +186,13 @@ Resources:
         Statement:
         - Effect: Allow
           Principal:
-            AWS:
-            - !Sub "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity ${CFOriginAccessIdentity}"
+            Service: cloudfront.amazonaws.com
           Action:
           - 's3:GetObject'
           Resource: !Join [ '', [ 'arn:aws:s3:::', !Ref ParamDeploymentBucketFrontendName, '/*' ] ]
+          Condition:
+            StringEquals:
+              AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${CFDistribution}
   ARecord:
     Type: AWS::Route53::RecordSet
     Properties:
