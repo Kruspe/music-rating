@@ -45,6 +45,14 @@ Resources:
       DisableExecuteApiEndpoint: TRUE
       Name: MusicRating
       ProtocolType: HTTP
+      CorsConfiguration:
+        AllowOrigins:
+        - !Sub https://${ParamDomainName}
+        - !Sub https://www.${ParamDomainName}
+        AllowMethods:
+        - '*'
+        AllowHeaders:
+        - '*'
   ApiDomain:
     Type: AWS::ApiGatewayV2::DomainName
     Properties:
@@ -80,13 +88,45 @@ Resources:
       IntegrationType: AWS_PROXY
       IntegrationUri: !GetAtt [ BackendLambda, Arn ]
       PayloadFormatVersion: '2.0'
-  ApiBackendRoute:
+  ApiBackendRouteGet:
     Type: AWS::ApiGatewayV2::Route
     Properties:
       ApiId: !Ref Api
       AuthorizerId: !Ref ApiBackendAuthorizer
       AuthorizationType: JWT
-      RouteKey: $default
+      RouteKey: GET /{proxy+}
+      Target: !Join [ '/', [ integrations, !Ref ApiBackendIntegration ] ]
+  ApiBackendRoutePut:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref Api
+      AuthorizerId: !Ref ApiBackendAuthorizer
+      AuthorizationType: JWT
+      RouteKey: PUT /{proxy+}
+      Target: !Join [ '/', [ integrations, !Ref ApiBackendIntegration ] ]
+  ApiBackendRoutePost:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref Api
+      AuthorizerId: !Ref ApiBackendAuthorizer
+      AuthorizationType: JWT
+      RouteKey: POST /{proxy+}
+      Target: !Join [ '/', [ integrations, !Ref ApiBackendIntegration ] ]
+  ApiBackendRouteDelete:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref Api
+      AuthorizerId: !Ref ApiBackendAuthorizer
+      AuthorizationType: JWT
+      RouteKey: DELETE /{proxy+}
+      Target: !Join [ '/', [ integrations, !Ref ApiBackendIntegration ] ]
+  ApiBackendRoutePatch:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref Api
+      AuthorizerId: !Ref ApiBackendAuthorizer
+      AuthorizationType: JWT
+      RouteKey: PATCH /{proxy+}
       Target: !Join [ '/', [ integrations, !Ref ApiBackendIntegration ] ]
   BackendLambdaRole:
     Type: AWS::IAM::Role
