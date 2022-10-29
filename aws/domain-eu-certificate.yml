@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: MusicRating Domain Certificate for Http API
+Parameters:
+  ParamDomainName:
+    Type: String
+  ParamDomainHostedZone:
+    Type: AWS::Route53::HostedZone::Id
+
+Resources:
+  DomainCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Sub api.${ParamDomainName}
+      DomainValidationOptions:
+      - DomainName: !Sub api.${ParamDomainName}
+        HostedZoneId: !Ref ParamDomainHostedZone
+      SubjectAlternativeNames:
+      - !Sub '*.api.${ParamDomainName}'
+      ValidationMethod: DNS
+  DomainCertificateParameter:
+    Type: AWS::SSM::Parameter
+    DependsOn: DomainCertificate
+    Properties:
+      Description: MusicRating certificate ARN
+      Name: !Sub '/domain/api.${ParamDomainName}/certificate'
+      Type: String
+      Value: !Ref DomainCertificate

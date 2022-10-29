@@ -12,7 +12,7 @@ tasks:
       ParamDeploymentBucketFrontendDomainName=/deployment-bucket-frontend/regional-domain-name
       ParamDeploymentBucketFrontendName=/deployment-bucket-frontend/name
       ParamDomainHostedZoneId=/domain/{{.REACT_APP_DOMAIN_NAME}}/hosted-zone
-      ParamEUDomainCertificateArn=/domain/{{.REACT_APP_DOMAIN_NAME}}/certificate
+      ParamEUDomainCertificateArn=/domain/api.{{.REACT_APP_DOMAIN_NAME}}/certificate
       ParamClientId={{.REACT_APP_CLIENT_ID}}
       --profile music-rating
     vars:
@@ -29,5 +29,6 @@ tasks:
     cmds:
     - yarn
     - REACT_APP_DOMAIN_NAME={{.REACT_APP_DOMAIN_NAME}} REACT_APP_CLIENT_ID={{.REACT_APP_CLIENT_ID}} yarn build
+    - aws s3 rm s3://music-rating-deployment-bucket-frontend/static --recursive --profile music-rating
     - aws s3 cp ../frontend/build s3://music-rating-deployment-bucket-frontend --recursive --profile music-rating
 
