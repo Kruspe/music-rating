@@ -1,6 +1,17 @@
 version: '3'
 
 tasks:
+  start-dynamodb:
+    desc: Start DynamoDB instance and wait for it to start. Downloads DynamoDB if needed.
+    cmds:
+      - backend/third_party/dynamodb-local/download.sh
+      - backend/third_party/dynamodb-local/start.sh &
+      - backend/third_party/dynamodb-local/await-startup.sh
+  stop-dynamodb:
+    desc: Shut down DynamoDB instance
+    cmds:
+        - backend/third_party/dynamodb-local/stop.sh
+
   deploy:
     dir: aws
     deps: [backend-build, frontend-build]
