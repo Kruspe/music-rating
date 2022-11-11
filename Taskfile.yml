@@ -17,6 +17,11 @@ tasks:
     dir: aws
     deps: [backend-build, frontend-build]
     cmds:
+    - task: deploy-to-aws
+
+  deploy-to-aws:
+    dir: aws
+    cmds:
     - aws cloudformation deploy --template-file cloudformation.yml --stack-name MusicRating-App --capabilities CAPABILITY_IAM
       --parameter-overrides 
       ParamDomainName={{.REACT_APP_DOMAIN_NAME}}
