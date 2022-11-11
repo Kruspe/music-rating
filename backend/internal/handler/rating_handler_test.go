@@ -50,7 +50,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns201() {
 			},
 		},
 		Headers: map[string]string{
-			"Authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+			"authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
 		},
 		Body: string(rating),
 	})
@@ -113,7 +113,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns400WhenRatingIsMiss
 					},
 				},
 				Headers: map[string]string{
-					"Authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+					"authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
 				},
 				Body: string(rating),
 			})
@@ -139,7 +139,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns500WhenContextIsCan
 			},
 		},
 		Headers: map[string]string{
-			"Authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+			"authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
 		},
 		Body: string(rating),
 	})
@@ -160,7 +160,7 @@ func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns200AndAllRatings() {
 			},
 		},
 		Headers: map[string]string{
-			"Authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+			"authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
 		},
 	})
 	require.NoError(s.T(), err)
@@ -183,7 +183,7 @@ func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns500WhenContextIsCance
 			},
 		},
 		Headers: map[string]string{
-			"Authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+			"authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
 		},
 	})
 	require.ErrorContains(s.T(), err, "context canceled")
@@ -209,7 +209,7 @@ func (s *ratingHandlerSuite) Test_Handler_Returns401WhenSubjectIsMissingFromClai
 			},
 		},
 		Headers: map[string]string{
-			"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1MTYyMzkwMjJ9.tbDepxpstvGdW8TC3G8zg4B6rUYAOvfzdceoH48wgRQ",
+			"authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1MTYyMzkwMjJ9.tbDepxpstvGdW8TC3G8zg4B6rUYAOvfzdceoH48wgRQ",
 		},
 		Body: string(rating),
 	})

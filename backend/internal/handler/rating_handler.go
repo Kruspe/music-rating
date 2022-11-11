@@ -30,7 +30,7 @@ func NewRatingHandler(ratingUseCase ratingUseCase, logger *logrus.Logger) *Ratin
 }
 
 func (h *RatingHandler) Handle(ctx context.Context, event events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
-	userId, err := getUserId(strings.SplitAfter(event.Headers["Authorization"], "Bearer ")[1])
+	userId, err := getUserId(strings.SplitAfter(event.Headers["authorization"], "Bearer ")[1])
 	if err != nil {
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusUnauthorized}, err
 	}
