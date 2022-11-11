@@ -50,7 +50,7 @@ func (r *RatingRepo) SaveRating(ctx context.Context, userId string, rating model
 	return nil
 }
 
-func (r *RatingRepo) GetRatings(ctx context.Context, userId string) ([]model.RatingRecord, error) {
+func (r *RatingRepo) GetRatings(ctx context.Context, userId string) ([]model.Rating, error) {
 	expr, err := expression.NewBuilder().WithKeyCondition(expression.KeyEqual(expression.Key("PK"), expression.Value(fmt.Sprintf("USER#%s", userId)))).Build()
 	if err != nil {
 		return nil, err
@@ -69,5 +69,20 @@ func (r *RatingRepo) GetRatings(ctx context.Context, userId string) ([]model.Rat
 	if err != nil {
 		return nil, err
 	}
-	return ratings, nil
+
+	var result []model.Rating
+	for _, r := range ratings {
+		result = append(result, toRating(r))
+	}
+	return result, nil
+}
+
+func toRating(r model.RatingRecord) model.Rating {
+	return model.Rating{
+		ArtistName:   r.ArtistName,
+		Comment:      r.Comment,
+		FestivalName: r.FestivalName,
+		Rating:       r.Rating,
+		Year:         r.Year,
+	}
 }

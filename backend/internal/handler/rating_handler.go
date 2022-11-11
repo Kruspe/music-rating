@@ -2,7 +2,6 @@ package handler
 
 import (
 	"backend/internal/adapter/model"
-	"backend/internal/adapter/persistence"
 	"context"
 	"encoding/json"
 	"errors"
@@ -12,13 +11,18 @@ import (
 	"strings"
 )
 
-type RatingHandler struct {
-	ratingRepo *persistence.RatingRepo
+type ratingUseCase interface {
+	GetRatings(ctx context.Context, userId string) ([]model.Rating, error)
+	SaveRating(ctx context.Context, userId string, rating model.Rating) error
 }
 
-func NewRatingHandler(ratingRepo *persistence.RatingRepo) *RatingHandler {
+type RatingHandler struct {
+	ratingUseCase ratingUseCase
+}
+
+func NewRatingHandler(ratingUseCase ratingUseCase) *RatingHandler {
 	return &RatingHandler{
-		ratingRepo: ratingRepo,
+		ratingUseCase: ratingUseCase,
 	}
 }
 
@@ -54,7 +58,7 @@ func (h *RatingHandler) createRating(ctx context.Context, userId string, body st
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusBadRequest}, errors.New("missing year from rating")
 	}
 
-	err = h.ratingRepo.SaveRating(ctx, userId, model.Rating{
+	err = h.ratingUseCase.SaveRating(ctx, userId, model.Rating{
 		ArtistName:   rating.ArtistName,
 		Comment:      rating.Comment,
 		FestivalName: rating.FestivalName,

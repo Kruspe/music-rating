@@ -5,6 +5,7 @@ import (
 	"backend/internal/adapter/persistence"
 	"backend/internal/adapter/persistence/test_helper"
 	"backend/internal/handler"
+	"backend/internal/usecase"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -26,11 +27,11 @@ func Test_RatingHandlerSuite(t *testing.T) {
 	suite.Run(t, &ratingHandlerSuite{})
 }
 
-func (s *ratingHandlerSuite) SetupSuite() {
+func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
 	ph := test_helper.NewPersistenceHelper()
 
 	s.ratingRepo = persistence.NewRatingRepo(ph.Dynamo, ph.TableName)
-	s.handler = handler.NewRatingHandler(s.ratingRepo)
+	s.handler = handler.NewRatingHandler(usecase.NewRatingUseCase(s.ratingRepo))
 }
 
 func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns201() {
@@ -54,7 +55,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns201() {
 
 	savedRating, err := s.ratingRepo.GetRatings(context.Background(), test_helper.TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.RatingRecord{test_helper.TestRatingRecord}, savedRating)
+	require.Equal(s.T(), []model.Rating{test_helper.TestRating}, savedRating)
 }
 
 func (s *ratingHandlerSuite) Test_handle_CreateRating_Returns400WhenRatingIsMissingFields() {

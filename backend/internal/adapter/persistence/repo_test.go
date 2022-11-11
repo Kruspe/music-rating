@@ -5,7 +5,6 @@ import (
 	"backend/internal/adapter/persistence"
 	"backend/internal/adapter/persistence/test_helper"
 	"context"
-	"fmt"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"testing"
@@ -34,7 +33,7 @@ func (s *ratingRepoSuite) Test_SaveRating_SavesRating() {
 
 	ratings, err := s.repo.GetRatings(context.Background(), test_helper.TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.RatingRecord{test_helper.TestRatingRecord}, ratings)
+	require.Equal(s.T(), []model.Rating{test_helper.TestRating}, ratings)
 }
 
 func (s *ratingRepoSuite) Test_SaveRating_ReturnsError() {
@@ -46,7 +45,7 @@ func (s *ratingRepoSuite) Test_SaveRating_ReturnsError() {
 
 	ratings, err := s.repo.GetRatings(context.Background(), "me")
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.RatingRecord{}, ratings)
+	require.Equal(s.T(), []model.Rating(nil), ratings)
 }
 
 func (s *ratingRepoSuite) Test_GetRatings_ReturnsAllRatingsForUser() {
@@ -64,18 +63,12 @@ func (s *ratingRepoSuite) Test_GetRatings_ReturnsAllRatingsForUser() {
 
 	ratings, err := s.repo.GetRatings(context.Background(), test_helper.TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.RatingRecord{{
-		DbKey: model.DbKey{
-			PK: fmt.Sprintf("USER#%s", test_helper.TestUserId),
-			SK: fmt.Sprintf("ARTIST#%s", secondRating.ArtistName),
-		},
-		Type:         model.RatingType,
+	require.Equal(s.T(), []model.Rating{{
 		ArtistName:   secondRating.ArtistName,
 		FestivalName: secondRating.FestivalName,
 		Rating:       secondRating.Rating,
-		UserId:       test_helper.TestUserId,
 		Year:         secondRating.Year,
-	}, test_helper.TestRatingRecord}, ratings)
+	}, test_helper.TestRating}, ratings)
 }
 
 func (s *ratingRepoSuite) Test_GetRatings_ReturnsError() {
@@ -84,5 +77,5 @@ func (s *ratingRepoSuite) Test_GetRatings_ReturnsError() {
 
 	ratings, err := s.repo.GetRatings(ctx, test_helper.TestUserId)
 	require.ErrorContains(s.T(), err, "context canceled")
-	require.Equal(s.T(), []model.RatingRecord(nil), ratings)
+	require.Equal(s.T(), []model.Rating(nil), ratings)
 }
