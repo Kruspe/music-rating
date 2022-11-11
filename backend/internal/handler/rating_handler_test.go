@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"net/http"
@@ -21,6 +22,7 @@ type ratingHandlerSuite struct {
 	suite.Suite
 	ratingRepo *persistence.RatingRepo
 	handler    *handler.RatingHandler
+	logHook    *test.Hook
 }
 
 func Test_RatingHandlerSuite(t *testing.T) {
@@ -31,7 +33,9 @@ func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
 	ph := test_helper.NewPersistenceHelper()
 
 	s.ratingRepo = persistence.NewRatingRepo(ph.Dynamo, ph.TableName)
-	s.handler = handler.NewRatingHandler(usecase.NewRatingUseCase(s.ratingRepo))
+	logger, hook := test.NewNullLogger()
+	s.logHook = hook
+	s.handler = handler.NewRatingHandler(usecase.NewRatingUseCase(s.ratingRepo), logger)
 }
 
 func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns201() {
@@ -115,6 +119,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns400WhenRatingIsMiss
 			})
 			require.ErrorContains(t, err, fmt.Sprintf("missing %s", testCase.missingFieldName))
 			require.Equal(t, http.StatusBadRequest, response.StatusCode)
+			require.Equal(t, fmt.Sprintf("Request did not include %s", testCase.missingFieldName), s.logHook.LastEntry().Message)
 		})
 	}
 }
@@ -140,6 +145,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns500WhenContextIsCan
 	})
 	require.ErrorContains(s.T(), err, "context canceled")
 	require.Equal(s.T(), http.StatusInternalServerError, response.StatusCode)
+	require.Contains(s.T(), s.logHook.LastEntry().Message, "context canceled")
 }
 
 func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns200AndAllRatings() {
@@ -182,6 +188,7 @@ func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns500WhenContextIsCance
 	})
 	require.ErrorContains(s.T(), err, "context canceled")
 	require.Equal(s.T(), http.StatusInternalServerError, response.StatusCode)
+	require.Contains(s.T(), s.logHook.LastEntry().Message, "context canceled")
 }
 
 func (s *ratingHandlerSuite) Test_Handler_Returns401WhenSubjectIsMissingFromClaims() {

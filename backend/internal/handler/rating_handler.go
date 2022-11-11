@@ -7,6 +7,7 @@ import (
 	"errors"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 )
@@ -18,11 +19,13 @@ type ratingUseCase interface {
 
 type RatingHandler struct {
 	ratingUseCase ratingUseCase
+	logger        *logrus.Logger
 }
 
-func NewRatingHandler(ratingUseCase ratingUseCase) *RatingHandler {
+func NewRatingHandler(ratingUseCase ratingUseCase, logger *logrus.Logger) *RatingHandler {
 	return &RatingHandler{
 		ratingUseCase: ratingUseCase,
+		logger:        logger,
 	}
 }
 
@@ -48,15 +51,19 @@ func (h *RatingHandler) createRating(ctx context.Context, userId string, body st
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusInternalServerError}, err
 	}
 	if rating.ArtistName == "" {
+		h.logger.Error("Request did not include artist_name")
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusBadRequest}, errors.New("missing artist_name from rating")
 	}
 	if rating.FestivalName == "" {
+		h.logger.Error("Request did not include festival_name")
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusBadRequest}, errors.New("missing festival_name from rating")
 	}
 	if rating.Rating == nil {
+		h.logger.Error("Request did not include rating")
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusBadRequest}, errors.New("missing rating from rating")
 	}
 	if rating.Year == nil {
+		h.logger.Error("Request did not include year")
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusBadRequest}, errors.New("missing year from rating")
 	}
 
@@ -68,6 +75,7 @@ func (h *RatingHandler) createRating(ctx context.Context, userId string, body st
 		Year:         *rating.Year,
 	})
 	if err != nil {
+		h.logger.Error(err)
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusInternalServerError}, err
 	}
 
@@ -77,6 +85,7 @@ func (h *RatingHandler) createRating(ctx context.Context, userId string, body st
 func (h *RatingHandler) getRatings(ctx context.Context, userId string) (events.APIGatewayV2HTTPResponse, error) {
 	ratings, err := h.ratingUseCase.GetRatings(ctx, userId)
 	if err != nil {
+		h.logger.Error(err)
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusInternalServerError}, err
 	}
 	var ratingDaos []model.RatingDao
@@ -85,6 +94,7 @@ func (h *RatingHandler) getRatings(ctx context.Context, userId string) (events.A
 	}
 	result, err := json.Marshal(ratingDaos)
 	if err != nil {
+		h.logger.Error(err)
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusInternalServerError}, err
 	}
 	return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusOK, Body: string(result)}, nil

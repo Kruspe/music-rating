@@ -9,10 +9,19 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	log "github.com/sirupsen/logrus"
 	"os"
 )
 
 func handle(ctx context.Context, event events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
+	logger := log.New()
+	level, err := log.ParseLevel(os.Getenv("LOG_LEVEL"))
+	if err != nil {
+		log.Fatal("Could not get log level from environment variable")
+	}
+	logger.SetLevel(level)
+	logger.SetFormatter(&log.JSONFormatter{})
+
 	cfg, err := config.LoadDefaultConfig(ctx)
 	if err != nil {
 		return events.APIGatewayV2HTTPResponse{StatusCode: 500}, err
@@ -21,7 +30,7 @@ func handle(ctx context.Context, event events.APIGatewayV2HTTPRequest) (events.A
 
 	ratingUseCase := usecase.NewRatingUseCase(repo)
 
-	return handler.NewRatingHandler(ratingUseCase).Handle(ctx, event)
+	return handler.NewRatingHandler(ratingUseCase, logger).Handle(ctx, event)
 }
 
 func main() {

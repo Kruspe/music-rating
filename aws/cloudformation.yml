@@ -166,6 +166,9 @@ Resources:
       Handler: bootstrap
       Role: !GetAtt [ BackendLambdaRole, Arn ]
       Runtime: provided.al2
+      Environment:
+        Variables:
+          LOG_LEVEL: error
   BackendLambdaPermission:
     Type: AWS::Lambda::Permission
     Properties:
