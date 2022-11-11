@@ -58,7 +58,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns201() {
 	require.Equal(s.T(), []model.Rating{test_helper.TestRating}, savedRating)
 }
 
-func (s *ratingHandlerSuite) Test_handle_CreateRating_Returns400WhenRatingIsMissingFields() {
+func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns400WhenRatingIsMissingFields() {
 	c := []struct {
 		missingFieldName string
 		rating           model.RatingDao
@@ -117,6 +117,71 @@ func (s *ratingHandlerSuite) Test_handle_CreateRating_Returns400WhenRatingIsMiss
 			require.Equal(t, http.StatusBadRequest, response.StatusCode)
 		})
 	}
+}
+
+func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns500WhenContextIsCanceled() {
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	cancelFunc()
+
+	rating, err := json.Marshal(test_helper.TestRatingDao)
+	require.NoError(s.T(), err)
+
+	response, err := s.handler.Handle(ctx, events.APIGatewayV2HTTPRequest{
+		RawPath: "/ratings",
+		RequestContext: events.APIGatewayV2HTTPRequestContext{
+			HTTP: events.APIGatewayV2HTTPRequestContextHTTPDescription{
+				Method: "POST",
+			},
+		},
+		Headers: map[string]string{
+			"Authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+		},
+		Body: string(rating),
+	})
+	require.ErrorContains(s.T(), err, "context canceled")
+	require.Equal(s.T(), http.StatusInternalServerError, response.StatusCode)
+}
+
+func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns200AndAllRatings() {
+	err := s.ratingRepo.SaveRating(context.Background(), test_helper.TestUserId, test_helper.TestRating)
+	require.NoError(s.T(), err)
+
+	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{
+		RawPath: "/ratings",
+		RequestContext: events.APIGatewayV2HTTPRequestContext{
+			HTTP: events.APIGatewayV2HTTPRequestContextHTTPDescription{
+				Method: "GET",
+			},
+		},
+		Headers: map[string]string{
+			"Authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+		},
+	})
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), http.StatusOK, response.StatusCode)
+	var result []model.RatingDao
+	err = json.Unmarshal([]byte(response.Body), &result)
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), []model.RatingDao{test_helper.TestRatingDao}, result)
+}
+
+func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns500WhenContextIsCanceled() {
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	cancelFunc()
+
+	response, err := s.handler.Handle(ctx, events.APIGatewayV2HTTPRequest{
+		RawPath: "/ratings",
+		RequestContext: events.APIGatewayV2HTTPRequestContext{
+			HTTP: events.APIGatewayV2HTTPRequestContextHTTPDescription{
+				Method: "GET",
+			},
+		},
+		Headers: map[string]string{
+			"Authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+		},
+	})
+	require.ErrorContains(s.T(), err, "context canceled")
+	require.Equal(s.T(), http.StatusInternalServerError, response.StatusCode)
 }
 
 func (s *ratingHandlerSuite) Test_Handler_Returns401WhenSubjectIsMissingFromClaims() {

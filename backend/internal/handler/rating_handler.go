@@ -35,6 +35,8 @@ func (h *RatingHandler) Handle(ctx context.Context, event events.APIGatewayV2HTT
 	switch {
 	case event.RawPath == "/ratings" && event.RequestContext.HTTP.Method == http.MethodPost:
 		return h.createRating(ctx, userId, event.Body)
+	case event.RawPath == "/ratings" && event.RequestContext.HTTP.Method == http.MethodGet:
+		return h.getRatings(ctx, userId)
 	}
 	return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusNotFound}, nil
 }
@@ -70,6 +72,32 @@ func (h *RatingHandler) createRating(ctx context.Context, userId string, body st
 	}
 
 	return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusCreated}, nil
+}
+
+func (h *RatingHandler) getRatings(ctx context.Context, userId string) (events.APIGatewayV2HTTPResponse, error) {
+	ratings, err := h.ratingUseCase.GetRatings(ctx, userId)
+	if err != nil {
+		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusInternalServerError}, err
+	}
+	var ratingDaos []model.RatingDao
+	for _, r := range ratings {
+		ratingDaos = append(ratingDaos, toRatingDao(r))
+	}
+	result, err := json.Marshal(ratingDaos)
+	if err != nil {
+		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusInternalServerError}, err
+	}
+	return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusOK, Body: string(result)}, nil
+}
+
+func toRatingDao(rating model.Rating) model.RatingDao {
+	return model.RatingDao{
+		ArtistName:   rating.ArtistName,
+		Comment:      rating.Comment,
+		FestivalName: rating.FestivalName,
+		Rating:       &rating.Rating,
+		Year:         &rating.Year,
+	}
 }
 
 func getUserId(token string) (string, error) {
