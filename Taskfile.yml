@@ -13,6 +13,7 @@ tasks:
         - backend/third_party/dynamodb-local/stop.sh
 
   deploy:
+    desc: Deploy backend and frontend to AWS
     dir: aws
     deps: [backend-build, frontend-build]
     cmds:
