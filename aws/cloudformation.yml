@@ -169,6 +169,7 @@ Resources:
       Environment:
         Variables:
           LOG_LEVEL: error
+          TABLE_NAME: !Ref Table
   BackendLambdaPermission:
     Type: AWS::Lambda::Permission
     Properties:
