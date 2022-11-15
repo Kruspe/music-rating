@@ -67,6 +67,8 @@ func (l *local) handle(w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 	}
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
 	w.WriteHeader(response.StatusCode)
 	body, _ := json.Marshal(response.Body)
 	_, err = w.Write(body)
