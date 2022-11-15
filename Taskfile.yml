@@ -1,6 +1,12 @@
 version: '3'
 
 tasks:
+  start-backend:
+    desc: Start the backend locally
+    dir: backend
+    deps: [start-dynamodb]
+    cmds:
+      - go run local/main.go
   start-dynamodb:
     desc: Start DynamoDB instance and wait for it to start. Downloads DynamoDB if needed.
     cmds:
@@ -35,7 +41,6 @@ tasks:
     vars:
       BACKEND_VERSION_ID:
         sh: aws s3api put-object --bucket music-rating-deployment-bucket-backend --key backend.zip --body ../backend/out/backend.zip --profile music-rating | jq -r .VersionId
-
   backend-build:
     dir: backend
     cmds:
