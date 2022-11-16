@@ -70,10 +70,20 @@ func (l *local) handle(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "*")
 	w.WriteHeader(response.StatusCode)
-	body, _ := json.Marshal(response.Body)
-	_, err = w.Write(body)
-	if err != nil {
-		l.logger.Error(err)
+	if response.Body != "" {
+		var r interface{}
+		err := json.Unmarshal([]byte(response.Body), &r)
+		if err != nil {
+			l.logger.Error(err)
+		}
+		body, err := json.Marshal(r)
+		if err != nil {
+			l.logger.Error(err)
+		}
+		_, err = w.Write(body)
+		if err != nil {
+			l.logger.Error(err)
+		}
 	}
 	return
 }
