@@ -28,19 +28,19 @@ func (s *ratingRepoSuite) BeforeTest(_ string, _ string) {
 }
 
 func (s *ratingRepoSuite) Test_SaveRating_SavesRating() {
-	err := s.repo.SaveRating(context.Background(), test_helper.TestUserId, test_helper.TestRating)
+	err := s.repo.SaveRating(context.Background(), test_helper.TestUserId, test_helper.BloodbathRating)
 	require.NoError(s.T(), err)
 
 	ratings, err := s.repo.GetRatings(context.Background(), test_helper.TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.Rating{test_helper.TestRating}, ratings)
+	require.Equal(s.T(), []model.Rating{test_helper.BloodbathRating}, ratings)
 }
 
 func (s *ratingRepoSuite) Test_SaveRating_ReturnsError() {
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	cancelFunc()
 
-	err := s.repo.SaveRating(ctx, "me", test_helper.TestRating)
+	err := s.repo.SaveRating(ctx, "me", test_helper.BloodbathRating)
 	require.ErrorContains(s.T(), err, "context canceled")
 
 	ratings, err := s.repo.GetRatings(context.Background(), "me")
@@ -49,26 +49,14 @@ func (s *ratingRepoSuite) Test_SaveRating_ReturnsError() {
 }
 
 func (s *ratingRepoSuite) Test_GetRatings_ReturnsAllRatingsForUser() {
-	secondRating := model.Rating{
-		ArtistName:   "Hypocrisy",
-		Comment:      "",
-		FestivalName: "Concert",
-		Rating:       5,
-		Year:         666,
-	}
-	err := s.repo.SaveRating(context.Background(), test_helper.TestUserId, test_helper.TestRating)
+	err := s.repo.SaveRating(context.Background(), test_helper.TestUserId, test_helper.BloodbathRating)
 	require.NoError(s.T(), err)
-	err = s.repo.SaveRating(context.Background(), test_helper.TestUserId, secondRating)
+	err = s.repo.SaveRating(context.Background(), test_helper.TestUserId, test_helper.HypocrisyRating)
 	require.NoError(s.T(), err)
 
 	ratings, err := s.repo.GetRatings(context.Background(), test_helper.TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.Rating{{
-		ArtistName:   secondRating.ArtistName,
-		FestivalName: secondRating.FestivalName,
-		Rating:       secondRating.Rating,
-		Year:         secondRating.Year,
-	}, test_helper.TestRating}, ratings)
+	require.Equal(s.T(), []model.Rating{test_helper.HypocrisyRating, test_helper.BloodbathRating}, ratings)
 }
 
 func (s *ratingRepoSuite) Test_GetRatings_ReturnsError() {

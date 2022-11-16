@@ -39,7 +39,7 @@ func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
 }
 
 func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns201() {
-	rating, err := json.Marshal(test_helper.TestRatingDao)
+	rating, err := json.Marshal(test_helper.BloodbathRatingDao)
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{
@@ -59,7 +59,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns201() {
 
 	savedRating, err := s.ratingRepo.GetRatings(context.Background(), test_helper.TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.Rating{test_helper.TestRating}, savedRating)
+	require.Equal(s.T(), []model.Rating{test_helper.BloodbathRating}, savedRating)
 }
 
 func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns400WhenRatingIsMissingFields() {
@@ -128,7 +128,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns500WhenContextIsCan
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	cancelFunc()
 
-	rating, err := json.Marshal(test_helper.TestRatingDao)
+	rating, err := json.Marshal(test_helper.BloodbathRatingDao)
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(ctx, events.APIGatewayV2HTTPRequest{
@@ -149,7 +149,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns500WhenContextIsCan
 }
 
 func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns200AndAllRatings() {
-	err := s.ratingRepo.SaveRating(context.Background(), test_helper.TestUserId, test_helper.TestRating)
+	err := s.ratingRepo.SaveRating(context.Background(), test_helper.TestUserId, test_helper.BloodbathRating)
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{
@@ -168,7 +168,7 @@ func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns200AndAllRatings() {
 	var result []model.RatingDao
 	err = json.Unmarshal([]byte(response.Body), &result)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.RatingDao{test_helper.TestRatingDao}, result)
+	require.Equal(s.T(), []model.RatingDao{test_helper.BloodbathRatingDao}, result)
 }
 
 func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns500WhenContextIsCanceled() {
@@ -192,13 +192,7 @@ func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns500WhenContextIsCance
 }
 
 func (s *ratingHandlerSuite) Test_Handler_Returns401WhenSubjectIsMissingFromClaims() {
-	rating, err := json.Marshal(model.RatingDao{
-		ArtistName:   "Bloodbath",
-		Comment:      "Amazing",
-		FestivalName: "Wacken",
-		Rating:       aws.Int(5),
-		Year:         aws.Int(666),
-	})
+	rating, err := json.Marshal(test_helper.BloodbathRatingDao)
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{

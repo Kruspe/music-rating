@@ -9,6 +9,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	log "github.com/sirupsen/logrus"
 	"io"
@@ -27,6 +29,7 @@ func main() {
 	logger.SetLevel(log.DebugLevel)
 	logger.SetFormatter(&log.JSONFormatter{})
 	ph := test_helper.NewPersistenceHelper()
+	setupRatings(logger, ph)
 	l := local{
 		logger:    logger,
 		dynamo:    ph.Dynamo,
@@ -86,4 +89,30 @@ func (l *local) handle(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	return
+}
+
+func setupRatings(logger *log.Logger, ph *test_helper.PersistenceHelper) {
+	bloodbathItem, err := attributevalue.MarshalMap(test_helper.BloodbathRatingRecord)
+	if err != nil {
+		logger.Fatal(err)
+	}
+	_, err = ph.Dynamo.PutItem(context.Background(), &dynamodb.PutItemInput{
+		Item:      bloodbathItem,
+		TableName: aws.String(ph.TableName),
+	})
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	hypocrisyItem, err := attributevalue.MarshalMap(test_helper.HypocrisyRatingRecord)
+	if err != nil {
+		logger.Fatal(err)
+	}
+	_, err = ph.Dynamo.PutItem(context.Background(), &dynamodb.PutItemInput{
+		Item:      hypocrisyItem,
+		TableName: aws.String(ph.TableName),
+	})
+	if err != nil {
+		logger.Fatal(err)
+	}
 }

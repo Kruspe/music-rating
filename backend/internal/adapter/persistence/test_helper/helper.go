@@ -18,34 +18,52 @@ const (
 	TestUserId = "MetalLover666"
 )
 
-var TestRatingDao = model.RatingDao{
-	ArtistName:   "band",
-	Comment:      "someComment",
+var BloodbathRating = model.Rating{
+	ArtistName:   "Bloodbath",
+	Comment:      "old school swedish death metal",
 	FestivalName: "Wacken",
-	Rating:       aws.Int(1),
-	Year:         aws.Int(123),
+	Rating:       5,
+	Year:         2015,
+}
+var HypocrisyRating = model.Rating{
+	ArtistName:   "Hypocrisy",
+	FestivalName: "Wacken",
+	Rating:       2022,
+	Year:         5,
 }
 
-var TestRating = model.Rating{
-	ArtistName:   "band",
-	Comment:      "someComment",
-	FestivalName: "Wacken",
-	Rating:       1,
-	Year:         123,
+var BloodbathRatingDao = model.RatingDao{
+	ArtistName:   BloodbathRating.ArtistName,
+	Comment:      BloodbathRating.Comment,
+	FestivalName: BloodbathRating.FestivalName,
+	Rating:       aws.Int(BloodbathRating.Rating),
+	Year:         aws.Int(BloodbathRating.Year),
 }
 
-var TestRatingRecord = model.RatingRecord{
+var BloodbathRatingRecord = model.RatingRecord{
 	DbKey: model.DbKey{
 		PK: fmt.Sprintf("USER#%s", TestUserId),
-		SK: fmt.Sprintf("ARTIST#%s", TestRating.ArtistName),
+		SK: fmt.Sprintf("ARTIST#%s", BloodbathRating.ArtistName),
 	},
 	Type:         model.RatingType,
-	ArtistName:   TestRating.ArtistName,
-	Comment:      TestRating.Comment,
-	FestivalName: TestRating.FestivalName,
-	Rating:       TestRating.Rating,
+	ArtistName:   BloodbathRating.ArtistName,
+	Comment:      BloodbathRating.Comment,
+	FestivalName: BloodbathRating.FestivalName,
+	Rating:       BloodbathRating.Rating,
 	UserId:       TestUserId,
-	Year:         TestRating.Year,
+	Year:         BloodbathRating.Year,
+}
+var HypocrisyRatingRecord = model.RatingRecord{
+	DbKey: model.DbKey{
+		PK: fmt.Sprintf("USER#%s", TestUserId),
+		SK: fmt.Sprintf("ARTIST#%s", HypocrisyRating.ArtistName),
+	},
+	Type:         model.RatingType,
+	ArtistName:   HypocrisyRating.ArtistName,
+	FestivalName: HypocrisyRating.FestivalName,
+	Rating:       HypocrisyRating.Rating,
+	UserId:       TestUserId,
+	Year:         HypocrisyRating.Year,
 }
 
 type PersistenceHelper struct {

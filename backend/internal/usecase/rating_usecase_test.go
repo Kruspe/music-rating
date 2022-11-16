@@ -29,16 +29,16 @@ func (s *ratingUseCaseSuite) BeforeTest(_ string, _ string) {
 }
 
 func (s *ratingUseCaseSuite) Test_GetRatings_ReturnsAllRatings() {
-	err := s.ratingRepo.SaveRating(context.Background(), test_helper.TestUserId, test_helper.TestRating)
+	err := s.ratingRepo.SaveRating(context.Background(), test_helper.TestUserId, test_helper.BloodbathRating)
 	require.NoError(s.T(), err)
 
 	ratings, err := s.ratingUseCase.GetRatings(context.Background(), test_helper.TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.Rating{test_helper.TestRating}, ratings)
+	require.Equal(s.T(), []model.Rating{test_helper.BloodbathRating}, ratings)
 }
 
 func (s *ratingUseCaseSuite) Test_GetRatings_ReturnsError() {
-	err := s.ratingRepo.SaveRating(context.Background(), test_helper.TestUserId, test_helper.TestRating)
+	err := s.ratingRepo.SaveRating(context.Background(), test_helper.TestUserId, test_helper.BloodbathRating)
 	require.NoError(s.T(), err)
 
 	ctx, cancelFunc := context.WithCancel(context.Background())
@@ -49,17 +49,17 @@ func (s *ratingUseCaseSuite) Test_GetRatings_ReturnsError() {
 }
 
 func (s *ratingUseCaseSuite) Test_SaveRating_SavesRating() {
-	err := s.ratingUseCase.SaveRating(context.Background(), test_helper.TestUserId, test_helper.TestRating)
+	err := s.ratingUseCase.SaveRating(context.Background(), test_helper.TestUserId, test_helper.BloodbathRating)
 	require.NoError(s.T(), err)
 
 	ratings, err := s.ratingRepo.GetRatings(context.Background(), test_helper.TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.Rating{test_helper.TestRating}, ratings)
+	require.Equal(s.T(), []model.Rating{test_helper.BloodbathRating}, ratings)
 }
 
 func (s *ratingUseCaseSuite) Test_SaveRating_ReturnsError() {
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	cancelFunc()
-	err := s.ratingUseCase.SaveRating(ctx, test_helper.TestUserId, test_helper.TestRating)
+	err := s.ratingUseCase.SaveRating(ctx, test_helper.TestUserId, test_helper.BloodbathRating)
 	require.ErrorContains(s.T(), err, "context canceled")
 }
