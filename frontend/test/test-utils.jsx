@@ -3,6 +3,7 @@
 
 import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { mockServer } from './mocks';
 
 function QueryClientProviderWrapper({ children }) {
   return (
@@ -13,6 +14,10 @@ function QueryClientProviderWrapper({ children }) {
 }
 
 const customRender = (ui, options) => render(ui, { wrapper: QueryClientProviderWrapper, ...options });
+
+beforeAll(() => mockServer.listen());
+afterEach(() => mockServer.resetHandlers());
+afterAll(() => mockServer.close());
 
 export * from '@testing-library/react';
 export { customRender as render };
