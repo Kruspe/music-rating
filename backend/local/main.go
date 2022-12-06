@@ -1,8 +1,9 @@
 package main
 
 import (
+	"backend/internal/adapter/model/model_test_helper"
 	"backend/internal/adapter/persistence"
-	"backend/internal/adapter/persistence/test_helper"
+	"backend/internal/adapter/persistence/persistence_test_helper"
 	"backend/internal/handler"
 	"backend/internal/usecase"
 	"context"
@@ -28,7 +29,7 @@ func main() {
 	logger := log.New()
 	logger.SetLevel(log.DebugLevel)
 	logger.SetFormatter(&log.JSONFormatter{})
-	ph := test_helper.NewPersistenceHelper()
+	ph := persistence_test_helper.NewPersistenceHelper()
 	setupRatings(logger, ph)
 	l := local{
 		logger:    logger,
@@ -56,7 +57,7 @@ func (l *local) handle(w http.ResponseWriter, r *http.Request) {
 	event := events.APIGatewayV2HTTPRequest{
 		Body: buffer.String(),
 		Headers: map[string]string{
-			"authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+			"authorization": fmt.Sprintf("Bearer %s", model_test_helper.TestToken),
 		},
 		RawPath: strings.SplitAfter(r.URL.EscapedPath(), "/api")[1],
 		RequestContext: events.APIGatewayV2HTTPRequestContext{
@@ -91,8 +92,8 @@ func (l *local) handle(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func setupRatings(logger *log.Logger, ph *test_helper.PersistenceHelper) {
-	bloodbathItem, err := attributevalue.MarshalMap(test_helper.BloodbathRatingRecord)
+func setupRatings(logger *log.Logger, ph *persistence_test_helper.PersistenceHelper) {
+	bloodbathItem, err := attributevalue.MarshalMap(model_test_helper.BloodbathRatingRecord)
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -104,7 +105,7 @@ func setupRatings(logger *log.Logger, ph *test_helper.PersistenceHelper) {
 		logger.Fatal(err)
 	}
 
-	hypocrisyItem, err := attributevalue.MarshalMap(test_helper.HypocrisyRatingRecord)
+	hypocrisyItem, err := attributevalue.MarshalMap(model_test_helper.HypocrisyRatingRecord)
 	if err != nil {
 		logger.Fatal(err)
 	}

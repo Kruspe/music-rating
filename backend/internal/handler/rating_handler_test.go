@@ -2,8 +2,9 @@ package handler_test
 
 import (
 	"backend/internal/adapter/model"
+	"backend/internal/adapter/model/model_test_helper"
 	"backend/internal/adapter/persistence"
-	"backend/internal/adapter/persistence/test_helper"
+	"backend/internal/adapter/persistence/persistence_test_helper"
 	"backend/internal/handler"
 	"backend/internal/usecase"
 	"context"
@@ -30,7 +31,7 @@ func Test_RatingHandlerSuite(t *testing.T) {
 }
 
 func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
-	ph := test_helper.NewPersistenceHelper()
+	ph := persistence_test_helper.NewPersistenceHelper()
 
 	s.ratingRepo = persistence.NewRatingRepo(ph.Dynamo, ph.TableName)
 	logger, hook := test.NewNullLogger()
@@ -39,7 +40,7 @@ func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
 }
 
 func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns201() {
-	rating, err := json.Marshal(test_helper.BloodbathRatingDao)
+	rating, err := json.Marshal(model_test_helper.BloodbathRatingDao)
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{
@@ -50,16 +51,16 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns201() {
 			},
 		},
 		Headers: map[string]string{
-			"authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+			"authorization": fmt.Sprintf("Bearer %s", model_test_helper.TestToken),
 		},
 		Body: string(rating),
 	})
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), http.StatusCreated, response.StatusCode)
 
-	savedRating, err := s.ratingRepo.GetRatings(context.Background(), test_helper.TestUserId)
+	savedRating, err := s.ratingRepo.GetRatings(context.Background(), model_test_helper.TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.Rating{test_helper.BloodbathRating}, savedRating)
+	require.Equal(s.T(), []model.Rating{model_test_helper.BloodbathRating}, savedRating)
 }
 
 func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns400WhenRatingIsMissingFields() {
@@ -113,7 +114,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns400WhenRatingIsMiss
 					},
 				},
 				Headers: map[string]string{
-					"authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+					"authorization": fmt.Sprintf("Bearer %s", model_test_helper.TestToken),
 				},
 				Body: string(rating),
 			})
@@ -128,7 +129,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns500WhenContextIsCan
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	cancelFunc()
 
-	rating, err := json.Marshal(test_helper.BloodbathRatingDao)
+	rating, err := json.Marshal(model_test_helper.BloodbathRatingDao)
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(ctx, events.APIGatewayV2HTTPRequest{
@@ -139,7 +140,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns500WhenContextIsCan
 			},
 		},
 		Headers: map[string]string{
-			"authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+			"authorization": fmt.Sprintf("Bearer %s", model_test_helper.TestToken),
 		},
 		Body: string(rating),
 	})
@@ -149,7 +150,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns500WhenContextIsCan
 }
 
 func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns200AndAllRatings() {
-	err := s.ratingRepo.SaveRating(context.Background(), test_helper.TestUserId, test_helper.BloodbathRating)
+	err := s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.BloodbathRating)
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{
@@ -160,7 +161,7 @@ func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns200AndAllRatings() {
 			},
 		},
 		Headers: map[string]string{
-			"authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+			"authorization": fmt.Sprintf("Bearer %s", model_test_helper.TestToken),
 		},
 	})
 	require.NoError(s.T(), err)
@@ -168,7 +169,7 @@ func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns200AndAllRatings() {
 	var result []model.RatingDao
 	err = json.Unmarshal([]byte(response.Body), &result)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.RatingDao{test_helper.BloodbathRatingDao}, result)
+	require.Equal(s.T(), []model.RatingDao{model_test_helper.BloodbathRatingDao}, result)
 }
 
 func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns500WhenContextIsCanceled() {
@@ -183,7 +184,7 @@ func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns500WhenContextIsCance
 			},
 		},
 		Headers: map[string]string{
-			"authorization": fmt.Sprintf("Bearer %s", test_helper.TestToken),
+			"authorization": fmt.Sprintf("Bearer %s", model_test_helper.TestToken),
 		},
 	})
 	require.ErrorContains(s.T(), err, "context canceled")
@@ -192,7 +193,7 @@ func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns500WhenContextIsCance
 }
 
 func (s *ratingHandlerSuite) Test_Handler_Returns401WhenSubjectIsMissingFromClaims() {
-	rating, err := json.Marshal(test_helper.BloodbathRatingDao)
+	rating, err := json.Marshal(model_test_helper.BloodbathRatingDao)
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{
