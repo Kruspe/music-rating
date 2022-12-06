@@ -57,9 +57,31 @@ Resources:
             - 'cloudfront:*'
             - 'cognito-idp:*'
             - 'dynamodb:*'
+            - 'events:*'
             - 'iam:*'
             - 'lambda:*'
             - 'route53:*'
             - 'ssm:*'
             - 's3:*'
             Resource: '*'
+
+  # FestivalBands
+  DeploymentBucketFestivalBands:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: festival-bands-deployment-bucket
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: TRUE
+        BlockPublicPolicy: TRUE
+        IgnorePublicAcls: TRUE
+        RestrictPublicBuckets: TRUE
+  FestivalBandsDeploymentBucket:
+    Type: AWS::SSM::Parameter
+    DependsOn: DeploymentBucketFestivalBands
+    Properties:
+      Description: Deployment bucket name for FestivalBands lambdas
+      Name: /festival-bands/deployment-bucket/name
+      Type: String
+      Value: !Ref DeploymentBucketFestivalBands
