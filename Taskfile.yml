@@ -21,7 +21,7 @@ tasks:
   deploy:
     desc: Deploy backend and frontend to AWS
     dir: aws
-    deps: [backend-build, frontend-build]
+    deps: [build-backend, build-frontend]
     cmds:
     - task: deploy-to-aws
 
@@ -41,12 +41,12 @@ tasks:
     vars:
       BACKEND_VERSION_ID:
         sh: aws s3api put-object --bucket music-rating-deployment-bucket-backend --key backend.zip --body ../backend/out/backend.zip --profile music-rating | jq -r .VersionId
-  backend-build:
+  build-backend:
     dir: backend
     cmds:
     - GOOS=linux GOARCH=amd64 go build -mod=vendor -o out/bootstrap main.go
     - zip -j out/backend.zip out/bootstrap
-  frontend-build:
+  build-frontend:
     dir: frontend
     cmds:
     - yarn
