@@ -13,7 +13,6 @@ import (
 
 type ratingRepoSuite struct {
 	suite.Suite
-	ph        persistence_test_helper.PersistenceHelper
 	repo      *persistence.RatingRepo
 	tableName string
 }

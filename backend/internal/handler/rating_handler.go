@@ -120,10 +120,7 @@ func (h *RatingHandler) getUnratedArtistsForFestival(ctx context.Context, userId
 
 	var unratedArtistDaos []model.ArtistDao
 	for _, u := range unratedArtists {
-		unratedArtistDaos = append(unratedArtistDaos, model.ArtistDao{
-			ArtistName: u.ArtistName,
-			ImageUrl:   u.ImageUrl,
-		})
+		unratedArtistDaos = append(unratedArtistDaos, model.ArtistDao(u))
 	}
 	result, err := json.Marshal(unratedArtistDaos)
 	if err != nil {

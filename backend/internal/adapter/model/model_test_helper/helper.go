@@ -101,7 +101,4 @@ var UnratedArtist = model.Artist{
 	ImageUrl:   "https://unrated-artist-image.url",
 }
 
-var UnratedArtistDao = model.ArtistDao{
-	ArtistName: UnratedArtist.ArtistName,
-	ImageUrl:   UnratedArtist.ImageUrl,
-}
+var UnratedArtistDao = model.ArtistDao(UnratedArtist)

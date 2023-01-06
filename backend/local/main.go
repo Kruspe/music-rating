@@ -92,7 +92,6 @@ func (l *local) handle(w http.ResponseWriter, r *http.Request) {
 			l.logger.Error(err)
 		}
 	}
-	return
 }
 
 func setupRatings(logger *log.Logger, ph *persistence_test_helper.PersistenceHelper) {

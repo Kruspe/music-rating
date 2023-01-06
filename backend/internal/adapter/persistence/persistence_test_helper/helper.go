@@ -40,6 +40,9 @@ func NewPersistenceHelper() *PersistenceHelper {
 	tableName := uuid.NewString()
 	createTable(dynamo, tableName)
 	err = os.Setenv("TABLE_NAME", tableName)
+	if err != nil {
+		panic(err)
+	}
 
 	s3Mock := func() persistence.S3Client {
 		return MockS3Client{
