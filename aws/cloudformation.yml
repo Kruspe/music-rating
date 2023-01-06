@@ -21,6 +21,8 @@ Parameters:
     Type: String
   ParamFestivalBucketName:
     Type: AWS::SSM::Parameter::Value<String>
+  ParamFestivalBucketArn:
+    Type: AWS::SSM::Parameter::Value<String>
 
 Resources:
   # Database
@@ -158,6 +160,10 @@ Resources:
             - 'dynamodb:Scan'
             - 'dynamodb:UpdateItem'
             Resource: !GetAtt [ Table, Arn ]
+          - Effect: Allow
+            Action:
+            - 's3:GetObject'
+            Resource: !Sub ${ParamFestivalBucketArn}/*
   BackendLambda:
     Type: AWS::Lambda::Function
     Properties:

@@ -38,6 +38,7 @@ tasks:
       ParamEUDomainCertificateArn=/domain/api.{{.REACT_APP_DOMAIN_NAME}}/certificate
       ParamClientId={{.REACT_APP_CLIENT_ID}}
       ParamFestivalBucketName=/festival-bucket/name
+      ParamFestivalBucketArn=/festival-bucket/arn
       --profile music-rating
     vars:
       BACKEND_VERSION_ID:
