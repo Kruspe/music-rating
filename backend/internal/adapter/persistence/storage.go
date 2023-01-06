@@ -4,6 +4,7 @@ import (
 	"backend/internal/adapter/model"
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"os"
@@ -26,7 +27,7 @@ func NewFestivalStorage(s3Client S3Client) *Storage {
 func (s *Storage) GetFestival(ctx context.Context, festivalName string) (model.Festival, error) {
 	object, err := s.s3.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(os.Getenv("FESTIVAL_ARTIST_BUCKET_NAME")),
-		Key:    aws.String(festivalName),
+		Key:    aws.String(fmt.Sprintf("%s.json", festivalName)),
 	})
 	if err != nil {
 		return model.Festival{}, err

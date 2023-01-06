@@ -43,7 +43,7 @@ func (s *storageSuite) Test_GetArtists() {
 				if params.Key == nil {
 					t.Fatal("expect key not to be nil")
 				}
-				if e, a := "festival-name", *params.Key; e != a {
+				if e, a := "festival-name.json", *params.Key; e != a {
 					t.Fatalf("expect %v, got %v", e, a)
 				}
 
