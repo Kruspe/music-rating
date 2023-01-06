@@ -7,6 +7,7 @@ import (
 	"backend/internal/adapter/persistence/persistence_test_helper"
 	"backend/internal/usecase"
 	"context"
+	"errors"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"testing"
@@ -22,11 +23,27 @@ func Test_RatingUseCaseSuite(t *testing.T) {
 	suite.Run(t, &ratingUseCaseSuite{})
 }
 
+type mockFestivalStorage struct {
+	getFestival func(ctx context.Context, festivalName string) (model.Festival, error)
+}
+
+func (m mockFestivalStorage) GetFestival(ctx context.Context, festivalName string) (model.Festival, error) {
+	return m.getFestival(ctx, festivalName)
+}
+
 func (s *ratingUseCaseSuite) BeforeTest(_ string, _ string) {
 	ph := persistence_test_helper.NewPersistenceHelper()
-
 	s.ratingRepo = persistence.NewRatingRepo(ph.Dynamo, ph.TableName)
-	s.ratingUseCase = usecase.NewRatingUseCase(s.ratingRepo)
+
+	festivalStorage := func() usecase.FestivalStorage {
+		return mockFestivalStorage{
+			getFestival: func(ctx context.Context, festivalName string) (model.Festival, error) {
+				return model_test_helper.Festival, nil
+			},
+		}
+	}
+
+	s.ratingUseCase = usecase.NewRatingUseCase(s.ratingRepo, festivalStorage())
 }
 
 func (s *ratingUseCaseSuite) Test_GetRatings_ReturnsAllRatings() {
@@ -63,4 +80,42 @@ func (s *ratingUseCaseSuite) Test_SaveRating_ReturnsError() {
 	cancelFunc()
 	err := s.ratingUseCase.SaveRating(ctx, model_test_helper.TestUserId, model_test_helper.BloodbathRating)
 	require.ErrorContains(s.T(), err, "context canceled")
+}
+
+func (s *ratingUseCaseSuite) Test_GetUnratedArtistsForFestival_ReturnsUnratedArtists() {
+	err := s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.BloodbathRating)
+	require.NoError(s.T(), err)
+	err = s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.HypocrisyRating)
+	require.NoError(s.T(), err)
+
+	unratedArtists, err := s.ratingUseCase.GetUnratedArtistsForFestival(context.Background(), model_test_helper.TestUserId, "festival-name")
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), []model.Artist{model_test_helper.UnratedArtist}, unratedArtists)
+}
+
+func (s *ratingUseCaseSuite) Test_GetUnratedArtistsForFestival_ReturnsWhenGettingRatingsFails() {
+	err := s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.BloodbathRating)
+	require.NoError(s.T(), err)
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	cancelFunc()
+
+	_, err = s.ratingUseCase.GetUnratedArtistsForFestival(ctx, model_test_helper.TestUserId, "festival-name")
+	require.Error(s.T(), err)
+	require.Contains(s.T(), err.Error(), "context canceled")
+}
+
+func (s *ratingUseCaseSuite) Test_GetUnratedArtistsForFestival_ReturnsWhenGettingFestivalFails() {
+	err := s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.BloodbathRating)
+	require.NoError(s.T(), err)
+
+	festivalStorage := func() usecase.FestivalStorage {
+		return mockFestivalStorage{
+			getFestival: func(ctx context.Context, festivalName string) (model.Festival, error) {
+				return model.Festival{}, errors.New("fetching festival failed")
+			},
+		}
+	}
+	ratingUseCase := usecase.NewRatingUseCase(s.ratingRepo, festivalStorage())
+	_, err = ratingUseCase.GetUnratedArtistsForFestival(context.Background(), model_test_helper.TestUserId, "festival-name")
+	require.ErrorContains(s.T(), err, "fetching festival failed")
 }

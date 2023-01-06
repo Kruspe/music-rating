@@ -21,9 +21,10 @@ import (
 
 type ratingHandlerSuite struct {
 	suite.Suite
-	ratingRepo *persistence.RatingRepo
-	handler    *handler.RatingHandler
-	logHook    *test.Hook
+	ratingRepo      *persistence.RatingRepo
+	festivalStorage usecase.FestivalStorage
+	handler         *handler.RatingHandler
+	logHook         *test.Hook
 }
 
 func Test_RatingHandlerSuite(t *testing.T) {
@@ -34,9 +35,10 @@ func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
 	ph := persistence_test_helper.NewPersistenceHelper()
 
 	s.ratingRepo = persistence.NewRatingRepo(ph.Dynamo, ph.TableName)
+	s.festivalStorage = persistence.NewFestivalStorage(ph.S3Mock)
 	logger, hook := test.NewNullLogger()
 	s.logHook = hook
-	s.handler = handler.NewRatingHandler(usecase.NewRatingUseCase(s.ratingRepo), logger)
+	s.handler = handler.NewRatingHandler(usecase.NewRatingUseCase(s.ratingRepo, s.festivalStorage), logger)
 }
 
 func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns201() {
@@ -178,6 +180,51 @@ func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns500WhenContextIsCance
 
 	response, err := s.handler.Handle(ctx, events.APIGatewayV2HTTPRequest{
 		RawPath: "/ratings",
+		RequestContext: events.APIGatewayV2HTTPRequestContext{
+			HTTP: events.APIGatewayV2HTTPRequestContextHTTPDescription{
+				Method: "GET",
+			},
+		},
+		Headers: map[string]string{
+			"authorization": fmt.Sprintf("Bearer %s", model_test_helper.TestToken),
+		},
+	})
+	require.ErrorContains(s.T(), err, "context canceled")
+	require.Equal(s.T(), http.StatusInternalServerError, response.StatusCode)
+	require.Contains(s.T(), s.logHook.LastEntry().Message, "context canceled")
+}
+
+func (s *ratingHandlerSuite) Test_Handle_GetUnratedArtistsForFestival_Returns200AndAllUnratedArtists() {
+	err := s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.BloodbathRating)
+	require.NoError(s.T(), err)
+	err = s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.HypocrisyRating)
+	require.NoError(s.T(), err)
+
+	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{
+		RawPath: "/festivals/wacken",
+		RequestContext: events.APIGatewayV2HTTPRequestContext{
+			HTTP: events.APIGatewayV2HTTPRequestContextHTTPDescription{
+				Method: "GET",
+			},
+		},
+		Headers: map[string]string{
+			"authorization": fmt.Sprintf("Bearer %s", model_test_helper.TestToken),
+		},
+	})
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), http.StatusOK, response.StatusCode)
+	var result []model.ArtistDao
+	err = json.Unmarshal([]byte(response.Body), &result)
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), []model.ArtistDao{model_test_helper.UnratedArtistDao}, result)
+}
+
+func (s *ratingHandlerSuite) Test_Handle_GetUnratedArtistsForFestival_Returns500WhenContextIsCanceled() {
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	cancelFunc()
+
+	response, err := s.handler.Handle(ctx, events.APIGatewayV2HTTPRequest{
+		RawPath: "/festivals/wacken",
 		RequestContext: events.APIGatewayV2HTTPRequestContext{
 			HTTP: events.APIGatewayV2HTTPRequestContextHTTPDescription{
 				Method: "GET",

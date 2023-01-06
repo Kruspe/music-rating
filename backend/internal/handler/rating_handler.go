@@ -15,6 +15,7 @@ import (
 type ratingUseCase interface {
 	GetRatings(ctx context.Context, userId string) ([]model.Rating, error)
 	SaveRating(ctx context.Context, userId string, rating model.Rating) error
+	GetUnratedArtistsForFestival(ctx context.Context, userId, festivalName string) ([]model.Artist, error)
 }
 
 type RatingHandler struct {
@@ -35,11 +36,15 @@ func (h *RatingHandler) Handle(ctx context.Context, event events.APIGatewayV2HTT
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusUnauthorized}, err
 	}
 
+	var festival string
 	switch {
-	case event.RawPath == "/ratings" && event.RequestContext.HTTP.Method == http.MethodPost:
+	case match(event.RawPath, "/ratings") && event.RequestContext.HTTP.Method == http.MethodPost:
 		return h.createRating(ctx, userId, event.Body)
-	case event.RawPath == "/ratings" && event.RequestContext.HTTP.Method == http.MethodGet:
+	case match(event.RawPath, "/ratings") && event.RequestContext.HTTP.Method == http.MethodGet:
 		return h.getRatings(ctx, userId)
+		// TODO handle not implemented festivals
+	case match(event.RawPath, "/festivals/+", &festival) && event.RequestContext.HTTP.Method == http.MethodGet:
+		return h.getUnratedArtistsForFestival(ctx, userId, festival)
 	}
 	return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusNotFound}, nil
 }
@@ -90,7 +95,13 @@ func (h *RatingHandler) getRatings(ctx context.Context, userId string) (events.A
 	}
 	var ratingDaos []model.RatingDao
 	for _, r := range ratings {
-		ratingDaos = append(ratingDaos, toRatingDao(r))
+		ratingDaos = append(ratingDaos, model.RatingDao{
+			ArtistName:   r.ArtistName,
+			Comment:      r.Comment,
+			FestivalName: r.FestivalName,
+			Rating:       &r.Rating,
+			Year:         &r.Year,
+		})
 	}
 	result, err := json.Marshal(ratingDaos)
 	if err != nil {
@@ -100,14 +111,26 @@ func (h *RatingHandler) getRatings(ctx context.Context, userId string) (events.A
 	return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusOK, Body: string(result)}, nil
 }
 
-func toRatingDao(rating model.Rating) model.RatingDao {
-	return model.RatingDao{
-		ArtistName:   rating.ArtistName,
-		Comment:      rating.Comment,
-		FestivalName: rating.FestivalName,
-		Rating:       &rating.Rating,
-		Year:         &rating.Year,
+func (h *RatingHandler) getUnratedArtistsForFestival(ctx context.Context, userId, festivalName string) (events.APIGatewayV2HTTPResponse, error) {
+	unratedArtists, err := h.ratingUseCase.GetUnratedArtistsForFestival(ctx, userId, festivalName)
+	if err != nil {
+		h.logger.Error(err)
+		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusInternalServerError}, err
 	}
+
+	var unratedArtistDaos []model.ArtistDao
+	for _, u := range unratedArtists {
+		unratedArtistDaos = append(unratedArtistDaos, model.ArtistDao{
+			ArtistName: u.ArtistName,
+			ImageUrl:   u.ImageUrl,
+		})
+	}
+	result, err := json.Marshal(unratedArtistDaos)
+	if err != nil {
+		h.logger.Error(err)
+		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusInternalServerError}, err
+	}
+	return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusOK, Body: string(result)}, nil
 }
 
 func getUserId(token string) (string, error) {
@@ -120,4 +143,31 @@ func getUserId(token string) (string, error) {
 		return "", errors.New("missing sub in token")
 	}
 	return claims.Subject, nil
+}
+
+func match(path, pattern string, vars ...interface{}) bool {
+	for ; pattern != "" && path != ""; pattern = pattern[1:] {
+		switch pattern[0] {
+		case '+':
+			slash := strings.IndexByte(path, '/')
+			if slash < 0 {
+				slash = len(path)
+			}
+			segment := path[:slash]
+			path = path[slash:]
+			switch p := vars[0].(type) {
+			case *string:
+				*p = segment
+			default:
+				panic("vars must be *string")
+			}
+			vars = vars[1:]
+		case path[0]:
+			path = path[1:]
+		default:
+			return false
+		}
+	}
+
+	return path == "" && pattern == ""
 }

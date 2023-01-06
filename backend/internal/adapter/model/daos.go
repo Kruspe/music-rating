@@ -7,3 +7,8 @@ type RatingDao struct {
 	Rating       *int   `json:"rating"`
 	Year         *int   `json:"year"`
 }
+
+type ArtistDao struct {
+	ArtistName string `json:"artist_name"`
+	ImageUrl   string `json:"image_url"`
+}

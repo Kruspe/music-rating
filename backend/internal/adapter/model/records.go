@@ -19,3 +19,8 @@ type RatingRecord struct {
 	UserId       string `dynamodbav:"user_id"`
 	Year         int    `dynamodbav:"year"`
 }
+
+type ArtistRecord struct {
+	Artist string `json:"artist"`
+	Image  string `json:"image"`
+}

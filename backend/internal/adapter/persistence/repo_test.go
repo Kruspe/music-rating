@@ -57,7 +57,7 @@ func (s *ratingRepoSuite) Test_GetRatings_ReturnsAllRatingsForUser() {
 
 	ratings, err := s.repo.GetRatings(context.Background(), model_test_helper.TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.Rating{model_test_helper.HypocrisyRating, model_test_helper.BloodbathRating}, ratings)
+	require.Equal(s.T(), []model.Rating{model_test_helper.BloodbathRating, model_test_helper.HypocrisyRating}, ratings)
 }
 
 func (s *ratingRepoSuite) Test_GetRatings_ReturnsError() {

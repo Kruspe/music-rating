@@ -11,6 +11,11 @@ const (
 	TestUserId = "MetalLover666"
 )
 
+const (
+	BloodbathImageUrl = "https://bloodbath.com"
+	HypocrisyImageUrl = "https://hypocrisy.com"
+)
+
 var BloodbathRating = model.Rating{
 	ArtistName:   "Bloodbath",
 	Comment:      "old school swedish death metal",
@@ -57,4 +62,46 @@ var HypocrisyRatingRecord = model.RatingRecord{
 	Rating:       HypocrisyRating.Rating,
 	UserId:       TestUserId,
 	Year:         HypocrisyRating.Year,
+}
+
+var ArtistsRecord = []model.ArtistRecord{
+	{
+		Artist: BloodbathRating.ArtistName,
+		Image:  BloodbathImageUrl,
+	},
+	{
+		Artist: HypocrisyRating.ArtistName,
+		Image:  HypocrisyImageUrl,
+	},
+	{
+		Artist: UnratedArtist.ArtistName,
+		Image:  UnratedArtist.ImageUrl,
+	},
+}
+
+var Festival = model.Festival{
+	Artists: []model.Artist{
+		{
+			ArtistName: BloodbathRating.ArtistName,
+			ImageUrl:   BloodbathImageUrl,
+		},
+		{
+			ArtistName: HypocrisyRating.ArtistName,
+			ImageUrl:   HypocrisyImageUrl,
+		},
+		{
+			ArtistName: UnratedArtist.ArtistName,
+			ImageUrl:   UnratedArtist.ImageUrl,
+		},
+	},
+}
+
+var UnratedArtist = model.Artist{
+	ArtistName: "Benediction",
+	ImageUrl:   "https://unrated-artist-image.url",
+}
+
+var UnratedArtistDao = model.ArtistDao{
+	ArtistName: UnratedArtist.ArtistName,
+	ImageUrl:   UnratedArtist.ImageUrl,
 }

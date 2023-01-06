@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	log "github.com/sirupsen/logrus"
 	"os"
 )
@@ -27,8 +28,9 @@ func handle(ctx context.Context, event events.APIGatewayV2HTTPRequest) (events.A
 		return events.APIGatewayV2HTTPResponse{StatusCode: 500}, err
 	}
 	repo := persistence.NewRatingRepo(dynamodb.NewFromConfig(cfg), os.Getenv("TABLE_NAME"))
+	festivalStorage := persistence.NewFestivalStorage(s3.NewFromConfig(cfg))
 
-	ratingUseCase := usecase.NewRatingUseCase(repo)
+	ratingUseCase := usecase.NewRatingUseCase(repo, festivalStorage)
 
 	return handler.NewRatingHandler(ratingUseCase, logger).Handle(ctx, event)
 }

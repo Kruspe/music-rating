@@ -22,6 +22,7 @@ import (
 type local struct {
 	logger    *log.Logger
 	dynamo    *dynamodb.Client
+	s3        persistence.S3Client
 	tableName string
 }
 
@@ -35,6 +36,7 @@ func main() {
 		logger:    logger,
 		dynamo:    ph.Dynamo,
 		tableName: ph.TableName,
+		s3:        ph.S3Mock,
 	}
 
 	http.HandleFunc("/api/", l.handle)
@@ -46,7 +48,8 @@ func main() {
 
 func (l *local) handle(w http.ResponseWriter, r *http.Request) {
 	repo := persistence.NewRatingRepo(l.dynamo, l.tableName)
-	ratingUseCase := usecase.NewRatingUseCase(repo)
+	festivalStorage := persistence.NewFestivalStorage(l.s3)
+	ratingUseCase := usecase.NewRatingUseCase(repo, festivalStorage)
 	h := handler.NewRatingHandler(ratingUseCase, l.logger)
 
 	buffer := new(strings.Builder)

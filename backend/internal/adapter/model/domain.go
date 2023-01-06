@@ -7,3 +7,12 @@ type Rating struct {
 	Rating       int
 	Year         int
 }
+
+type Festival struct {
+	Artists []Artist
+}
+
+type Artist struct {
+	ArtistName string
+	ImageUrl   string
+}
