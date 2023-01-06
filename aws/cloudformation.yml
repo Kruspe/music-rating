@@ -19,6 +19,8 @@ Parameters:
     Default: arn:aws:acm:us-east-1:025007687265:certificate/ce1411e2-6f5d-4ffb-be8d-878a78cb6adb
   ParamClientId:
     Type: String
+  ParamFestivalBucketName:
+    Type: AWS::SSM::Parameter::Value<String>
 
 Resources:
   # Database
@@ -170,6 +172,7 @@ Resources:
         Variables:
           LOG_LEVEL: error
           TABLE_NAME: !Ref Table
+          FESTIVAL_ARTIST_BUCKET_NAME: !Ref ParamFestivalBucketName
   BackendLambdaPermission:
     Type: AWS::Lambda::Permission
     Properties:

@@ -37,6 +37,7 @@ tasks:
       ParamDomainHostedZoneId=/domain/{{.REACT_APP_DOMAIN_NAME}}/hosted-zone
       ParamEUDomainCertificateArn=/domain/api.{{.REACT_APP_DOMAIN_NAME}}/certificate
       ParamClientId={{.REACT_APP_CLIENT_ID}}
+      ParamFestivalBucketName=/festival-bucket/name
       --profile music-rating
     vars:
       BACKEND_VERSION_ID:
