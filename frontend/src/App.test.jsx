@@ -1,13 +1,16 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import { render, screen } from '@testing-library/react';
 import App from './App';
+import Ratings from './wacken';
 
 jest.mock('@auth0/auth0-react');
+jest.mock('./wacken');
 
 beforeEach(() => {
   useAuth0.mockImplementation(() => ({
     isAuthenticated: true,
   }));
+  Ratings.mockImplementation(() => (<p>WackenComponent</p>));
 });
 
 it('should show log in when user is not logged in', () => {
@@ -20,8 +23,8 @@ it('should show log in when user is not logged in', () => {
   expect(screen.getByRole('button', { name: 'Log in' })).toBeVisible();
 });
 
-it('should show content when user is logged in', () => {
+it('should show bands for wacken', () => {
   render(<App />);
 
-  expect(screen.getByText('Hello World')).toBeVisible();
+  expect(screen.getByText('WackenComponent')).toBeVisible();
 });

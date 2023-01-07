@@ -4,11 +4,12 @@ import {
   Button, Card, CardContent, Typography,
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
+import Wacken from './wacken';
 
 function App() {
   const { isAuthenticated, loginWithRedirect } = useAuth0();
   return (
-    isAuthenticated ? <p>Hello World</p> : (
+    isAuthenticated ? <Wacken /> : (
       <Grid container justifyContent="center" alignItems="center" minHeight="100vh">
         <Card>
           <CardContent>
