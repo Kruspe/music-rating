@@ -219,6 +219,38 @@ func (s *ratingHandlerSuite) Test_Handle_GetUnratedArtistsForFestival_Returns200
 	require.Equal(s.T(), []model.ArtistDao{model_test_helper.UnratedArtistDao}, result)
 }
 
+func (s *ratingHandlerSuite) Test_Handle_GetUnratedArtistsForFestival_Returns200AndEmptyList_WhenAllArtistsAreRated() {
+	err := s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.BloodbathRating)
+	require.NoError(s.T(), err)
+	err = s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.HypocrisyRating)
+	require.NoError(s.T(), err)
+	err = s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model.Rating{
+		ArtistName:   model_test_helper.UnratedArtist.ArtistName,
+		FestivalName: "Concert",
+		Rating:       2022,
+		Year:         5,
+	})
+	require.NoError(s.T(), err)
+
+	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{
+		RawPath: "/festivals/wacken",
+		RequestContext: events.APIGatewayV2HTTPRequestContext{
+			HTTP: events.APIGatewayV2HTTPRequestContextHTTPDescription{
+				Method: "GET",
+			},
+		},
+		Headers: map[string]string{
+			"authorization": fmt.Sprintf("Bearer %s", model_test_helper.TestToken),
+		},
+	})
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), http.StatusOK, response.StatusCode)
+	var result []model.ArtistDao
+	err = json.Unmarshal([]byte(response.Body), &result)
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), []model.ArtistDao{}, result)
+}
+
 func (s *ratingHandlerSuite) Test_Handle_GetUnratedArtistsForFestival_Returns500WhenContextIsCanceled() {
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	cancelFunc()
