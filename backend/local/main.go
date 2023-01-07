@@ -47,6 +47,13 @@ func main() {
 }
 
 func (l *local) handle(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(200)
+		return
+	}
+
 	repo := persistence.NewRatingRepo(l.dynamo, l.tableName)
 	festivalStorage := persistence.NewFestivalStorage(l.s3)
 	ratingUseCase := usecase.NewRatingUseCase(repo, festivalStorage)
@@ -74,8 +81,6 @@ func (l *local) handle(w http.ResponseWriter, r *http.Request) {
 		log.Error(err)
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "*")
 	w.WriteHeader(response.StatusCode)
 	if response.Body != "" {
 		var r interface{}
