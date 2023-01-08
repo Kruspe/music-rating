@@ -80,7 +80,6 @@ export default function RatingCard({ artistName, imageUrl }) {
           </form>
         </Grid>
       </Grid>
-
     </Card>
   );
 }

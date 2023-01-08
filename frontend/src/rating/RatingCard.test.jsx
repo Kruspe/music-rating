@@ -13,4 +13,5 @@ it('should show artist name when no image is supplied', () => {
   render(<RatingCard artistName={unratedArtist.artist_name} />);
 
   expect(screen.getByText(unratedArtist.artist_name)).toBeVisible();
+  expect(screen.queryByAltText(`${unratedArtist.artist_name} image`)).not.toBeInTheDocument();
 });

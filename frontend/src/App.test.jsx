@@ -7,24 +7,26 @@ jest.mock('@auth0/auth0-react');
 jest.mock('./wacken');
 
 beforeEach(() => {
-  useAuth0.mockImplementation(() => ({
-    isAuthenticated: true,
-  }));
   Wacken.mockImplementation(() => (<p>WackenComponent</p>));
 });
 
-it('should show log in when user is not logged in', () => {
+it('should show information that user has to login', () => {
   useAuth0.mockImplementation(() => ({
     isAuthenticated: false,
   }));
   render(<App />);
 
+  expect(screen.getByText('MusicRating')).toBeVisible();
   expect(screen.getByText('You need to log in in order to rate your music')).toBeVisible();
   expect(screen.getByRole('button', { name: 'Log in' })).toBeVisible();
 });
 
-it('should show bands for wacken', () => {
+it('should show WackenComponent', () => {
+  useAuth0.mockImplementation(() => ({
+    isAuthenticated: true,
+  }));
   render(<App />);
 
+  expect(screen.getByText('Log out')).toBeVisible();
   expect(screen.getByText('WackenComponent')).toBeVisible();
 });
