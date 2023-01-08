@@ -2,13 +2,13 @@ name: Test
 on:
   push:
     branches:
-      - master
+    - main
   pull_request:
     types:
-      - opened
-      - edited
-      - synchronize
-      - reopened
+    - opened
+    - edited
+    - synchronize
+    - reopened
 
 jobs:
   test-frontend:
@@ -16,14 +16,30 @@ jobs:
     defaults:
       run:
         working-directory: frontend
-    strategy:
-      matrix:
-        node-version: [ 16.x, 17.x ]
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: yarn
-      - run: yarn test
+    - uses: actions/checkout@v3
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.x
+    - run: yarn
+    - run: yarn test
+
+  test-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.18'
+    - name: Install Task
+      uses: arduino/setup-task@v1
+    - name: Test
+      run: |
+        task start-dynamo
+        GOOS=;inux GOARCH=amd64 go test ./...
+
