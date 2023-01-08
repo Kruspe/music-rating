@@ -29,11 +29,14 @@ beforeEach(() => {
 
 it('should load all Providers and ContentComponent', () => {
   render(<Providers><p>Content</p></Providers>);
+
   expect(screen.getByText('QueryClientProvider')).toBeVisible();
+
   expect(screen.getByText('Auth0Provider')).toBeVisible();
   expect(screen.getByText('ClientId: prjn715M1O1ysyL8yxOF8gjdcWpnq9a4')).toBeVisible();
   expect(screen.getByText('Domain: https://musicrating.eu.auth0.com')).toBeVisible();
   expect(screen.getByText('RedirectUri: http://localhost:3000')).toBeVisible();
   expect(screen.getByText('Audience: undefined')).toBeVisible();
+
   expect(screen.getByText('Content')).toBeVisible();
 });
