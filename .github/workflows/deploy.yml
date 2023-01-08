@@ -1,0 +1,64 @@
+name: Deploy
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  test-frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.x
+    - run: yarn
+    - run: CI=true yarn test
+
+  test-backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.18'
+    - name: Install Task
+      uses: arduino/setup-task@v1
+    - name: Test
+      run: |
+        task start-dynamodb
+        GOOS=linux GOARCH=amd64 go test ./...
+
+  deploy:
+    needs: [test-frontend, test-backend]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.18'
+    - name: Use Node.js 16.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 16.x
+    - name: Install Task
+      uses: arduino/setup-task@v1
+    - name: Deploy
+      run: |
+        REACT_APP_DOMAIN_NAME="$DOMAIN_NAME" REACT_APP_CLIENT_ID="$CLIENT_ID" task deploy
+        GOOS=linux GOARCH=amd64 go test ./...
+      env:
+        DOMAIN_NAME: ${{secrets.DOMAIN_NAME}}
+        CLIENT_ID: ${{secrets.CLIENT_ID}}
+        AWS_ACCESS_KEY_ID: ${{secrets.AWS_ACCESS_KEY_ID}}
+        AWS_SECRET_ACCESS_KEY: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        AWS_DEFAULT_REGION: eu-west-1
