@@ -20,7 +20,6 @@ export const hypocrisyRating = {
 
 export const unratedArtist = { artist_name: 'God Dethroned', image_url: 'https://god-dethrond-image.com' };
 
-let unratedArtists = [unratedArtist];
 export const checkToken = (req) => {
   if (req.headers.get('authorization') !== `Bearer ${TestToken}`) {
     console.error('missing token');
@@ -28,18 +27,28 @@ export const checkToken = (req) => {
   }
 };
 const api = 'http://localhost:8080/api';
+
+let ratedArtists;
+let unratedArtists;
+beforeEach(() => {
+  ratedArtists = [bloodbathRating, hypocrisyRating];
+  unratedArtists = [unratedArtist];
+});
 const handlers = [
   rest.get(`${api}/ratings`, (req, res, ctx) => {
     checkToken(req);
     return res(
       ctx.status(200),
-      ctx.json([bloodbathRating, hypocrisyRating]),
+      ctx.json(ratedArtists),
     );
   }),
   rest.post(`${api}/ratings`, async (req, res, ctx) => {
     checkToken(req);
     const body = await req.json();
     unratedArtists = unratedArtists.filter((a) => a.artist_name !== body.artist_name);
+    if (ratedArtists.filter((a) => a.artist_name === body.artist_name).length === 0) {
+      ratedArtists.push(body);
+    }
     return res(ctx.status(201));
   }),
   rest.get(`${api}/festivals/wacken`, (req, res, ctx) => {

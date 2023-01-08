@@ -1,14 +1,28 @@
 import { rest } from 'msw';
 import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/react';
+import { useQuery } from '@tanstack/react-query';
 import { render, screen } from '../../test/test-utils';
 import Wacken from './index';
-import { mockServer, unratedArtist } from '../../test/mocks';
+import { mockServer, TestToken, unratedArtist } from '../../test/mocks';
 
 let user;
 beforeEach(() => {
   user = userEvent.setup();
 });
+
+function AllRatingsTestComponent() {
+  const { data: ratings, isSuccess } = useQuery(['ratings'], async () => {
+    const response = await fetch(`${process.env.REACT_APP_API_ENDPOINT}/ratings`, {
+      headers: {
+        authorization: `Bearer ${TestToken}`,
+      },
+    });
+    return response.json();
+  });
+
+  return isSuccess && <p>{`Found ${ratings.length} ratings`}</p>;
+}
 
 it('should show unrated band and allow to rate it', async () => {
   render(<Wacken />);
@@ -19,9 +33,11 @@ it('should show unrated band and allow to rate it', async () => {
   await user.type(screen.getByLabelText(/Year/), '2015');
   await user.click(screen.getByLabelText(/5 Stars/));
   await user.type(screen.getByLabelText(/Comment/), 'Swedish death metal');
-  await user.click(screen.getByText('Rate'));
+  await user.click(screen.getByRole('button', { name: 'Rate' }));
 
-  await waitFor(() => expect(screen.queryByAltText(`${unratedArtist.artist_name} image`)).toBeNull());
+  await waitFor(() => expect(screen.queryByAltText(`${unratedArtist.artist_name} image`)).not.toBeInTheDocument());
+  render(<AllRatingsTestComponent />);
+  expect(await screen.findByText('Found 3 ratings')).toBeVisible();
 });
 
 it('should display message that all bands have been rated', async () => {
