@@ -12,7 +12,7 @@ beforeEach(() => {
 });
 
 function AllRatingsTestComponent() {
-  const { data: ratings, isSuccess } = useQuery(['ratings'], async () => {
+  const { data: ratings, isFetched } = useQuery(['ratings'], async () => {
     const response = await fetch(`${process.env.REACT_APP_API_ENDPOINT}/ratings`, {
       headers: {
         authorization: `Bearer ${TestToken}`,
@@ -21,7 +21,7 @@ function AllRatingsTestComponent() {
     return response.json();
   });
 
-  return isSuccess && <p>{`Found ${ratings.length} ratings`}</p>;
+  return isFetched && <p>{`Found ${ratings.length} ratings`}</p>;
 }
 
 it('should show unrated band and allow to rate it', async () => {

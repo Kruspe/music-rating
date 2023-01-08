@@ -16,15 +16,19 @@ export default function Wacken() {
     return result.json();
   });
 
-  return isFetched && bands.length > 0
-    ? (
-      <Grid container spacing={0.5}>
-        {bands.map((band) => (
-          <Grid key={band.artist_name}>
-            <RatingCard artistName={band.artist_name} imageUrl={band.image_url} />
-          </Grid>
-        ))}
-      </Grid>
-    )
-    : <Typography variant="h2">You rated all bands that are announced at the moment</Typography>;
+  if (isFetched) {
+    return bands.length > 0
+      ? (
+        <Grid container spacing={0.5}>
+          {bands.map((band) => (
+            <Grid key={band.artist_name}>
+              <RatingCard artistName={band.artist_name} imageUrl={band.image_url} />
+            </Grid>
+          ))}
+        </Grid>
+      )
+      : <Typography variant="h2">You rated all bands that are announced at the moment</Typography>;
+  }
+
+  return <div />;
 }
