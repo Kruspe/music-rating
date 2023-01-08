@@ -118,7 +118,7 @@ func (h *RatingHandler) getUnratedArtistsForFestival(ctx context.Context, userId
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusInternalServerError}, err
 	}
 
-	unratedArtistDaos := make([]model.ArtistDao, len(unratedArtists))
+	unratedArtistDaos := make([]model.ArtistDao, 0)
 	for _, u := range unratedArtists {
 		unratedArtistDaos = append(unratedArtistDaos, model.ArtistDao(u))
 	}
