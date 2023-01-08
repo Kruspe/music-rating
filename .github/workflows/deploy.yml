@@ -42,6 +42,7 @@ jobs:
         GOOS=linux GOARCH=amd64 go test ./...
 
   deploy:
+    concurrency: deploy
     needs: [test-frontend, test-backend]
     runs-on: ubuntu-latest
     steps:
