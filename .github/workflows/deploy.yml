@@ -34,6 +34,8 @@ jobs:
         go-version: '1.18'
     - name: Install Task
       uses: arduino/setup-task@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Test
       run: |
         task start-dynamodb
@@ -54,6 +56,8 @@ jobs:
         node-version: 16.x
     - name: Install Task
       uses: arduino/setup-task@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
     - name: Deploy
       run: |
         aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile music-rating
