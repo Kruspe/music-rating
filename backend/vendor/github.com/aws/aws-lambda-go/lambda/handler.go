@@ -3,8 +3,10 @@
 package lambda
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"reflect"
 
@@ -15,45 +17,118 @@ type Handler interface {
 	Invoke(ctx context.Context, payload []byte) ([]byte, error)
 }
 
-// lambdaHandler is the generic function type
-type lambdaHandler func(context.Context, []byte) (interface{}, error)
-
-// Invoke calls the handler, and serializes the response.
-// If the underlying handler returned an error, or an error occurs during serialization, error is returned.
-func (handler lambdaHandler) Invoke(ctx context.Context, payload []byte) ([]byte, error) {
-	response, err := handler(ctx, payload)
-	if err != nil {
-		return nil, err
-	}
-
-	responseBytes, err := json.Marshal(response)
-	if err != nil {
-		return nil, err
-	}
-
-	return responseBytes, nil
+type handlerOptions struct {
+	Handler
+	baseContext              context.Context
+	jsonResponseEscapeHTML   bool
+	jsonResponseIndentPrefix string
+	jsonResponseIndentValue  string
+	enableSIGTERM            bool
+	sigtermCallbacks         []func()
 }
 
-func errorHandler(e error) lambdaHandler {
-	return func(ctx context.Context, event []byte) (interface{}, error) {
-		return nil, e
-	}
+type Option func(*handlerOptions)
+
+// WithContext is a HandlerOption that sets the base context for all invocations of the handler.
+//
+// Usage:
+//
+//	lambda.StartWithOptions(
+//	 	func (ctx context.Context) (string, error) {
+//	 		return ctx.Value("foo"), nil
+//	 	},
+//	 	lambda.WithContext(context.WithValue(context.Background(), "foo", "bar"))
+//	)
+func WithContext(ctx context.Context) Option {
+	return Option(func(h *handlerOptions) {
+		h.baseContext = ctx
+	})
 }
 
-func validateArguments(handler reflect.Type) (bool, error) {
-	handlerTakesContext := false
-	if handler.NumIn() > 2 {
-		return false, fmt.Errorf("handlers may not take more than two arguments, but handler takes %d", handler.NumIn())
-	} else if handler.NumIn() > 0 {
+// WithSetEscapeHTML sets the SetEscapeHTML argument on the underlying json encoder
+//
+// Usage:
+//
+//	lambda.StartWithOptions(
+//		func () (string, error) {
+//			return "<html><body>hello!></body></html>", nil
+//		},
+//		lambda.WithSetEscapeHTML(true),
+//	)
+func WithSetEscapeHTML(escapeHTML bool) Option {
+	return Option(func(h *handlerOptions) {
+		h.jsonResponseEscapeHTML = escapeHTML
+	})
+}
+
+// WithSetIndent sets the SetIndent argument on the underling json encoder
+//
+// Usage:
+//
+//	lambda.StartWithOptions(
+//		func (event any) (any, error) {
+//			return event, nil
+//		},
+//		lambda.WithSetIndent(">"," "),
+//	)
+func WithSetIndent(prefix, indent string) Option {
+	return Option(func(h *handlerOptions) {
+		h.jsonResponseIndentPrefix = prefix
+		h.jsonResponseIndentValue = indent
+	})
+}
+
+// WithEnableSIGTERM enables SIGTERM behavior within the Lambda platform on container spindown.
+// SIGKILL will occur ~500ms after SIGTERM.
+// Optionally, an array of callback functions to run on SIGTERM may be provided.
+//
+// Usage:
+//
+//	lambda.StartWithOptions(
+//	    func (event any) (any, error) {
+//			return event, nil
+//		},
+//		lambda.WithEnableSIGTERM(func() {
+//			log.Print("function container shutting down...")
+//		})
+//	)
+func WithEnableSIGTERM(callbacks ...func()) Option {
+	return Option(func(h *handlerOptions) {
+		h.sigtermCallbacks = append(h.sigtermCallbacks, callbacks...)
+		h.enableSIGTERM = true
+	})
+}
+
+// handlerTakesContext returns whether the handler takes a context.Context as its first argument.
+func handlerTakesContext(handler reflect.Type) (bool, error) {
+	switch handler.NumIn() {
+	case 0:
+		return false, nil
+	case 1:
 		contextType := reflect.TypeOf((*context.Context)(nil)).Elem()
 		argumentType := handler.In(0)
-		handlerTakesContext = argumentType.Implements(contextType)
-		if handler.NumIn() > 1 && !handlerTakesContext {
+		if argumentType.Kind() != reflect.Interface {
+			return false, nil
+		}
+
+		// handlers like func(event any) are valid.
+		if argumentType.NumMethod() == 0 {
+			return false, nil
+		}
+
+		if !contextType.Implements(argumentType) || !argumentType.Implements(contextType) {
+			return false, fmt.Errorf("handler takes an interface, but it is not context.Context: %q", argumentType.Name())
+		}
+		return true, nil
+	case 2:
+		contextType := reflect.TypeOf((*context.Context)(nil)).Elem()
+		argumentType := handler.In(0)
+		if argumentType.Kind() != reflect.Interface || !contextType.Implements(argumentType) || !argumentType.Implements(contextType) {
 			return false, fmt.Errorf("handler takes two arguments, but the first is not Context. got %s", argumentType.Kind())
 		}
+		return true, nil
 	}
-
-	return handlerTakesContext, nil
+	return false, fmt.Errorf("handlers may not take more than two arguments, but handler takes %d", handler.NumIn())
 }
 
 func validateReturns(handler reflect.Type) error {
@@ -77,20 +152,69 @@ func validateReturns(handler reflect.Type) error {
 
 // NewHandler creates a base lambda handler from the given handler function. The
 // returned Handler performs JSON serialization and deserialization, and
-// delegates to the input handler function.  The handler function parameter must
-// satisfy the rules documented by Start.  If handlerFunc is not a valid
+// delegates to the input handler function. The handler function parameter must
+// satisfy the rules documented by Start. If handlerFunc is not a valid
 // handler, the returned Handler simply reports the validation error.
 func NewHandler(handlerFunc interface{}) Handler {
-	if handlerFunc == nil {
-		return errorHandler(fmt.Errorf("handler is nil"))
+	return NewHandlerWithOptions(handlerFunc)
+}
+
+// NewHandlerWithOptions creates a base lambda handler from the given handler function. The
+// returned Handler performs JSON serialization and deserialization, and
+// delegates to the input handler function. The handler function parameter must
+// satisfy the rules documented by Start. If handlerFunc is not a valid
+// handler, the returned Handler simply reports the validation error.
+func NewHandlerWithOptions(handlerFunc interface{}, options ...Option) Handler {
+	return newHandler(handlerFunc, options...)
+}
+
+func newHandler(handlerFunc interface{}, options ...Option) *handlerOptions {
+	if h, ok := handlerFunc.(*handlerOptions); ok {
+		return h
 	}
+	h := &handlerOptions{
+		baseContext:              context.Background(),
+		jsonResponseEscapeHTML:   false,
+		jsonResponseIndentPrefix: "",
+		jsonResponseIndentValue:  "",
+	}
+	for _, option := range options {
+		option(h)
+	}
+	if h.enableSIGTERM {
+		enableSIGTERM(h.sigtermCallbacks)
+	}
+	h.Handler = reflectHandler(handlerFunc, h)
+	return h
+}
+
+type bytesHandlerFunc func(context.Context, []byte) ([]byte, error)
+
+func (h bytesHandlerFunc) Invoke(ctx context.Context, payload []byte) ([]byte, error) {
+	return h(ctx, payload)
+}
+func errorHandler(err error) Handler {
+	return bytesHandlerFunc(func(_ context.Context, _ []byte) ([]byte, error) {
+		return nil, err
+	})
+}
+
+func reflectHandler(handlerFunc interface{}, h *handlerOptions) Handler {
+	if handlerFunc == nil {
+		return errorHandler(errors.New("handler is nil"))
+	}
+
+	if handler, ok := handlerFunc.(Handler); ok {
+		return handler
+	}
+
 	handler := reflect.ValueOf(handlerFunc)
 	handlerType := reflect.TypeOf(handlerFunc)
 	if handlerType.Kind() != reflect.Func {
 		return errorHandler(fmt.Errorf("handler kind %s is not %s", handlerType.Kind(), reflect.Func))
 	}
 
-	takesContext, err := validateArguments(handlerType)
+	takesContext, err := handlerTakesContext(handlerType)
 	if err != nil {
 		return errorHandler(err)
 	}
@@ -99,7 +223,13 @@ func NewHandler(handlerFunc interface{}) Handler {
 		return errorHandler(err)
 	}
 
-	return lambdaHandler(func(ctx context.Context, payload []byte) (interface{}, error) {
+	return bytesHandlerFunc(func(ctx context.Context, payload []byte) ([]byte, error) {
+		in := bytes.NewBuffer(payload)
+		out := bytes.NewBuffer(nil)
+		decoder := json.NewDecoder(in)
+		encoder := json.NewEncoder(out)
+		encoder.SetEscapeHTML(h.jsonResponseEscapeHTML)
+		encoder.SetIndent(h.jsonResponseIndentPrefix, h.jsonResponseIndentValue)
 
 		trace := handlertrace.FromContext(ctx)
 
@@ -111,8 +241,7 @@ func NewHandler(handlerFunc interface{}) Handler {
 		if (handlerType.NumIn() == 1 && !takesContext) || handlerType.NumIn() == 2 {
 			eventType := handlerType.In(handlerType.NumIn() - 1)
 			event := reflect.New(eventType)
-
-			if err := json.Unmarshal(payload, event.Interface()); err != nil {
+			if err := decoder.Decode(event.Interface()); err != nil {
 				return nil, err
 			}
 			if nil != trace.RequestEvent {
@@ -123,22 +252,30 @@ func NewHandler(handlerFunc interface{}) Handler {
 
 		response := handler.Call(args)
 
-		// convert return values into (interface{}, error)
-		var err error
+		// return the error, if any
 		if len(response) > 0 {
-			if errVal, ok := response[len(response)-1].Interface().(error); ok {
-				err = errVal
+			if errVal, ok := response[len(response)-1].Interface().(error); ok && errVal != nil {
+				return nil, errVal
 			}
 		}
+		// set the response value, if any
 		var val interface{}
 		if len(response) > 1 {
 			val = response[0].Interface()
-
 			if nil != trace.ResponseEvent {
 				trace.ResponseEvent(ctx, val)
 			}
 		}
+		if err := encoder.Encode(val); err != nil {
+			return nil, err
+		}
 
-		return val, err
+		responseBytes := out.Bytes()
+		// back-compat, strip the encoder's trailing newline unless WithSetIndent was used
+		if h.jsonResponseIndentValue == "" && h.jsonResponseIndentPrefix == "" {
+			return responseBytes[:len(responseBytes)-1], nil
+		}
+
+		return responseBytes, nil
 	})
 }
