@@ -60,10 +60,10 @@ export default function RatingCard({ artistName, imageUrl }) {
           }}
           >
             <Grid xs={12}>
-              <TextField fullWidth required label="Festival/Concert" value={festival} onChange={(event) => setFestival(event.target.value)} />
+              <TextField fullWidth label="Festival/Concert" value={festival} onChange={(event) => setFestival(event.target.value)} />
             </Grid>
             <Grid xs={12}>
-              <TextField fullWidth required label="Year" value={year} onChange={(event) => setYear(event.target.value)} />
+              <TextField fullWidth label="Year" value={year} onChange={(event) => setYear(event.target.value)} />
             </Grid>
             <Grid xs={12}>
               <Rating

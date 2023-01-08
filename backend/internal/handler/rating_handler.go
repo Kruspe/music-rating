@@ -59,17 +59,9 @@ func (h *RatingHandler) createRating(ctx context.Context, userId string, body st
 		h.logger.Error("Request did not include artist_name")
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusBadRequest}, errors.New("missing artist_name from rating")
 	}
-	if rating.FestivalName == "" {
-		h.logger.Error("Request did not include festival_name")
-		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusBadRequest}, errors.New("missing festival_name from rating")
-	}
 	if rating.Rating == nil {
 		h.logger.Error("Request did not include rating")
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusBadRequest}, errors.New("missing rating from rating")
-	}
-	if rating.Year == nil {
-		h.logger.Error("Request did not include year")
-		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusBadRequest}, errors.New("missing year from rating")
 	}
 
 	err = h.ratingUseCase.SaveRating(ctx, userId, model.Rating{

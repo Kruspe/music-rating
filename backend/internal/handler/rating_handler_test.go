@@ -79,27 +79,11 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns400WhenRatingIsMiss
 			},
 		},
 		{
-			missingFieldName: "festival_name",
-			rating: model.RatingDao{
-				ArtistName: "Bloodbath",
-				Rating:     aws.Int(5),
-				Year:       aws.Int(666),
-			},
-		},
-		{
 			missingFieldName: "rating",
 			rating: model.RatingDao{
 				ArtistName:   "Bloodbath",
 				FestivalName: "Wacken",
 				Year:         aws.Int(666),
-			},
-		},
-		{
-			missingFieldName: "year",
-			rating: model.RatingDao{
-				ArtistName:   "Bloodbath",
-				FestivalName: "Wacken",
-				Rating:       aws.Int(5),
 			},
 		},
 	}
