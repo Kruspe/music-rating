@@ -41,5 +41,5 @@ jobs:
     - name: Test
       run: |
         task start-dynamodb
-        GOOS=;inux GOARCH=amd64 go test ./...
+        GOOS=linux GOARCH=amd64 go test ./...
 
