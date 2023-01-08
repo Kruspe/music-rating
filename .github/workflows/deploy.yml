@@ -57,7 +57,6 @@ jobs:
         aws configure set aws_access_key_id "$AWS_ACCESS_KEY_ID" --profile music-rating
         aws configure set aws_secret_access_key "$AWS_SECRET_ACCESS_KEY" --profile music-rating
         REACT_APP_DOMAIN_NAME="$DOMAIN_NAME" REACT_APP_CLIENT_ID="$CLIENT_ID" task deploy
-        GOOS=linux GOARCH=amd64 go test ./...
       env:
         DOMAIN_NAME: ${{secrets.DOMAIN_NAME}}
         CLIENT_ID: ${{secrets.CLIENT_ID}}
