@@ -1,10 +1,10 @@
 import { renderWithRouteProvider, screen } from '../test/test-utils';
+import AuthenticationGuard from './components/AuthenticationGuard';
 import Wacken from './wacken';
 import Home from './home';
-import AuthenticationGuard from './components/AuthenticationGuard';
 
-jest.mock('./Home');
-jest.mock('./Wacken');
+jest.mock('./home');
+jest.mock('./wacken');
 
 jest.mock('./components/AuthenticationGuard');
 
