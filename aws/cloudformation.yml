@@ -285,6 +285,9 @@ Resources:
           Action:
           - 's3:ListBucket'
           Resource: !Sub arn:aws:s3:::${ParamDeploymentBucketFrontendName}
+          Condition:
+            StringEquals:
+              AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${CFDistribution}
   FrontendARecord:
     Type: AWS::Route53::RecordSet
     Properties:
