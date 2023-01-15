@@ -1,16 +1,39 @@
 import './App.css';
-import { useAuth0 } from '@auth0/auth0-react';
-import Wacken from './wacken';
-import Home from './home';
-import MenuBar from './components/menu-bar';
+import { Auth0Provider } from '@auth0/auth0-react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import routesConfig from './config';
+import MenuBar from './components/MenuBar';
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
+
+const router = createBrowserRouter(routesConfig);
+
+const queryClient = new QueryClient();
 
 function App() {
-  const { isAuthenticated } = useAuth0();
   return (
-    <>
-      <MenuBar />
-      {isAuthenticated ? <Wacken /> : <Home />}
-    </>
+    <Auth0Provider
+      domain="https://musicrating.eu.auth0.com"
+      clientId={process.env.REACT_APP_CLIENT_ID}
+      redirectUri={process.env.REACT_APP_DOMAIN_NAME.includes('localhost')
+        ? process.env.REACT_APP_DOMAIN_NAME : `https://${process.env.REACT_APP_DOMAIN_NAME}`}
+      audience={process.env.REACT_APP_DOMAIN_NAME.includes('localhost')
+        ? undefined : `https://api.${process.env.REACT_APP_DOMAIN_NAME}`}
+    >
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <QueryClientProvider client={queryClient}>
+          <MenuBar />
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </ThemeProvider>
+    </Auth0Provider>
   );
 }
 

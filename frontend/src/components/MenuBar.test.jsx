@@ -1,7 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react';
 import userEvent from '@testing-library/user-event';
 import { render, screen } from '../../test/test-utils';
-import MenuBar from './menu-bar';
+import MenuBar from './MenuBar';
 
 jest.mock('@auth0/auth0-react');
 
