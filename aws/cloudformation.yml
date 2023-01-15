@@ -204,6 +204,11 @@ Resources:
     Properties:
       DistributionConfig:
         Aliases: [!Ref ParamDomainName]
+        CustomErrorResponses:
+        - ErrorCode: 404
+          ResponseCode: 200
+          ErrorCachingMinTTL: 31536000
+          ResponsePagePath: /index.html
         DefaultCacheBehavior:
           AllowedMethods:
           - GET
@@ -269,7 +274,8 @@ Resources:
           Principal:
             Service: cloudfront.amazonaws.com
           Action:
-          - 's3:GetObject'
+          - 's3:GetObject',
+          - 's3:ListBucket'
           Resource: !Join [ '', [ 'arn:aws:s3:::', !Ref ParamDeploymentBucketFrontendName, '/*' ] ]
           Condition:
             StringEquals:
