@@ -22,7 +22,7 @@ function App() {
       domain="https://musicrating.eu.auth0.com"
       clientId={process.env.REACT_APP_CLIENT_ID}
       redirectUri={process.env.REACT_APP_DOMAIN_NAME.includes('localhost')
-        ? process.env.REACT_APP_DOMAIN_NAME : `https://${process.env.REACT_APP_DOMAIN_NAME}`}
+        ? `${process.env.REACT_APP_DOMAIN_NAME}/wacken` : `https://${process.env.REACT_APP_DOMAIN_NAME}/wacken`}
       audience={process.env.REACT_APP_DOMAIN_NAME.includes('localhost')
         ? undefined : `https://api.${process.env.REACT_APP_DOMAIN_NAME}`}
     >
