@@ -277,7 +277,7 @@ Resources:
           - 's3:GetObject'
           Resource: !Join [ '', [ 'arn:aws:s3:::', !Ref ParamDeploymentBucketFrontendName, '/*' ] ]
           Condition:
-            StringEquals:
+            ArnEquals:
               AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${CFDistribution}
         - Effect: Allow
           Principal:
@@ -286,7 +286,7 @@ Resources:
           - 's3:ListBucket'
           Resource: !Sub arn:aws:s3:::${ParamDeploymentBucketFrontendName}
           Condition:
-            StringEquals:
+            ArnEquals:
               AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${CFDistribution}
   FrontendARecord:
     Type: AWS::Route53::RecordSet
