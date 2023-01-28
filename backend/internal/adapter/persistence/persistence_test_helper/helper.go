@@ -1,6 +1,7 @@
 package persistence_test_helper
 
 import (
+	"backend/internal/adapter/model"
 	"backend/internal/adapter/model/model_test_helper"
 	"backend/internal/adapter/persistence"
 	"bytes"
@@ -45,9 +46,25 @@ func NewPersistenceHelper() *PersistenceHelper {
 	}
 
 	s3Mock := func() persistence.S3Client {
+		artist1 := model_test_helper.AnArtistWithName("Bloodbath")
+		artist2 := model_test_helper.AnArtistWithName("Hypocrisy")
+		artist3 := model_test_helper.AnArtistWithName("Benediction")
 		return MockS3Client{
 			GetObjectMock: func(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
-				s3Body, err := json.Marshal(model_test_helper.ArtistsRecord)
+				s3Body, err := json.Marshal([]model.ArtistRecord{
+					{
+						Artist: artist1.ArtistName,
+						Image:  artist1.ImageUrl,
+					},
+					{
+						Artist: artist2.ArtistName,
+						Image:  artist2.ImageUrl,
+					},
+					{
+						Artist: artist3.ArtistName,
+						Image:  artist3.ImageUrl,
+					},
+				})
 				if err != nil {
 					panic("s3 mock failed")
 				}

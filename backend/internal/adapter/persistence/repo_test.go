@@ -28,19 +28,20 @@ func (s *ratingRepoSuite) BeforeTest(_ string, _ string) {
 }
 
 func (s *ratingRepoSuite) Test_SaveRating_SavesRating() {
-	err := s.repo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.BloodbathRating)
+	rating := model_test_helper.ARatingForArtist("Bloodbath")
+	err := s.repo.SaveRating(context.Background(), model_test_helper.TestUserId, rating)
 	require.NoError(s.T(), err)
 
 	ratings, err := s.repo.GetRatings(context.Background(), model_test_helper.TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.Rating{model_test_helper.BloodbathRating}, ratings)
+	require.Equal(s.T(), []model.Rating{rating}, ratings)
 }
 
 func (s *ratingRepoSuite) Test_SaveRating_ReturnsError() {
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	cancelFunc()
 
-	err := s.repo.SaveRating(ctx, "me", model_test_helper.BloodbathRating)
+	err := s.repo.SaveRating(ctx, "me", model_test_helper.ARatingForArtist("Bloodbath"))
 	require.ErrorContains(s.T(), err, "context canceled")
 
 	ratings, err := s.repo.GetRatings(context.Background(), "me")
@@ -49,14 +50,16 @@ func (s *ratingRepoSuite) Test_SaveRating_ReturnsError() {
 }
 
 func (s *ratingRepoSuite) Test_GetRatings_ReturnsAllRatingsForUser() {
-	err := s.repo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.BloodbathRating)
+	rating1 := model_test_helper.ARatingForArtist("Bloodbath")
+	rating2 := model_test_helper.ARatingForArtist("Hypocrisy")
+	err := s.repo.SaveRating(context.Background(), model_test_helper.TestUserId, rating1)
 	require.NoError(s.T(), err)
-	err = s.repo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.HypocrisyRating)
+	err = s.repo.SaveRating(context.Background(), model_test_helper.TestUserId, rating2)
 	require.NoError(s.T(), err)
 
 	ratings, err := s.repo.GetRatings(context.Background(), model_test_helper.TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.Rating{model_test_helper.BloodbathRating, model_test_helper.HypocrisyRating}, ratings)
+	require.Equal(s.T(), []model.Rating{rating1, rating2}, ratings)
 }
 
 func (s *ratingRepoSuite) Test_GetRatings_ReturnsError() {

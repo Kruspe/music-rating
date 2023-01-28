@@ -3,7 +3,6 @@ package model_test_helper
 import (
 	"backend/internal/adapter/model"
 	"fmt"
-	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
 const (
@@ -11,94 +10,25 @@ const (
 	TestUserId = "MetalLover666"
 )
 
-const (
-	BloodbathImageUrl = "https://bloodbath.com"
-	HypocrisyImageUrl = "https://hypocrisy.com"
-)
-
-var BloodbathRating = model.Rating{
-	ArtistName:   "Bloodbath",
-	Comment:      "old school swedish death metal",
-	FestivalName: "Wacken",
-	Rating:       5,
-	Year:         2015,
-}
-var HypocrisyRating = model.Rating{
-	ArtistName:   "Hypocrisy",
-	FestivalName: "Wacken",
-	Rating:       2022,
-	Year:         5,
+func ARatingForArtist(name string) model.Rating {
+	return model.Rating{
+		ArtistName:   name,
+		Comment:      fmt.Sprintf("Comment for %s", name),
+		FestivalName: "Wacken",
+		Rating:       5,
+		Year:         2020,
+	}
 }
 
-var BloodbathRatingDao = model.RatingDao{
-	ArtistName:   BloodbathRating.ArtistName,
-	Comment:      BloodbathRating.Comment,
-	FestivalName: BloodbathRating.FestivalName,
-	Rating:       aws.Int(BloodbathRating.Rating),
-	Year:         aws.Int(BloodbathRating.Year),
+func AnArtistWithName(name string) model.Artist {
+	return model.Artist{
+		ArtistName: name,
+		ImageUrl:   fmt.Sprintf("https://%s.com", name),
+	}
 }
 
-var BloodbathRatingRecord = model.RatingRecord{
-	DbKey: model.DbKey{
-		PK: fmt.Sprintf("USER#%s", TestUserId),
-		SK: fmt.Sprintf("ARTIST#%s", BloodbathRating.ArtistName),
-	},
-	Type:         model.RatingType,
-	ArtistName:   BloodbathRating.ArtistName,
-	Comment:      BloodbathRating.Comment,
-	FestivalName: BloodbathRating.FestivalName,
-	Rating:       BloodbathRating.Rating,
-	UserId:       TestUserId,
-	Year:         BloodbathRating.Year,
+func AFestivalWithArtists(artists []model.Artist) model.Festival {
+	return model.Festival{
+		Artists: artists,
+	}
 }
-var HypocrisyRatingRecord = model.RatingRecord{
-	DbKey: model.DbKey{
-		PK: fmt.Sprintf("USER#%s", TestUserId),
-		SK: fmt.Sprintf("ARTIST#%s", HypocrisyRating.ArtistName),
-	},
-	Type:         model.RatingType,
-	ArtistName:   HypocrisyRating.ArtistName,
-	FestivalName: HypocrisyRating.FestivalName,
-	Rating:       HypocrisyRating.Rating,
-	UserId:       TestUserId,
-	Year:         HypocrisyRating.Year,
-}
-
-var ArtistsRecord = []model.ArtistRecord{
-	{
-		Artist: BloodbathRating.ArtistName,
-		Image:  BloodbathImageUrl,
-	},
-	{
-		Artist: HypocrisyRating.ArtistName,
-		Image:  HypocrisyImageUrl,
-	},
-	{
-		Artist: UnratedArtist.ArtistName,
-		Image:  UnratedArtist.ImageUrl,
-	},
-}
-
-var Festival = model.Festival{
-	Artists: []model.Artist{
-		{
-			ArtistName: BloodbathRating.ArtistName,
-			ImageUrl:   BloodbathImageUrl,
-		},
-		{
-			ArtistName: HypocrisyRating.ArtistName,
-			ImageUrl:   HypocrisyImageUrl,
-		},
-		{
-			ArtistName: UnratedArtist.ArtistName,
-			ImageUrl:   UnratedArtist.ImageUrl,
-		},
-	},
-}
-
-var UnratedArtist = model.Artist{
-	ArtistName: "Benediction",
-	ImageUrl:   "https://unrated-artist-image.url",
-}
-
-var UnratedArtistDao = model.ArtistDao(UnratedArtist)

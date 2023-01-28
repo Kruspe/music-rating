@@ -42,7 +42,14 @@ func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
 }
 
 func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns201() {
-	rating, err := json.Marshal(model_test_helper.BloodbathRatingDao)
+	rating := model_test_helper.ARatingForArtist("Bloodbath")
+	ratingDao, err := json.Marshal(model.RatingDao{
+		ArtistName:   rating.ArtistName,
+		Comment:      rating.Comment,
+		FestivalName: rating.FestivalName,
+		Rating:       &rating.Rating,
+		Year:         &rating.Year,
+	})
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{
@@ -55,14 +62,14 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns201() {
 		Headers: map[string]string{
 			"authorization": fmt.Sprintf("Bearer %s", model_test_helper.TestToken),
 		},
-		Body: string(rating),
+		Body: string(ratingDao),
 	})
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), http.StatusCreated, response.StatusCode)
 
 	savedRating, err := s.ratingRepo.GetRatings(context.Background(), model_test_helper.TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.Rating{model_test_helper.BloodbathRating}, savedRating)
+	require.Equal(s.T(), []model.Rating{rating}, savedRating)
 }
 
 func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns400WhenRatingIsMissingFields() {
@@ -115,7 +122,14 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns500WhenContextIsCan
 	ctx, cancelFunc := context.WithCancel(context.Background())
 	cancelFunc()
 
-	rating, err := json.Marshal(model_test_helper.BloodbathRatingDao)
+	rating := model_test_helper.ARatingForArtist("Bloodbath")
+	ratingDao, err := json.Marshal(model.RatingDao{
+		ArtistName:   rating.ArtistName,
+		Comment:      rating.Comment,
+		FestivalName: rating.FestivalName,
+		Rating:       &rating.Rating,
+		Year:         &rating.Year,
+	})
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(ctx, events.APIGatewayV2HTTPRequest{
@@ -128,7 +142,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns500WhenContextIsCan
 		Headers: map[string]string{
 			"authorization": fmt.Sprintf("Bearer %s", model_test_helper.TestToken),
 		},
-		Body: string(rating),
+		Body: string(ratingDao),
 	})
 	require.ErrorContains(s.T(), err, "context canceled")
 	require.Equal(s.T(), http.StatusInternalServerError, response.StatusCode)
@@ -136,7 +150,8 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns500WhenContextIsCan
 }
 
 func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns200AndAllRatings() {
-	err := s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.BloodbathRating)
+	rating := model_test_helper.ARatingForArtist("Bloodbath")
+	err := s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, rating)
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{
@@ -155,7 +170,13 @@ func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns200AndAllRatings() {
 	var result []model.RatingDao
 	err = json.Unmarshal([]byte(response.Body), &result)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.RatingDao{model_test_helper.BloodbathRatingDao}, result)
+	require.Equal(s.T(), []model.RatingDao{{
+		ArtistName:   rating.ArtistName,
+		Comment:      rating.Comment,
+		FestivalName: rating.FestivalName,
+		Rating:       &rating.Rating,
+		Year:         &rating.Year,
+	}}, result)
 }
 
 func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns500WhenContextIsCanceled() {
@@ -179,9 +200,9 @@ func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns500WhenContextIsCance
 }
 
 func (s *ratingHandlerSuite) Test_Handle_GetUnratedArtistsForFestival_Returns200AndAllUnratedArtists() {
-	err := s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.BloodbathRating)
+	err := s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.ARatingForArtist("Bloodbath"))
 	require.NoError(s.T(), err)
-	err = s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.HypocrisyRating)
+	err = s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.ARatingForArtist("Hypocrisy"))
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{
@@ -200,20 +221,19 @@ func (s *ratingHandlerSuite) Test_Handle_GetUnratedArtistsForFestival_Returns200
 	var result []model.ArtistDao
 	err = json.Unmarshal([]byte(response.Body), &result)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.ArtistDao{model_test_helper.UnratedArtistDao}, result)
+	unratedArtist := model_test_helper.AnArtistWithName("Benediction")
+	require.Equal(s.T(), []model.ArtistDao{{
+		ArtistName: unratedArtist.ArtistName,
+		ImageUrl:   unratedArtist.ImageUrl,
+	}}, result)
 }
 
 func (s *ratingHandlerSuite) Test_Handle_GetUnratedArtistsForFestival_Returns200AndEmptyList_WhenAllArtistsAreRated() {
-	err := s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.BloodbathRating)
+	err := s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.ARatingForArtist("Bloodbath"))
 	require.NoError(s.T(), err)
-	err = s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.HypocrisyRating)
+	err = s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.ARatingForArtist("Hypocrisy"))
 	require.NoError(s.T(), err)
-	err = s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model.Rating{
-		ArtistName:   model_test_helper.UnratedArtist.ArtistName,
-		FestivalName: "Concert",
-		Rating:       2022,
-		Year:         5,
-	})
+	err = s.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.ARatingForArtist("Benediction"))
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{
@@ -256,7 +276,14 @@ func (s *ratingHandlerSuite) Test_Handle_GetUnratedArtistsForFestival_Returns500
 }
 
 func (s *ratingHandlerSuite) Test_Handler_Returns401WhenSubjectIsMissingFromClaims() {
-	rating, err := json.Marshal(model_test_helper.BloodbathRatingDao)
+	rating := model_test_helper.ARatingForArtist("Bloodbath")
+	ratingDao, err := json.Marshal(model.RatingDao{
+		ArtistName:   rating.ArtistName,
+		Comment:      rating.Comment,
+		FestivalName: rating.FestivalName,
+		Rating:       &rating.Rating,
+		Year:         &rating.Year,
+	})
 	require.NoError(s.T(), err)
 
 	response, err := s.handler.Handle(context.Background(), events.APIGatewayV2HTTPRequest{
@@ -269,7 +296,7 @@ func (s *ratingHandlerSuite) Test_Handler_Returns401WhenSubjectIsMissingFromClai
 		Headers: map[string]string{
 			"authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1MTYyMzkwMjJ9.tbDepxpstvGdW8TC3G8zg4B6rUYAOvfzdceoH48wgRQ",
 		},
-		Body: string(rating),
+		Body: string(ratingDao),
 	})
 	require.ErrorContains(s.T(), err, "missing sub in token")
 	require.Equal(s.T(), http.StatusUnauthorized, response.StatusCode)

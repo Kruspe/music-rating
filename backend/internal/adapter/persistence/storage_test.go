@@ -1,6 +1,7 @@
 package persistence_test
 
 import (
+	"backend/internal/adapter/model"
 	"backend/internal/adapter/model/model_test_helper"
 	"backend/internal/adapter/persistence"
 	"backend/internal/adapter/persistence/persistence_test_helper"
@@ -30,6 +31,11 @@ func (s *storageSuite) SetupSuite() {
 }
 
 func (s *storageSuite) Test_GetArtists() {
+	festival := model_test_helper.AFestivalWithArtists([]model.Artist{
+		model_test_helper.AnArtistWithName("Bloodbath"),
+		model_test_helper.AnArtistWithName("Hypocrisy"),
+		model_test_helper.AnArtistWithName("Benediction"),
+	})
 	s3Mock := func(t *testing.T) persistence.S3Client {
 		return persistence_test_helper.MockS3Client{
 			GetObjectMock: func(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
@@ -47,7 +53,20 @@ func (s *storageSuite) Test_GetArtists() {
 					t.Fatalf("expect %v, got %v", e, a)
 				}
 
-				s3Body, err := json.Marshal(model_test_helper.ArtistsRecord)
+				s3Body, err := json.Marshal([]model.ArtistRecord{
+					{
+						Artist: festival.Artists[0].ArtistName,
+						Image:  festival.Artists[0].ImageUrl,
+					},
+					{
+						Artist: festival.Artists[1].ArtistName,
+						Image:  festival.Artists[1].ImageUrl,
+					},
+					{
+						Artist: festival.Artists[2].ArtistName,
+						Image:  festival.Artists[2].ImageUrl,
+					},
+				})
 				require.NoError(t, err)
 				return &s3.GetObjectOutput{
 					Body: io.NopCloser(bytes.NewReader(s3Body)),
@@ -59,7 +78,7 @@ func (s *storageSuite) Test_GetArtists() {
 	storage := persistence.NewFestivalStorage(s3Mock(s.T()))
 	artists, err := storage.GetFestival(context.Background(), "festival-name")
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), model_test_helper.Festival, artists)
+	require.Equal(s.T(), festival, artists)
 }
 
 func (s *storageSuite) Test_GetArtists_ReturnsS3Error() {

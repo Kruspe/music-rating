@@ -10,9 +10,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
-	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"net/http"
@@ -20,10 +17,9 @@ import (
 )
 
 type local struct {
-	logger    *log.Logger
-	dynamo    *dynamodb.Client
-	s3        persistence.S3Client
-	tableName string
+	logger          *log.Logger
+	ratingRepo      *persistence.RatingRepo
+	festivalStorage *persistence.Storage
 }
 
 func main() {
@@ -31,13 +27,15 @@ func main() {
 	logger.SetLevel(log.DebugLevel)
 	logger.SetFormatter(&log.JSONFormatter{})
 	ph := persistence_test_helper.NewPersistenceHelper()
-	setupRatings(logger, ph)
+	repo := persistence.NewRatingRepo(ph.Dynamo, ph.TableName)
+	festivalStorage := persistence.NewFestivalStorage(ph.S3Mock)
+
 	l := local{
-		logger:    logger,
-		dynamo:    ph.Dynamo,
-		tableName: ph.TableName,
-		s3:        ph.S3Mock,
+		logger:          logger,
+		ratingRepo:      repo,
+		festivalStorage: festivalStorage,
 	}
+	l.setupRatings()
 
 	http.HandleFunc("/api/", l.handle)
 	err := http.ListenAndServe(":8080", nil)
@@ -54,9 +52,7 @@ func (l *local) handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	repo := persistence.NewRatingRepo(l.dynamo, l.tableName)
-	festivalStorage := persistence.NewFestivalStorage(l.s3)
-	ratingUseCase := usecase.NewRatingUseCase(repo, festivalStorage)
+	ratingUseCase := usecase.NewRatingUseCase(l.ratingRepo, l.festivalStorage)
 	h := handler.NewRatingHandler(ratingUseCase, l.logger)
 
 	buffer := new(strings.Builder)
@@ -99,28 +95,13 @@ func (l *local) handle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func setupRatings(logger *log.Logger, ph *persistence_test_helper.PersistenceHelper) {
-	bloodbathItem, err := attributevalue.MarshalMap(model_test_helper.BloodbathRatingRecord)
+func (l *local) setupRatings() {
+	err := l.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.ARatingForArtist("Bloodbath"))
 	if err != nil {
-		logger.Fatal(err)
+		l.logger.Fatal(err)
 	}
-	_, err = ph.Dynamo.PutItem(context.Background(), &dynamodb.PutItemInput{
-		Item:      bloodbathItem,
-		TableName: aws.String(ph.TableName),
-	})
+	err = l.ratingRepo.SaveRating(context.Background(), model_test_helper.TestUserId, model_test_helper.ARatingForArtist("Hypocrisy"))
 	if err != nil {
-		logger.Fatal(err)
-	}
-
-	hypocrisyItem, err := attributevalue.MarshalMap(model_test_helper.HypocrisyRatingRecord)
-	if err != nil {
-		logger.Fatal(err)
-	}
-	_, err = ph.Dynamo.PutItem(context.Background(), &dynamodb.PutItemInput{
-		Item:      hypocrisyItem,
-		TableName: aws.String(ph.TableName),
-	})
-	if err != nil {
-		logger.Fatal(err)
+		l.logger.Fatal(err)
 	}
 }

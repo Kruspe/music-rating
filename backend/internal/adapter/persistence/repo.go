@@ -44,10 +44,7 @@ func (r *RatingRepo) SaveRating(ctx context.Context, userId string, rating model
 		Item:      item,
 		TableName: aws.String(r.tableName),
 	})
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func (r *RatingRepo) GetRatings(ctx context.Context, userId string) ([]model.Rating, error) {
