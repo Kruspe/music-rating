@@ -1,57 +1,19 @@
 version: '3'
 
+includes:
+  aws:
+    taskfile: aws/
+    dir: aws/
+  frontend:
+    taskfile: frontend/
+    dir: frontend/
+  backend:
+    taskfile: backend/
+    dir: backend/
+
 tasks:
-  start-backend:
-    desc: Start the backend locally
-    dir: backend
-    deps: [start-dynamodb]
-    cmds:
-      - go run local/main.go
-  start-dynamodb:
-    desc: Start DynamoDB instance and wait for it to start. Downloads DynamoDB if needed.
-    cmds:
-      - backend/third_party/dynamodb-local/download.sh
-      - backend/third_party/dynamodb-local/start.sh &
-      - backend/third_party/dynamodb-local/await-startup.sh
-  stop-dynamodb:
-    desc: Shut down DynamoDB instance
-    cmds:
-        - backend/third_party/dynamodb-local/stop.sh
-
   deploy:
-    desc: Deploy backend and frontend to AWS
-    dir: aws
-    deps: [build-backend, build-frontend]
+    desc: Build and deploy frontend and backend
+    deps: [ backend:build, frontend:build ]
     cmds:
-    - task: deploy-to-aws
-
-  deploy-to-aws:
-    dir: aws
-    cmds:
-    - aws cloudformation deploy --template-file cloudformation.yml --stack-name MusicRating-App --capabilities CAPABILITY_IAM
-      --parameter-overrides 
-      ParamDomainName={{.REACT_APP_DOMAIN_NAME}}
-      ParamBackendVersion={{.BACKEND_VERSION_ID}}
-      ParamDeploymentBucketFrontendDomainName=/deployment-bucket-frontend/regional-domain-name
-      ParamDeploymentBucketFrontendName=/deployment-bucket-frontend/name
-      ParamDomainHostedZoneId=/domain/{{.REACT_APP_DOMAIN_NAME}}/hosted-zone
-      ParamEUDomainCertificateArn=/domain/api.{{.REACT_APP_DOMAIN_NAME}}/certificate
-      ParamClientId={{.REACT_APP_CLIENT_ID}}
-      ParamFestivalBucketName=/festival-bucket/name
-      ParamFestivalBucketArn=/festival-bucket/arn
-      --profile music-rating
-    vars:
-      BACKEND_VERSION_ID:
-        sh: aws s3api put-object --bucket music-rating-deployment-bucket-backend --key backend.zip --body ../backend/out/backend.zip --profile music-rating | jq -r .VersionId
-  build-backend:
-    dir: backend
-    cmds:
-    - GOOS=linux GOARCH=amd64 go build -mod=vendor -o out/bootstrap main.go
-    - zip -j out/backend.zip out/bootstrap
-  build-frontend:
-    dir: frontend
-    cmds:
-    - yarn
-    - REACT_APP_DOMAIN_NAME={{.REACT_APP_DOMAIN_NAME}} REACT_APP_CLIENT_ID={{.REACT_APP_CLIENT_ID}} REACT_APP_API_ENDPOINT=https://api.{{.REACT_APP_DOMAIN_NAME}} yarn build
-    - aws s3 cp ../frontend/build s3://music-rating-deployment-bucket-frontend --recursive --profile music-rating
-
+    - task: aws:deploy-to-aws

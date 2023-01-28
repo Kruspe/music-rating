@@ -1,0 +1,22 @@
+version: 3
+
+tasks:
+  start:
+    desc: Start the backend locally
+    deps: [ start-dynamodb ]
+    cmds:
+      - go run local/main.go
+  start-dynamodb:
+    desc: Start DynamoDB instance and wait for it to start. Downloads DynamoDB if needed.
+    cmds:
+      - third_party/dynamodb-local/download.sh
+      - third_party/dynamodb-local/start.sh &
+      - third_party/dynamodb-local/await-startup.sh
+  stop-dynamodb:
+    desc: Shut down DynamoDB instance
+    cmds:
+      - third_party/dynamodb-local/stop.sh
+  build:
+    cmds:
+      - GOOS=linux GOARCH=amd64 go build -mod=vendor -o out/bootstrap main.go
+      - zip -j out/backend.zip out/bootstrap
