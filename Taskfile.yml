@@ -16,4 +16,4 @@ tasks:
     desc: Build and deploy frontend and backend
     deps: [ backend:build, frontend:build ]
     cmds:
-    - task: aws:deploy-to-aws
+    - task: aws:deploy
