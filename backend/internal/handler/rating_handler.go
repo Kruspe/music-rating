@@ -59,7 +59,7 @@ func (h *RatingHandler) createRating(ctx context.Context, userId string, body st
 		h.logger.Error("Request did not include artist_name")
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusBadRequest}, errors.New("missing artist_name from rating")
 	}
-	if rating.Rating == nil {
+	if rating.Rating == 0 {
 		h.logger.Error("Request did not include rating")
 		return events.APIGatewayV2HTTPResponse{StatusCode: http.StatusBadRequest}, errors.New("missing rating from rating")
 	}
@@ -68,8 +68,8 @@ func (h *RatingHandler) createRating(ctx context.Context, userId string, body st
 		ArtistName:   rating.ArtistName,
 		Comment:      rating.Comment,
 		FestivalName: rating.FestivalName,
-		Rating:       *rating.Rating,
-		Year:         *rating.Year,
+		Rating:       rating.Rating,
+		Year:         rating.Year,
 	})
 	if err != nil {
 		h.logger.Error(err)
@@ -91,8 +91,8 @@ func (h *RatingHandler) getRatings(ctx context.Context, userId string) (events.A
 			ArtistName:   r.ArtistName,
 			Comment:      r.Comment,
 			FestivalName: r.FestivalName,
-			Rating:       &r.Rating,
-			Year:         &r.Year,
+			Rating:       r.Rating,
+			Year:         r.Year,
 		})
 	}
 	result, err := json.Marshal(ratingDaos)

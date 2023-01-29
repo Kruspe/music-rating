@@ -11,7 +11,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -47,8 +46,8 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns201() {
 		ArtistName:   rating.ArtistName,
 		Comment:      rating.Comment,
 		FestivalName: rating.FestivalName,
-		Rating:       &rating.Rating,
-		Year:         &rating.Year,
+		Rating:       rating.Rating,
+		Year:         rating.Year,
 	})
 	require.NoError(s.T(), err)
 
@@ -81,8 +80,8 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns400WhenRatingIsMiss
 			missingFieldName: "artist_name",
 			rating: model.RatingDao{
 				FestivalName: "Wacken",
-				Rating:       aws.Int(5),
-				Year:         aws.Int(666),
+				Rating:       5,
+				Year:         666,
 			},
 		},
 		{
@@ -90,7 +89,7 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns400WhenRatingIsMiss
 			rating: model.RatingDao{
 				ArtistName:   "Bloodbath",
 				FestivalName: "Wacken",
-				Year:         aws.Int(666),
+				Year:         666,
 			},
 		},
 	}
@@ -127,8 +126,8 @@ func (s *ratingHandlerSuite) Test_Handle_CreateRating_Returns500WhenContextIsCan
 		ArtistName:   rating.ArtistName,
 		Comment:      rating.Comment,
 		FestivalName: rating.FestivalName,
-		Rating:       &rating.Rating,
-		Year:         &rating.Year,
+		Rating:       rating.Rating,
+		Year:         rating.Year,
 	})
 	require.NoError(s.T(), err)
 
@@ -174,8 +173,8 @@ func (s *ratingHandlerSuite) Test_Handle_GetRatings_Returns200AndAllRatings() {
 		ArtistName:   rating.ArtistName,
 		Comment:      rating.Comment,
 		FestivalName: rating.FestivalName,
-		Rating:       &rating.Rating,
-		Year:         &rating.Year,
+		Rating:       rating.Rating,
+		Year:         rating.Year,
 	}}, result)
 }
 
@@ -281,8 +280,8 @@ func (s *ratingHandlerSuite) Test_Handler_Returns401WhenSubjectIsMissingFromClai
 		ArtistName:   rating.ArtistName,
 		Comment:      rating.Comment,
 		FestivalName: rating.FestivalName,
-		Rating:       &rating.Rating,
-		Year:         &rating.Year,
+		Rating:       rating.Rating,
+		Year:         rating.Year,
 	})
 	require.NoError(s.T(), err)
 
