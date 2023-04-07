@@ -1,4 +1,4 @@
-module backend
+module github.com/kruspe/music-rating
 
 go 1.18
 
