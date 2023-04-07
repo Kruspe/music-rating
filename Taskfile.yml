@@ -12,6 +12,27 @@ includes:
     dir: backend/
 
 tasks:
+  start:
+    desc: Start the project
+    cmds:
+    - task: frontend:start
+    - task: backend:start
+  stop:
+    desc: Stop everything
+    cmds:
+    - task: frontend:stop
+    - task: backend:stop
+  install:
+    desc: Install all dependencies
+    cmds:
+    - task: frontend:install
+    - task: backend:install
+  world:
+    desc: Verify and test everything
+    cmds:
+    - task: frontend:world
+    - task: backend:world
+
   deploy:
     desc: Build and deploy frontend and backend
     deps: [ backend:build, frontend:build ]
