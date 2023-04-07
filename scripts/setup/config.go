@@ -26,7 +26,7 @@ func BackendConfig() ServerProcess {
 		Command: CommandInBackground{
 			Command: "go",
 			Dir:     "backend/",
-			Args:    []string{"run", "../backend/cmd/local/main.go"},
+			Args:    []string{"run", "../backend/local/main.go"},
 		},
 		Name:           "backend",
 		Port:           8080,
