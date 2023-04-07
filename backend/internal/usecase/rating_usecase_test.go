@@ -1,13 +1,13 @@
 package usecase_test
 
 import (
-	"backend/internal/adapter/model"
-	"backend/internal/adapter/model/model_test_helper"
-	"backend/internal/adapter/persistence"
-	"backend/internal/adapter/persistence/persistence_test_helper"
-	"backend/internal/usecase"
 	"context"
 	"errors"
+	"github.com/kruspe/music-rating/internal/adapter/model"
+	"github.com/kruspe/music-rating/internal/adapter/model/model_test_helper"
+	"github.com/kruspe/music-rating/internal/adapter/persistence"
+	"github.com/kruspe/music-rating/internal/adapter/persistence/persistence_test_helper"
+	"github.com/kruspe/music-rating/internal/usecase"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"testing"

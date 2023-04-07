@@ -1,8 +1,8 @@
 package model_test_helper
 
 import (
-	"backend/internal/adapter/model"
 	"fmt"
+	"github.com/kruspe/music-rating/internal/adapter/model"
 )
 
 const (

@@ -1,15 +1,15 @@
 package main
 
 import (
-	"backend/internal/adapter/model/model_test_helper"
-	"backend/internal/adapter/persistence"
-	"backend/internal/adapter/persistence/persistence_test_helper"
-	"backend/internal/handler"
-	"backend/internal/usecase"
 	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-lambda-go/events"
+	"github.com/kruspe/music-rating/internal/adapter/model/model_test_helper"
+	"github.com/kruspe/music-rating/internal/adapter/persistence"
+	"github.com/kruspe/music-rating/internal/adapter/persistence/persistence_test_helper"
+	"github.com/kruspe/music-rating/internal/handler"
+	"github.com/kruspe/music-rating/internal/usecase"
 	log "github.com/sirupsen/logrus"
 	"io"
 	"net/http"

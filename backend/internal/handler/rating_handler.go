@@ -1,12 +1,12 @@
 package handler
 
 import (
-	"backend/internal/adapter/model"
 	"context"
 	"encoding/json"
 	"errors"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/kruspe/music-rating/internal/adapter/model"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"strings"

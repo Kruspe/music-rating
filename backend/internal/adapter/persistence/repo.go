@@ -1,13 +1,13 @@
 package persistence
 
 import (
-	"backend/internal/adapter/model"
 	"context"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/kruspe/music-rating/internal/adapter/model"
 )
 
 type RatingRepo struct {

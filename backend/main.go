@@ -1,15 +1,15 @@
 package main
 
 import (
-	"backend/internal/adapter/persistence"
-	"backend/internal/handler"
-	"backend/internal/usecase"
 	"context"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/kruspe/music-rating/internal/adapter/persistence"
+	"github.com/kruspe/music-rating/internal/handler"
+	"github.com/kruspe/music-rating/internal/usecase"
 	log "github.com/sirupsen/logrus"
 	"os"
 )

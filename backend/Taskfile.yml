@@ -1,22 +1,65 @@
 version: 3
 
 tasks:
+  install:
+    cmds:
+    - task: install-golangci-lint
+    - task: dynamodb:install
   start:
     desc: Start the backend locally
-    deps: [ start-dynamodb ]
+    deps: [ dynamodb:start ]
+    dir: ../scripts/backend
     cmds:
-      - go run local/main.go
-  start-dynamodb:
-    desc: Start DynamoDB instance and wait for it to start. Downloads DynamoDB if needed.
+    - go run start.go
+  stop:
+    desc: Stop the backend locally
+    deps: [ dynamodb:stop ]
+    dir: ../scripts/backend
     cmds:
-      - third_party/dynamodb-local/download.sh
-      - third_party/dynamodb-local/start.sh &
-      - third_party/dynamodb-local/await-startup.sh
-  stop-dynamodb:
-    desc: Shut down DynamoDB instance
+    - go run stop.go
+  world:
+    desc: Format and test everything
     cmds:
-      - third_party/dynamodb-local/stop.sh
+    - task: format
+    - task: lint
+    - task: test
   build:
     cmds:
-      - GOOS=linux GOARCH=amd64 go build -mod=vendor -o out/bootstrap main.go
-      - zip -j out/backend.zip out/bootstrap
+    - GOOS=linux GOARCH=amd64 go build -mod=vendor -o out/bootstrap main.go
+    - zip -j out/backend.zip out/bootstrap
+  test:
+    desc: run tests without caching the results
+    deps: [ dynamodb:start ]
+    dir: internal/
+    cmds:
+    - go clean -testcache
+    - go test ./...
+
+  format:
+    desc: format code
+    cmds:
+    - go fmt ./...
+
+  lint:
+    desc: run linter on sources
+    cmds: [ ../scripts/third_party/golangci-lint/golangci-lint run ./... ]
+
+  dynamodb:install:
+    dir: ../scripts
+    cmds:
+    - go run dynamodb/download.go
+  dynamodb:start:
+    desc: start local dynamodb
+    dir: ../scripts/dynamodb
+    cmds:
+    - go run start.go
+  dynamodb:stop:
+    desc: stop local dynamodb
+    dir: ../scripts/dynamodb
+    cmds:
+    - go run stop.go
+
+  install-golangci-lint:
+    dir: ../scripts
+    cmds:
+    - go run golangci_lint/download.go

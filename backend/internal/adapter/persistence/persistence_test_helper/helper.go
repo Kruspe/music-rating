@@ -1,12 +1,10 @@
 package persistence_test_helper
 
 import (
-	"backend/internal/adapter/model"
-	"backend/internal/adapter/model/model_test_helper"
-	"backend/internal/adapter/persistence"
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -14,6 +12,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
+	"github.com/kruspe/music-rating/internal/adapter/model"
+	"github.com/kruspe/music-rating/internal/adapter/model/model_test_helper"
+	"github.com/kruspe/music-rating/internal/adapter/persistence"
+	"github.com/kruspe/music-rating/scripts/setup"
 	"io"
 	"os"
 )
@@ -90,7 +92,7 @@ func LocalDefaultConfig() (aws.Config, error) {
 		config.WithEndpointResolverWithOptions(
 			aws.EndpointResolverWithOptionsFunc(
 				func(service, region string, options ...interface{}) (aws.Endpoint, error) {
-					return aws.Endpoint{URL: "http://localhost:8095"}, nil
+					return aws.Endpoint{URL: fmt.Sprintf("http://localhost:%d", setup.DynamoDBPort)}, nil
 				},
 			),
 		),

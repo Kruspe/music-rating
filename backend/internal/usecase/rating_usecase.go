@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"backend/internal/adapter/model"
 	"context"
+	"github.com/kruspe/music-rating/internal/adapter/model"
 )
 
 type ratingRepo interface {
