@@ -1,8 +1,7 @@
 import { rest } from 'msw';
 import userEvent from '@testing-library/user-event';
-import { waitFor } from '@testing-library/react';
 import { useQuery } from '@tanstack/react-query';
-import { render, screen } from '../../test/test-utils';
+import { render, screen, waitFor } from '../../test/test-utils';
 import Wacken from './index';
 import { mockServer, TestToken, unratedArtist } from '../../test/mocks';
 
@@ -24,7 +23,7 @@ function AllRatingsTestComponent() {
   return isFetched && <p>{`Found ${ratings.length} ratings`}</p>;
 }
 
-it('should show unrated band and allow to rate it', async () => {
+test('should show unrated band and allow to rate it', async () => {
   render(<Wacken />);
 
   expect(await screen.findByAltText(`${unratedArtist.artist_name} image`)).toBeVisible();
@@ -40,7 +39,7 @@ it('should show unrated band and allow to rate it', async () => {
   expect(await screen.findByText('Found 3 ratings')).toBeVisible();
 });
 
-it('should display message that all bands have been rated', async () => {
+test('should display message that all bands have been rated', async () => {
   mockServer.use(rest.get('http://localhost:8080/api/festivals/wacken', (req, res, ctx) => res(
     ctx.status(200),
     ctx.json([]),

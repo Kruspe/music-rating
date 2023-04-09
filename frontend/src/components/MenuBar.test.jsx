@@ -1,35 +1,48 @@
-import { useAuth0 } from '@auth0/auth0-react';
+import { useAuth0, withAuthenticationRequired } from '@auth0/auth0-react';
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '../../test/test-utils';
+import { renderWithRouteProvider, screen } from '../../test/test-utils';
 import MenuBar from './MenuBar';
 
 jest.mock('@auth0/auth0-react');
+jest.mock('../home');
 
 let user;
 beforeEach(() => {
   user = userEvent.setup();
 });
 
-it('should allow to login', async () => {
+test('should allow to login', async () => {
   const mockLoginWithRedirect = jest.fn();
   useAuth0.mockImplementation(() => ({
     isAuthenticated: false,
     loginWithRedirect: mockLoginWithRedirect,
   }));
-  render(<MenuBar />);
+  renderWithRouteProvider(<MenuBar />);
   await user.click(screen.getByRole('button', { name: 'Log in' }));
 
   expect(mockLoginWithRedirect).toHaveBeenCalled();
 });
 
-it('should allow to logout', async () => {
+test('should allow to logout', async () => {
   const mockLogout = jest.fn();
   useAuth0.mockImplementation(() => ({
     isAuthenticated: true,
     logout: mockLogout,
   }));
-  render(<MenuBar />);
+  withAuthenticationRequired.mockImplementation((component) => component);
+  renderWithRouteProvider(<MenuBar />);
   await user.click(screen.getByRole('button', { name: 'Log out' }));
 
   expect(mockLogout).toHaveBeenCalled();
+});
+
+test('should have correct hrefs set', async () => {
+  useAuth0.mockImplementation(() => ({
+    isAuthenticated: true,
+  }));
+  withAuthenticationRequired.mockImplementation((component) => component);
+  renderWithRouteProvider(<MenuBar />);
+
+  expect(await screen.findByText('My Ratings')).toHaveAttribute('href', '/ratings');
+  expect(screen.getByText('Wacken')).toHaveAttribute('href', '/wacken');
 });
