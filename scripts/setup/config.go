@@ -50,9 +50,9 @@ func DynamodbConfig() ServerProcess {
 func FrontendConfig() ServerProcess {
 	return ServerProcess{
 		Command: CommandInBackground{
-			Command: "npm",
+			Command: "yarn",
 			Dir:     "frontend/",
-			Args:    []string{"run", "start"},
+			Args:    []string{"start"},
 		},
 		Name:           "frontend",
 		Port:           3000,

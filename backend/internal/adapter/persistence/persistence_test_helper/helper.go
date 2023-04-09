@@ -12,12 +12,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
-	"github.com/kruspe/music-rating/internal/adapter/model"
-	"github.com/kruspe/music-rating/internal/adapter/model/model_test_helper"
 	"github.com/kruspe/music-rating/internal/adapter/persistence"
+	"github.com/kruspe/music-rating/internal/model"
 	"github.com/kruspe/music-rating/scripts/setup"
 	"io"
-	"os"
 )
 
 type MockS3Client struct {
@@ -31,7 +29,6 @@ func (m MockS3Client) GetObject(ctx context.Context, params *s3.GetObjectInput, 
 type PersistenceHelper struct {
 	Dynamo    *dynamodb.Client
 	TableName string
-	S3Mock    persistence.S3Client
 }
 
 func NewPersistenceHelper() *PersistenceHelper {
@@ -42,46 +39,31 @@ func NewPersistenceHelper() *PersistenceHelper {
 	dynamo := dynamodb.NewFromConfig(cfg)
 	tableName := uuid.NewString()
 	createTable(dynamo, tableName)
-	err = os.Setenv("TABLE_NAME", tableName)
-	if err != nil {
-		panic(err)
-	}
-
-	s3Mock := func() persistence.S3Client {
-		artist1 := model_test_helper.AnArtistWithName("Bloodbath")
-		artist2 := model_test_helper.AnArtistWithName("Hypocrisy")
-		artist3 := model_test_helper.AnArtistWithName("Benediction")
-		return MockS3Client{
-			GetObjectMock: func(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
-				s3Body, err := json.Marshal([]model.ArtistRecord{
-					{
-						Artist: artist1.ArtistName,
-						Image:  artist1.ImageUrl,
-					},
-					{
-						Artist: artist2.ArtistName,
-						Image:  artist2.ImageUrl,
-					},
-					{
-						Artist: artist3.ArtistName,
-						Image:  artist3.ImageUrl,
-					},
-				})
-				if err != nil {
-					panic("s3 mock failed")
-				}
-
-				return &s3.GetObjectOutput{
-					Body: io.NopCloser(bytes.NewReader(s3Body)),
-				}, nil
-			},
-		}
-	}
-
 	return &PersistenceHelper{
 		Dynamo:    dynamo,
 		TableName: tableName,
-		S3Mock:    s3Mock(),
+	}
+}
+
+func (ph *PersistenceHelper) ReturnArtists(artists []model.Artist) persistence.S3Client {
+	return MockS3Client{
+		GetObjectMock: func(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
+			result := make([]persistence.ArtistRecord, 0)
+			for _, artist := range artists {
+				result = append(result, persistence.ArtistRecord{
+					Artist: artist.Name,
+					Image:  artist.ImageUrl,
+				})
+			}
+			s3Body, err := json.Marshal(result)
+			if err != nil {
+				panic("s3 mock failed")
+			}
+
+			return &s3.GetObjectOutput{
+				Body: io.NopCloser(bytes.NewReader(s3Body)),
+			}, nil
+		},
 	}
 }
 

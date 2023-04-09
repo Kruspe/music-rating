@@ -19,8 +19,10 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 16.x
-    - run: yarn
-    - run: CI=true yarn test
+    - name: Install Task
+      uses: arduino/setup-task@v1
+    - name: Test
+      run: task frontend:test
 
   test-backend:
     runs-on: ubuntu-latest
@@ -36,7 +38,5 @@ jobs:
     - name: Install Task
       uses: arduino/setup-task@v1
     - name: Test
-      run: |
-        task start-dynamodb
-        GOOS=linux GOARCH=amd64 go test ./...
+      run: task backend:test
 
