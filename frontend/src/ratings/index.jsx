@@ -55,9 +55,13 @@ function renderUpdateRating(params) {
 }
 
 const columns = [
-  { field: 'artist_name', headerName: 'Artist' },
-  { field: 'year', headerName: 'Year', editable: true },
-  { field: 'festival_name', headerName: 'Festival', editable: true },
+  { field: 'artist_name', headerName: 'Artist', flex: 2 },
+  {
+    field: 'year', headerName: 'Year', editable: true, flex: 1,
+  },
+  {
+    field: 'festival_name', headerName: 'Festival', editable: true, flex: 1.5,
+  },
   {
     field: 'rating',
     headerName: 'Rating',
@@ -65,9 +69,10 @@ const columns = [
     renderEditCell: renderUpdateRating,
     width: 180,
     editable: true,
+    flex: 1,
   },
   {
-    field: 'comment', headerName: 'Comment', flex: 1, sortable: false, editable: true,
+    field: 'comment', headerName: 'Comment', flex: 4, sortable: false, editable: true,
   },
 ];
 
