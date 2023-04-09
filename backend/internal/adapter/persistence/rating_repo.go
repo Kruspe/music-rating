@@ -2,11 +2,13 @@ package persistence
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/kruspe/music-rating/internal/model"
 )
 
@@ -113,6 +115,10 @@ func (r *RatingRepo) Update(ctx context.Context, userId, artistName string, upda
 		ExpressionAttributeNames:  expr.Names(),
 		ConditionExpression:       expr.Condition(),
 	})
+	var conditionalError *types.ConditionalCheckFailedException
+	if errors.As(err, &conditionalError) {
+		return model.UpdateNonExistingRatingError{ArtistName: artistName}
+	}
 	return err
 }
 

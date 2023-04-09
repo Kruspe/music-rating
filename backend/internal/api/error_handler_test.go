@@ -36,6 +36,14 @@ func (s *errorHandlerSuite) Test_Returns400_MissingParameterError() {
 	require.Contains(s.T(), s.logHook.LastEntry().Message, "missing parameter 'some_parameter'")
 }
 
+func (s *errorHandlerSuite) Test_Returns400_UpdateNonExistingRatingError() {
+	recorder := httptest.NewRecorder()
+	s.errorHandler.Handle(recorder, model.UpdateNonExistingRatingError{ArtistName: "artist_name"})
+
+	require.Equal(s.T(), http.StatusBadRequest, recorder.Result().StatusCode)
+	require.Contains(s.T(), s.logHook.LastEntry().Message, "trying to update non existing rating for 'artist_name'")
+}
+
 func (s *errorHandlerSuite) Test_Returns500_GenericError() {
 	recorder := httptest.NewRecorder()
 	s.errorHandler.Handle(recorder, errors.New("random error"))

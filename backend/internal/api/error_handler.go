@@ -19,6 +19,9 @@ func (e *ErrorHandler) Handle(w http.ResponseWriter, err error) {
 	case MissingParameterError:
 		e.log.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
+	case UpdateNonExistingRatingError:
+		e.log.Error(err)
+		w.WriteHeader(http.StatusBadRequest)
 	default:
 		e.log.Error(err)
 		w.WriteHeader(http.StatusInternalServerError)
