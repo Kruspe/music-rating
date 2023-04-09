@@ -10,7 +10,7 @@ export default function Home() {
     return <div />;
   }
 
-  return isAuthenticated ? <Navigate to="/wacken" /> : (
+  return isAuthenticated ? <Navigate to="/ratings" /> : (
     <Grid container justifyContent="center" alignItems="center" justifyItems="start" minHeight="100vh">
       <Grid flexWrap="wrap" justifyContent="center">
         <Typography variant="h1">MusicRating</Typography>

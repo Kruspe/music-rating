@@ -2,7 +2,7 @@ import {
   AppBar, Box, Button, Tab, Tabs, Toolbar,
 } from '@mui/material';
 import { useAuth0 } from '@auth0/auth0-react';
-import { useEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 export default function MenuBar() {
@@ -10,11 +10,11 @@ export default function MenuBar() {
   const [tabIndex, setTabIndex] = useState(0);
   const location = useLocation();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (location.pathname === '/wacken') {
       setTabIndex(1);
     }
-  });
+  }, [location]);
 
   return (
     <>
