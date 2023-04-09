@@ -25,7 +25,7 @@ tasks:
     - task: test
   build:
     cmds:
-    - GOOS=linux GOARCH=amd64 go build -mod=vendor -o out/bootstrap main.go
+    - GOOS=linux GOARCH=amd64 go build -mod=vendor -o out/bootstrap cmd/api/main.go
     - zip -j out/backend.zip out/bootstrap
   test:
     desc: run tests without caching the results
