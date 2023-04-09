@@ -99,12 +99,23 @@ func (r *RatingRepo) GetAll(ctx context.Context, userId string) ([]model.Rating,
 }
 
 func (r *RatingRepo) Update(ctx context.Context, userId, artistName string, update model.RatingUpdate) error {
-	expr, err := expression.NewBuilder().WithUpdate(
-		expression.Set(expression.Name("festival_name"), expression.Value(update.FestivalName)).
-			Set(expression.Name("rating"), expression.Value(update.Rating)).
-			Set(expression.Name("year"), expression.Value(update.Year)).
-			Set(expression.Name("comment"), expression.Value(update.Comment)),
-	).WithCondition(expression.And(
+	updateExpr := expression.Set(expression.Name("rating"), expression.Value(update.Rating))
+	if update.Year == 0 {
+		updateExpr.Remove(expression.Name("year"))
+	} else {
+		updateExpr.Set(expression.Name("year"), expression.Value(update.Year))
+	}
+	if update.FestivalName == "" {
+		updateExpr.Remove(expression.Name("festival_name"))
+	} else {
+		updateExpr.Set(expression.Name("festival_name"), expression.Value(update.FestivalName))
+	}
+	if update.Comment == "" {
+		updateExpr.Remove(expression.Name("comment"))
+	} else {
+		updateExpr.Set(expression.Name("comment"), expression.Value(update.Comment))
+	}
+	expr, err := expression.NewBuilder().WithUpdate(updateExpr).WithCondition(expression.And(
 		expression.Equal(expression.Name("PK"), expression.Value(fmt.Sprintf("USER#%s", userId))),
 		expression.Equal(expression.Name("SK"), expression.Value(fmt.Sprintf("ARTIST#%s", artistName))),
 	)).Build()

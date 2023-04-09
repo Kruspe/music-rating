@@ -45,7 +45,7 @@ func (s *ratingRepoSuite) Test_Patch_UpdatesRating() {
 	err := s.repo.Save(context.Background(), TestUserId, rating)
 	require.NoError(s.T(), err)
 
-	ratingUpdate := ARatingUpdateForArtist("Bloodbath")
+	ratingUpdate := ARatingUpdateForArtist()
 	err = s.repo.Update(context.Background(), TestUserId, "Bloodbath", ratingUpdate)
 	require.NoError(s.T(), err)
 
@@ -56,7 +56,7 @@ func (s *ratingRepoSuite) Test_Patch_UpdatesRating() {
 	require.Equal(s.T(), ratingUpdate.FestivalName, ratings[0].FestivalName)
 	require.Equal(s.T(), ratingUpdate.Rating, ratings[0].Rating)
 	require.Equal(s.T(), ratingUpdate.Year, ratings[0].Year)
-	require.Equal(s.T(), ratingUpdate.Comment, ratings[0].Comment)
+	require.Equal(s.T(), "", ratings[0].Comment)
 }
 
 func (s *ratingRepoSuite) Test_UpdateRating_FailsWhenRatingDoesNotExist() {
