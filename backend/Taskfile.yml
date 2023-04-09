@@ -34,7 +34,10 @@ tasks:
     cmds:
     - go clean -testcache
     - go test ./...
-
+  ci:
+    deps: [ install ]
+    cmds:
+    - task: test
   format:
     desc: format code
     cmds:
