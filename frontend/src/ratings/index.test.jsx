@@ -10,7 +10,7 @@ test('should show all ratings of user', async () => {
 });
 
 test('should show message when no bands are rated', async () => {
-  mockServer.use(rest.get('http://localhost:8080/api/ratings', (req, res, ctx) => res(
+  mockServer.use(rest.get('http://localhost:8080/ratings', (req, res, ctx) => res(
     ctx.status(200),
     ctx.json([]),
   )));

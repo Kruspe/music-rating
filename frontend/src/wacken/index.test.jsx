@@ -40,7 +40,7 @@ test('should show unrated band and allow to rate it', async () => {
 });
 
 test('should display message that all bands have been rated', async () => {
-  mockServer.use(rest.get('http://localhost:8080/api/festivals/wacken', (req, res, ctx) => res(
+  mockServer.use(rest.get('http://localhost:8080/festivals/wacken', (req, res, ctx) => res(
     ctx.status(200),
     ctx.json([]),
   )));

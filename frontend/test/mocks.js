@@ -26,7 +26,7 @@ export const checkToken = (req) => {
     expect(true).toBeFalsy();
   }
 };
-const api = 'http://localhost:8080/api';
+const api = 'http://localhost:8080';
 
 let ratedArtists;
 let unratedArtists;
