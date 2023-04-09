@@ -30,7 +30,7 @@ test('should show unrated band and allow to rate it', async () => {
 
   await user.type(screen.getByLabelText(/Festival\/Concert/), 'Wacken');
   await user.type(screen.getByLabelText(/Year/), '2015');
-  await user.click(screen.getByLabelText(/5 Stars/));
+  await user.click(screen.getByLabelText(/4.5 Stars/));
   await user.type(screen.getByLabelText(/Comment/), 'Swedish death metal');
   await user.click(screen.getByRole('button', { name: 'Rate' }));
 

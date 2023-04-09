@@ -67,8 +67,9 @@ export default function RatingCard({ artistName, imageUrl }) {
             </Grid>
             <Grid xs={12}>
               <Rating
+                precision={0.5}
                 value={rating}
-                onChange={(event) => setRating(parseInt(event.target.value, 10))}
+                onChange={(event) => setRating(parseFloat(event.target.value))}
               />
             </Grid>
             <Grid xs={12}>

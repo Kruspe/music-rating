@@ -22,7 +22,7 @@ function useUpdateRating() {
 }
 
 function renderRating(rating) {
-  return <Rating readOnly value={rating.value} />;
+  return <Rating readOnly value={rating.value} precision={0.5} />;
 }
 
 function EditRating({ field, id, value }) {
@@ -30,10 +30,10 @@ function EditRating({ field, id, value }) {
   const [rating, setRating] = useState(value);
   return (
     <Rating
-      precision={1}
+      precision={0.5}
       value={rating}
       onChange={(event) => {
-        const newRating = parseInt(event.target.value, 10);
+        const newRating = parseFloat(event.target.value);
         apiRef.current.setEditCellValue({
           id,
           field,
@@ -105,7 +105,7 @@ export default function Ratings() {
               artist_name: row.artist_name,
               year: parseInt(row.year, 10),
               festival_name: row.festival_name,
-              rating: parseInt(row.rating, 10),
+              rating: parseFloat(row.rating),
               comment: row.comment,
             });
             return row;
