@@ -58,3 +58,14 @@ func (s *ratingRepoSuite) Test_Patch_UpdatesRating() {
 	require.Equal(s.T(), ratingUpdate.Year, ratings[0].Year)
 	require.Equal(s.T(), ratingUpdate.Comment, ratings[0].Comment)
 }
+
+func (s *ratingRepoSuite) Test_UpdateRating_FailsWhenRatingDoesNotExist() {
+	err := s.repo.Update(context.Background(), TestUserId, "not_existing_artist", model.RatingUpdate{
+		Comment:      AComment,
+		FestivalName: AFestivalName,
+		Rating:       ARating,
+		Year:         AYear,
+	})
+	require.Error(s.T(), err)
+	require.ErrorContains(s.T(), err, "ConditionalCheckFailed")
+}

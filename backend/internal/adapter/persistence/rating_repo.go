@@ -91,7 +91,10 @@ func (r *RatingRepo) Update(ctx context.Context, userId, artistName string, upda
 			Set(expression.Name("rating"), expression.Value(update.Rating)).
 			Set(expression.Name("year"), expression.Value(update.Year)).
 			Set(expression.Name("comment"), expression.Value(update.Comment)),
-	).Build()
+	).WithCondition(expression.And(
+		expression.Equal(expression.Name("PK"), expression.Value(fmt.Sprintf("USER#%s", userId))),
+		expression.Equal(expression.Name("SK"), expression.Value(fmt.Sprintf("ARTIST#%s", artistName))),
+	)).Build()
 	if err != nil {
 		return err
 	}
@@ -108,6 +111,7 @@ func (r *RatingRepo) Update(ctx context.Context, userId, artistName string, upda
 		UpdateExpression:          expr.Update(),
 		ExpressionAttributeValues: expr.Values(),
 		ExpressionAttributeNames:  expr.Names(),
+		ConditionExpression:       expr.Condition(),
 	})
 	return err
 }
