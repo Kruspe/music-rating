@@ -30,20 +30,20 @@ func (s *apiSuite) BeforeTest(_, _ string) {
 	s.api = api.NewApi(useCases, repos, api.NewErrorHandler(log.New()))
 }
 
-func (s *apiSuite) Test_Returns404_WhenRequestPathDoesNotStartWith_api() {
-	request := NewAuthenticatedRequest(http.MethodGet, "/not_api/health", nil)
+func (s *apiSuite) Test_Returns404_WhenRequestPathDoesNotExist() {
+	request := NewAuthenticatedRequest(http.MethodGet, "/not_existing", nil)
 	recorder := httptest.NewRecorder()
 	s.api.ServeHTTP(recorder, request)
 
 	require.Equal(s.T(), http.StatusNotFound, recorder.Result().StatusCode)
 }
 
-func (s *apiSuite) Test_Returns404_WhenRequestPathDoesNotExist() {
-	request := NewAuthenticatedRequest(http.MethodGet, "/api/not_existing", nil)
+func (s *apiSuite) Test_Returns501_ratings_WhenMethodIsNotImplemented() {
+	request := NewAuthenticatedRequest(http.MethodPut, "/ratings", nil)
 	recorder := httptest.NewRecorder()
 	s.api.ServeHTTP(recorder, request)
 
-	require.Equal(s.T(), http.StatusNotFound, recorder.Result().StatusCode)
+	require.Equal(s.T(), http.StatusNotImplemented, recorder.Result().StatusCode)
 }
 
 func (s *apiSuite) Test_Returns401_WhenNoSubIsSet() {

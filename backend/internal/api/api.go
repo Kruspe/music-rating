@@ -35,6 +35,8 @@ func (a *Api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			a.ratingEndpoint.create(w, r, userId)
 		case http.MethodGet:
 			a.ratingEndpoint.getAll(w, r, userId)
+		default:
+			w.WriteHeader(http.StatusNotImplemented)
 		}
 	// TODO handle not implemented festivals
 	case match(r.URL.Path, "/festivals/+", &festival):
