@@ -23,9 +23,17 @@ type ratingRequest struct {
 	Year         int    `json:"year"`
 }
 
+type updateRatingRequest struct {
+	Comment      string `json:"comment"`
+	FestivalName string `json:"festival_name"`
+	Rating       int    `json:"rating"`
+	Year         int    `json:"year"`
+}
+
 type ratingRepo interface {
 	GetAll(ctx context.Context, userId string) ([]model.Rating, error)
-	Create(ctx context.Context, userId string, rating model.Rating) error
+	Save(ctx context.Context, userId string, rating model.Rating) error
+	Update(ctx context.Context, userId, artistName string, ratingUpdate model.RatingUpdate) error
 }
 
 type RatingEndpoint struct {
@@ -56,7 +64,7 @@ func (e *RatingEndpoint) create(w http.ResponseWriter, r *http.Request, userId s
 		return
 	}
 
-	err = e.ratingRepo.Create(r.Context(), userId, model.Rating{
+	err = e.ratingRepo.Save(r.Context(), userId, model.Rating{
 		ArtistName:   rating.ArtistName,
 		Comment:      rating.Comment,
 		FestivalName: rating.FestivalName,
@@ -82,6 +90,27 @@ func (e *RatingEndpoint) getAll(w http.ResponseWriter, r *http.Request, userId s
 		return
 	}
 	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+}
+
+func (e *RatingEndpoint) patch(w http.ResponseWriter, r *http.Request, userId, artistName string) {
+	var ratingUpdate updateRatingRequest
+	err := json.NewDecoder(r.Body).Decode(&ratingUpdate)
+	if err != nil {
+		e.errorHandler.Handle(w, err)
+		return
+	}
+
+	err = e.ratingRepo.Update(r.Context(), userId, artistName, model.RatingUpdate{
+		Comment:      ratingUpdate.Comment,
+		FestivalName: ratingUpdate.FestivalName,
+		Rating:       ratingUpdate.Rating,
+		Year:         ratingUpdate.Year,
+	})
+	if err != nil {
+		e.errorHandler.Handle(w, err)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 }
 

@@ -7,3 +7,10 @@ type Rating struct {
 	Rating       int
 	Year         int
 }
+
+type RatingUpdate struct {
+	Comment      string
+	FestivalName string
+	Rating       int
+	Year         int
+}

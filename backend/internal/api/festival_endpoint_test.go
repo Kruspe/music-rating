@@ -39,9 +39,9 @@ func (s *festivalHandlerSuite) BeforeTest(_, _ string) {
 }
 
 func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndAllUnratedArtists() {
-	err := s.repos.RatingRepo.Create(context.Background(), TestUserId, ARatingForArtist("Bloodbath"))
+	err := s.repos.RatingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Bloodbath"))
 	require.NoError(s.T(), err)
-	err = s.repos.RatingRepo.Create(context.Background(), TestUserId, ARatingForArtist("Hypocrisy"))
+	err = s.repos.RatingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Hypocrisy"))
 	require.NoError(s.T(), err)
 
 	unratedArtist := AnArtistWithName("Benediction")
@@ -68,11 +68,11 @@ func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndAl
 }
 
 func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndEmptyList_WhenAllArtistsAreRated() {
-	err := s.repos.RatingRepo.Create(context.Background(), TestUserId, ARatingForArtist("Bloodbath"))
+	err := s.repos.RatingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Bloodbath"))
 	require.NoError(s.T(), err)
-	err = s.repos.RatingRepo.Create(context.Background(), TestUserId, ARatingForArtist("Hypocrisy"))
+	err = s.repos.RatingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Hypocrisy"))
 	require.NoError(s.T(), err)
-	err = s.repos.RatingRepo.Create(context.Background(), TestUserId, ARatingForArtist("Benediction"))
+	err = s.repos.RatingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Benediction"))
 	require.NoError(s.T(), err)
 
 	festivalStorage := persistence.NewFestivalStorage(s.ph.ReturnArtists([]model.Artist{
