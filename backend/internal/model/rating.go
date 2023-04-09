@@ -6,14 +6,14 @@ type Rating struct {
 	ArtistName   string
 	Comment      string
 	FestivalName string
-	Rating       int
+	Rating       float64
 	Year         int
 }
 
 type RatingUpdate struct {
 	Comment      string
 	FestivalName string
-	Rating       int
+	Rating       float64
 	Year         int
 }
 

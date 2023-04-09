@@ -8,26 +8,26 @@ import (
 )
 
 type ratingResponse struct {
-	ArtistName   string `json:"artist_name"`
-	Comment      string `json:"comment"`
-	FestivalName string `json:"festival_name"`
-	Rating       int    `json:"rating"`
-	Year         int    `json:"year,omitempty"`
+	ArtistName   string  `json:"artist_name"`
+	Comment      string  `json:"comment"`
+	FestivalName string  `json:"festival_name"`
+	Rating       float64 `json:"rating"`
+	Year         int     `json:"year,omitempty"`
 }
 
 type ratingRequest struct {
-	ArtistName   string `json:"artist_name"`
-	Comment      string `json:"comment"`
-	FestivalName string `json:"festival_name"`
-	Rating       int    `json:"rating"`
-	Year         int    `json:"year"`
+	ArtistName   string  `json:"artist_name"`
+	Comment      string  `json:"comment"`
+	FestivalName string  `json:"festival_name"`
+	Rating       float64 `json:"rating"`
+	Year         int     `json:"year"`
 }
 
 type updateRatingRequest struct {
-	Comment      string `json:"comment"`
-	FestivalName string `json:"festival_name"`
-	Rating       int    `json:"rating"`
-	Year         int    `json:"year"`
+	Comment      string  `json:"comment"`
+	FestivalName string  `json:"festival_name"`
+	Rating       float64 `json:"rating"`
+	Year         int     `json:"year"`
 }
 
 type ratingRepo interface {

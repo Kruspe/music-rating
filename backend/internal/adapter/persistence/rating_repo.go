@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/kruspe/music-rating/internal/model"
+	"strconv"
 )
 
 type RatingRecord struct {
@@ -18,7 +19,7 @@ type RatingRecord struct {
 	ArtistName   string `dynamodbav:"artist_name"`
 	Comment      string `dynamodbav:"comment,omitempty"`
 	FestivalName string `dynamodbav:"festival_name,omitempty"`
-	Rating       int    `dynamodbav:"rating"`
+	Rating       string `dynamodbav:"rating"`
 	UserId       string `dynamodbav:"user_id"`
 	Year         int    `dynamodbav:"year,omitempty"`
 }
@@ -45,7 +46,7 @@ func (r *RatingRepo) Save(ctx context.Context, userId string, rating model.Ratin
 		ArtistName:   rating.ArtistName,
 		Comment:      rating.Comment,
 		FestivalName: rating.FestivalName,
-		Rating:       rating.Rating,
+		Rating:       strconv.FormatFloat(rating.Rating, 'f', 1, 32),
 		UserId:       userId,
 		Year:         rating.Year,
 	}
@@ -82,7 +83,17 @@ func (r *RatingRepo) GetAll(ctx context.Context, userId string) ([]model.Rating,
 
 	var result []model.Rating
 	for _, r := range ratings {
-		result = append(result, toRating(r))
+		rating, err := strconv.ParseFloat(r.Rating, 32)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, model.Rating{
+			ArtistName:   r.ArtistName,
+			Comment:      r.Comment,
+			FestivalName: r.FestivalName,
+			Rating:       rating,
+			Year:         r.Year,
+		})
 	}
 	return result, nil
 }
@@ -120,14 +131,4 @@ func (r *RatingRepo) Update(ctx context.Context, userId, artistName string, upda
 		return model.UpdateNonExistingRatingError{ArtistName: artistName}
 	}
 	return err
-}
-
-func toRating(r RatingRecord) model.Rating {
-	return model.Rating{
-		ArtistName:   r.ArtistName,
-		Comment:      r.Comment,
-		FestivalName: r.FestivalName,
-		Rating:       r.Rating,
-		Year:         r.Year,
-	}
 }

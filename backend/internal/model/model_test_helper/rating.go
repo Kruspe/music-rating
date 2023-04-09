@@ -9,8 +9,8 @@ const (
 	AnotherComment      = "another-comment"
 	AFestivalName       = "festival-name"
 	AnotherFestivalName = "another-festival-name"
-	ARating             = 5
-	AnotherRating       = 1
+	ARating             = float64(5)
+	AnotherRating       = float64(1)
 	AYear               = 2020
 	AnotherYear         = 2015
 )

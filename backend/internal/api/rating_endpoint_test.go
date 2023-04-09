@@ -19,11 +19,11 @@ import (
 )
 
 type ratingResponse struct {
-	ArtistName   string `json:"artist_name"`
-	Comment      string `json:"comment"`
-	FestivalName string `json:"festival_name"`
-	Rating       int    `json:"rating"`
-	Year         int    `json:"year"`
+	ArtistName   string  `json:"artist_name"`
+	Comment      string  `json:"comment"`
+	FestivalName string  `json:"festival_name"`
+	Rating       float64 `json:"rating"`
+	Year         int     `json:"year"`
 }
 
 type ratingHandlerSuite struct {
