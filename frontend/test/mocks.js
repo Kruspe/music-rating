@@ -6,7 +6,7 @@ export const TestToken = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJNZXRhb
 
 export const bloodbathRating = {
   artist_name: 'Bloodbath',
-  comment: 'old school swedish death metal',
+  comment: 'some words',
   festival_name: 'Wacken',
   rating: 5,
   year: 2015,
@@ -50,6 +50,22 @@ const handlers = [
       ratedArtists.push(body);
     }
     return res(ctx.status(201));
+  }),
+  rest.patch(`${api}/ratings/:artistName`, async (req, res, ctx) => {
+    checkToken(req);
+    const { artistName } = req.params;
+    const body = await req.json();
+    ratedArtists = ratedArtists.filter((a) => a.artist_name !== artistName);
+    ratedArtists.push(
+      {
+        artist_name: artistName,
+        comment: body.comment,
+        festival_name: body.festival_name,
+        rating: body.rating,
+        year: body.year,
+      },
+    );
+    return res(ctx.status(200));
   }),
   rest.get(`${api}/festivals/wacken`, (req, res, ctx) => {
     checkToken(req);
