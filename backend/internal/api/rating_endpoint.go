@@ -12,7 +12,7 @@ type ratingResponse struct {
 	Comment      string `json:"comment"`
 	FestivalName string `json:"festival_name"`
 	Rating       int    `json:"rating"`
-	Year         int    `json:"year"`
+	Year         int    `json:"year,omitempty"`
 }
 
 type ratingRequest struct {
