@@ -34,13 +34,12 @@ func (e *FestivalEndpoint) GetUnratedArtistsForFestival(w http.ResponseWriter, r
 		e.errorHandler.Handle(w, err)
 		return
 	}
+	w.Header().Set("content-type", "application/json")
 	err = json.NewEncoder(w).Encode(e.toUnratedArtistsResponse(unratedArtists))
 	if err != nil {
 		e.errorHandler.Handle(w, err)
 		return
 	}
-	w.Header().Set("content-type", "application/json")
-	w.WriteHeader(http.StatusOK)
 }
 
 func (e *FestivalEndpoint) toUnratedArtistsResponse(artists []model.Artist) []unratedArtistResponse {

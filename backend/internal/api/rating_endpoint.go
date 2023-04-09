@@ -84,13 +84,12 @@ func (e *RatingEndpoint) getAll(w http.ResponseWriter, r *http.Request, userId s
 		e.errorHandler.Handle(w, err)
 		return
 	}
+	w.Header().Set("content-type", "application/json")
 	err = json.NewEncoder(w).Encode(e.toRatingsResponse(ratings))
 	if err != nil {
 		e.errorHandler.Handle(w, err)
 		return
 	}
-	w.Header().Set("content-type", "application/json")
-	w.WriteHeader(http.StatusOK)
 }
 
 func (e *RatingEndpoint) patch(w http.ResponseWriter, r *http.Request, userId, artistName string) {
