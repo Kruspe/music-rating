@@ -6,7 +6,7 @@ require (
 	github.com/aws/aws-lambda-go v1.39.1
 	github.com/aws/aws-sdk-go-v2 v1.17.8
 	github.com/aws/aws-sdk-go-v2/config v1.18.20
-	github.com/aws/aws-sdk-go-v2/credentials v1.13.19
+	github.com/aws/aws-sdk-go-v2/credentials v1.13.20
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.21
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.48
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.4
@@ -32,9 +32,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/internal/endpoint-discovery v1.7.26 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.9.26 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.14.1 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sso v1.12.7 // indirect
-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.7 // indirect
-	github.com/aws/aws-sdk-go-v2/service/sts v1.18.8 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sso v1.12.8 // indirect
+	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.14.8 // indirect
+	github.com/aws/aws-sdk-go-v2/service/sts v1.18.9 // indirect
 	github.com/aws/smithy-go v1.13.5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
