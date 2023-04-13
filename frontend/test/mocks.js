@@ -51,7 +51,7 @@ const handlers = [
     }
     return res(ctx.status(201));
   }),
-  rest.patch(`${api}/ratings/:artistName`, async (req, res, ctx) => {
+  rest.put(`${api}/ratings/:artistName`, async (req, res, ctx) => {
     checkToken(req);
     const { artistName } = req.params;
     const body = await req.json();

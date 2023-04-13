@@ -86,24 +86,24 @@ func (s *ratingHandlerSuite) Test_UpdateRating() {
 		"year":          rating.Year,
 	})
 	require.NoError(s.T(), err)
-	put := NewAuthenticatedRequest(http.MethodPost, "/ratings", bytes.NewReader(putBody))
+	create := NewAuthenticatedRequest(http.MethodPost, "/ratings", bytes.NewReader(putBody))
 	putRecorder := httptest.NewRecorder()
 
-	s.api.ServeHTTP(putRecorder, put)
+	s.api.ServeHTTP(putRecorder, create)
 	require.Equal(s.T(), http.StatusCreated, putRecorder.Result().StatusCode)
 
-	patchBody, err := json.Marshal(map[string]interface{}{
+	updateBody, err := json.Marshal(map[string]interface{}{
 		"comment":       AnotherComment,
 		"festival_name": AnotherFestivalName,
 		"rating":        AnotherRating,
 		"year":          AnotherYear,
 	})
 	require.NoError(s.T(), err)
-	patch := NewAuthenticatedRequest(http.MethodPatch, fmt.Sprintf("/ratings/%s", rating.ArtistName), bytes.NewReader(patchBody))
-	patchRecorder := httptest.NewRecorder()
+	update := NewAuthenticatedRequest(http.MethodPut, fmt.Sprintf("/ratings/%s", rating.ArtistName), bytes.NewReader(updateBody))
+	updateRecorder := httptest.NewRecorder()
 
-	s.api.ServeHTTP(patchRecorder, patch)
-	require.Equal(s.T(), http.StatusOK, patchRecorder.Result().StatusCode)
+	s.api.ServeHTTP(updateRecorder, update)
+	require.Equal(s.T(), http.StatusOK, updateRecorder.Result().StatusCode)
 
 	get := NewAuthenticatedRequest(http.MethodGet, "/ratings", nil)
 	require.NoError(s.T(), err)

@@ -98,33 +98,33 @@ func (r *RatingRepo) GetAll(ctx context.Context, userId string) ([]model.Rating,
 	return result, nil
 }
 
-func (r *RatingRepo) Update(ctx context.Context, userId, artistName string, update model.RatingUpdate) error {
-	updateExpr := expression.Set(expression.Name("rating"), expression.Value(update.Rating))
-	if update.Year == 0 {
+func (r *RatingRepo) Update(ctx context.Context, userId string, rating model.Rating) error {
+	updateExpr := expression.Set(expression.Name("rating"), expression.Value(rating.Rating))
+	if rating.Year == 0 {
 		updateExpr.Remove(expression.Name("year"))
 	} else {
-		updateExpr.Set(expression.Name("year"), expression.Value(update.Year))
+		updateExpr.Set(expression.Name("year"), expression.Value(rating.Year))
 	}
-	if update.FestivalName == "" {
+	if rating.FestivalName == "" {
 		updateExpr.Remove(expression.Name("festival_name"))
 	} else {
-		updateExpr.Set(expression.Name("festival_name"), expression.Value(update.FestivalName))
+		updateExpr.Set(expression.Name("festival_name"), expression.Value(rating.FestivalName))
 	}
-	if update.Comment == "" {
+	if rating.Comment == "" {
 		updateExpr.Remove(expression.Name("comment"))
 	} else {
-		updateExpr.Set(expression.Name("comment"), expression.Value(update.Comment))
+		updateExpr.Set(expression.Name("comment"), expression.Value(rating.Comment))
 	}
 	expr, err := expression.NewBuilder().WithUpdate(updateExpr).WithCondition(expression.And(
 		expression.Equal(expression.Name("PK"), expression.Value(fmt.Sprintf("USER#%s", userId))),
-		expression.Equal(expression.Name("SK"), expression.Value(fmt.Sprintf("ARTIST#%s", artistName))),
+		expression.Equal(expression.Name("SK"), expression.Value(fmt.Sprintf("ARTIST#%s", rating.ArtistName))),
 	)).Build()
 	if err != nil {
 		return err
 	}
 	key, err := attributevalue.MarshalMap(DbKey{
 		PK: fmt.Sprintf("USER#%s", userId),
-		SK: fmt.Sprintf("ARTIST#%s", artistName),
+		SK: fmt.Sprintf("ARTIST#%s", rating.ArtistName),
 	})
 	if err != nil {
 		return err
@@ -139,7 +139,7 @@ func (r *RatingRepo) Update(ctx context.Context, userId, artistName string, upda
 	})
 	var conditionalError *types.ConditionalCheckFailedException
 	if errors.As(err, &conditionalError) {
-		return model.UpdateNonExistingRatingError{ArtistName: artistName}
+		return model.UpdateNonExistingRatingError{ArtistName: rating.ArtistName}
 	}
 	return err
 }

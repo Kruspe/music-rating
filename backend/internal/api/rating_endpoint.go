@@ -33,7 +33,7 @@ type updateRatingRequest struct {
 type ratingRepo interface {
 	GetAll(ctx context.Context, userId string) ([]model.Rating, error)
 	Save(ctx context.Context, userId string, rating model.Rating) error
-	Update(ctx context.Context, userId, artistName string, ratingUpdate model.RatingUpdate) error
+	Update(ctx context.Context, userId string, ratingUpdate model.Rating) error
 }
 
 type RatingEndpoint struct {
@@ -92,7 +92,7 @@ func (e *RatingEndpoint) getAll(w http.ResponseWriter, r *http.Request, userId s
 	}
 }
 
-func (e *RatingEndpoint) patch(w http.ResponseWriter, r *http.Request, userId, artistName string) {
+func (e *RatingEndpoint) put(w http.ResponseWriter, r *http.Request, userId, artistName string) {
 	var ratingUpdate updateRatingRequest
 	err := json.NewDecoder(r.Body).Decode(&ratingUpdate)
 	if err != nil {
@@ -100,7 +100,8 @@ func (e *RatingEndpoint) patch(w http.ResponseWriter, r *http.Request, userId, a
 		return
 	}
 
-	err = e.ratingRepo.Update(r.Context(), userId, artistName, model.RatingUpdate{
+	err = e.ratingRepo.Update(r.Context(), userId, model.Rating{
+		ArtistName:   artistName,
 		Comment:      ratingUpdate.Comment,
 		FestivalName: ratingUpdate.FestivalName,
 		Rating:       ratingUpdate.Rating,

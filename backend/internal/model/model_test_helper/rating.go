@@ -24,12 +24,3 @@ func ARatingForArtist(name string) model.Rating {
 		Year:         AYear,
 	}
 }
-
-func ARatingUpdateForArtist() model.RatingUpdate {
-	return model.RatingUpdate{
-		Comment:      "",
-		FestivalName: AnotherFestivalName,
-		Rating:       AnotherRating,
-		Year:         AnotherYear,
-	}
-}

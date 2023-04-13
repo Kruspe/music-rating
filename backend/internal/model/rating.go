@@ -10,13 +10,6 @@ type Rating struct {
 	Year         int
 }
 
-type RatingUpdate struct {
-	Comment      string
-	FestivalName string
-	Rating       float64
-	Year         int
-}
-
 type UpdateNonExistingRatingError struct {
 	ArtistName string
 }

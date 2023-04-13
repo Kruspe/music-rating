@@ -11,7 +11,7 @@ function useUpdateRating() {
   return useMutation({
     mutationFn: async (data) => {
       fetch(`${process.env.REACT_APP_API_ENDPOINT}/ratings/${data.artist_name}`, {
-        method: 'PATCH',
+        method: 'PUT',
         body: JSON.stringify(data),
         headers: {
           authorization: `Bearer ${await getAccessTokenSilently()}`,
