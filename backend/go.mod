@@ -9,7 +9,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.21
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.23
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.4.50
-	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.6
+	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.19.7
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.33.0
 	github.com/awslabs/aws-lambda-go-api-proxy v0.14.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
