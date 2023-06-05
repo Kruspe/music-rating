@@ -6,7 +6,6 @@ import (
 	"github.com/kruspe/music-rating/internal/api"
 	. "github.com/kruspe/music-rating/internal/api/api_test_helper"
 	"github.com/kruspe/music-rating/internal/usecase"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"net/http"
@@ -27,7 +26,7 @@ func (s *apiSuite) BeforeTest(_, _ string) {
 	persistenceHelper := persistence_test_helper.NewPersistenceHelper()
 	repos := persistence.NewRepositories(persistenceHelper.Dynamo, persistenceHelper.TableName)
 	useCases := usecase.NewUseCases(repos, persistence.NewFestivalStorage(persistenceHelper.ReturnArtists(nil)))
-	s.api = api.NewApi(useCases, repos, api.NewErrorHandler(log.New()))
+	s.api = api.NewApi(useCases, repos)
 }
 
 func (s *apiSuite) Test_Returns404_WhenRequestPathDoesNotExist() {

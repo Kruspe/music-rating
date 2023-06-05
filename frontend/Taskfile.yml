@@ -19,7 +19,7 @@ tasks:
       CI: true
     cmds: [ yarn test ]
 
-  world:
+  default:
     cmds:
     - task: lint
     - task: test

@@ -10,7 +10,6 @@ import (
 	"github.com/kruspe/music-rating/internal/model"
 	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
 	"github.com/kruspe/music-rating/internal/usecase"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"net/http"
@@ -50,7 +49,7 @@ func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndAl
 		AnArtistWithName("Hypocrisy"),
 		unratedArtist,
 	}))
-	api := api.NewApi(usecase.NewUseCases(s.repos, festivalStorage), s.repos, api.NewErrorHandler(log.New()))
+	api := api.NewApi(usecase.NewUseCases(s.repos, festivalStorage), s.repos)
 
 	request := NewAuthenticatedRequest(http.MethodGet, "/festivals/wacken", nil)
 	recorder := httptest.NewRecorder()
@@ -80,7 +79,7 @@ func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndEm
 		AnArtistWithName("Hypocrisy"),
 		AnArtistWithName("Benediction"),
 	}))
-	api := api.NewApi(usecase.NewUseCases(s.repos, festivalStorage), s.repos, api.NewErrorHandler(log.New()))
+	api := api.NewApi(usecase.NewUseCases(s.repos, festivalStorage), s.repos)
 
 	request := NewAuthenticatedRequest(http.MethodGet, "/festivals/wacken", nil)
 	recorder := httptest.NewRecorder()

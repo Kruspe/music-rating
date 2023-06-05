@@ -9,7 +9,7 @@ import (
 	"os"
 )
 
-func InitRepos(cfg aws.Config, log *log.Logger) *persistence.Repositories {
+func InitRepos(cfg aws.Config) *persistence.Repositories {
 	tableName, present := os.LookupEnv("TABLE_NAME")
 	if !present {
 		err := fmt.Errorf("missing table name in environment variables")

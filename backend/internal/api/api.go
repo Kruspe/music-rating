@@ -14,10 +14,10 @@ type Api struct {
 	ratingEndpoint   *RatingEndpoint
 }
 
-func NewApi(useCases *usecase.UseCases, repos *persistence.Repositories, errorHandler *ErrorHandler) *Api {
+func NewApi(useCases *usecase.UseCases, repos *persistence.Repositories) *Api {
 	return &Api{
-		ratingEndpoint:   NewRatingEndpoint(repos.RatingRepo, errorHandler),
-		festivalEndpoint: NewFestivalEndpoint(useCases.FestivalUseCase, errorHandler),
+		ratingEndpoint:   NewRatingEndpoint(repos.RatingRepo),
+		festivalEndpoint: NewFestivalEndpoint(useCases.FestivalUseCase),
 	}
 }
 

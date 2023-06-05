@@ -18,26 +18,24 @@ type festivalUseCase interface {
 
 type FestivalEndpoint struct {
 	festivalUseCase festivalUseCase
-	errorHandler    *ErrorHandler
 }
 
-func NewFestivalEndpoint(festivalUseCase festivalUseCase, errorHandler *ErrorHandler) *FestivalEndpoint {
+func NewFestivalEndpoint(festivalUseCase festivalUseCase) *FestivalEndpoint {
 	return &FestivalEndpoint{
 		festivalUseCase: festivalUseCase,
-		errorHandler:    errorHandler,
 	}
 }
 
 func (e *FestivalEndpoint) GetUnratedArtistsForFestival(w http.ResponseWriter, r *http.Request, userId, festivalName string) {
 	unratedArtists, err := e.festivalUseCase.GetUnratedArtistsForFestival(r.Context(), userId, festivalName)
 	if err != nil {
-		e.errorHandler.Handle(w, err)
+		HandleError(w, err)
 		return
 	}
 	w.Header().Set("content-type", "application/json")
 	err = json.NewEncoder(w).Encode(e.toUnratedArtistsResponse(unratedArtists))
 	if err != nil {
-		e.errorHandler.Handle(w, err)
+		HandleError(w, err)
 		return
 	}
 }

@@ -17,7 +17,7 @@ tasks:
     dir: ../scripts/backend
     cmds:
     - go run stop.go
-  world:
+  default:
     desc: Format and test everything
     cmds:
     - task: format

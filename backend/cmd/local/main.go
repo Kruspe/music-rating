@@ -15,7 +15,6 @@ import (
 func main() {
 	log.SetLevel(log.DebugLevel)
 	log.SetFormatter(&log.JSONFormatter{})
-	log := log.New()
 	ph := NewPersistenceHelper()
 	repos := persistence.NewRepositories(ph.Dynamo, ph.TableName)
 	festivalStorage := persistence.NewFestivalStorage(ph.ReturnArtists([]model.Artist{
@@ -34,7 +33,7 @@ func main() {
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(200)
 		} else {
-			api.NewApi(useCases, repos, api.NewErrorHandler(log)).ServeHTTP(w, r)
+			api.NewApi(useCases, repos).ServeHTTP(w, r)
 		}
 	}))
 	err := http.ListenAndServe(":8080", mux)

@@ -6,24 +6,16 @@ import (
 	"net/http"
 )
 
-type ErrorHandler struct {
-	log *log.Logger
-}
-
-func NewErrorHandler(log *log.Logger) *ErrorHandler {
-	return &ErrorHandler{log: log}
-}
-
-func (e *ErrorHandler) Handle(w http.ResponseWriter, err error) {
+func HandleError(w http.ResponseWriter, err error) {
 	switch err.(type) {
 	case MissingParameterError:
-		e.log.Error(err)
+		log.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
 	case UpdateNonExistingRatingError:
-		e.log.Error(err)
+		log.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
 	default:
-		e.log.Error(err)
+		log.Error(err)
 		w.WriteHeader(http.StatusInternalServerError)
 	}
 }

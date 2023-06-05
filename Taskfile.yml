@@ -27,11 +27,11 @@ tasks:
     cmds:
     - task: frontend:install
     - task: backend:install
-  world:
+  default:
     desc: Verify and test everything
     cmds:
-    - task: frontend:world
-    - task: backend:world
+    - task: frontend
+    - task: backend
 
   deploy:
     desc: Build and deploy frontend and backend

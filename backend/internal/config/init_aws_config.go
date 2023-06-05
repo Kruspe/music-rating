@@ -7,7 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func InitAwsConfig(log *log.Logger) aws.Config {
+func InitAwsConfig() aws.Config {
 	cfg, err := config.LoadDefaultConfig(context.Background())
 	if err != nil {
 		log.Fatal(err)

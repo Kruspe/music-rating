@@ -10,7 +10,6 @@ import (
 	. "github.com/kruspe/music-rating/internal/api/api_test_helper"
 	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
 	"github.com/kruspe/music-rating/internal/usecase"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"net/http"
@@ -38,7 +37,7 @@ func Test_RatingHandlerSuite(t *testing.T) {
 func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
 	ph := NewPersistenceHelper()
 	repos := persistence.NewRepositories(ph.Dynamo, ph.TableName)
-	s.api = api.NewApi(usecase.NewUseCases(repos, persistence.NewFestivalStorage(ph.ReturnArtists(nil))), repos, api.NewErrorHandler(log.New()))
+	s.api = api.NewApi(usecase.NewUseCases(repos, persistence.NewFestivalStorage(ph.ReturnArtists(nil))), repos)
 }
 
 func (s *ratingHandlerSuite) Test_PersistsRating() {

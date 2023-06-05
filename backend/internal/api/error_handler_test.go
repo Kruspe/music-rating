@@ -14,8 +14,7 @@ import (
 
 type errorHandlerSuite struct {
 	suite.Suite
-	errorHandler *api.ErrorHandler
-	logHook      *test.Hook
+	logHook *test.Hook
 }
 
 func Test_ErrorHandlerSuite(t *testing.T) {
@@ -23,14 +22,12 @@ func Test_ErrorHandlerSuite(t *testing.T) {
 }
 
 func (s *errorHandlerSuite) BeforeTest(_, _ string) {
-	logger, hook := test.NewNullLogger()
-	s.logHook = hook
-	s.errorHandler = api.NewErrorHandler(logger)
+	s.logHook = test.NewGlobal()
 }
 
 func (s *errorHandlerSuite) Test_Returns400_MissingParameterError() {
 	recorder := httptest.NewRecorder()
-	s.errorHandler.Handle(recorder, model.MissingParameterError{ParameterName: "some_parameter"})
+	api.HandleError(recorder, model.MissingParameterError{ParameterName: "some_parameter"})
 
 	require.Equal(s.T(), http.StatusBadRequest, recorder.Result().StatusCode)
 	require.Contains(s.T(), s.logHook.LastEntry().Message, "missing parameter 'some_parameter'")
@@ -38,7 +35,7 @@ func (s *errorHandlerSuite) Test_Returns400_MissingParameterError() {
 
 func (s *errorHandlerSuite) Test_Returns400_UpdateNonExistingRatingError() {
 	recorder := httptest.NewRecorder()
-	s.errorHandler.Handle(recorder, model.UpdateNonExistingRatingError{ArtistName: "artist_name"})
+	api.HandleError(recorder, model.UpdateNonExistingRatingError{ArtistName: "artist_name"})
 
 	require.Equal(s.T(), http.StatusBadRequest, recorder.Result().StatusCode)
 	require.Contains(s.T(), s.logHook.LastEntry().Message, "trying to update non existing rating for 'artist_name'")
@@ -46,7 +43,7 @@ func (s *errorHandlerSuite) Test_Returns400_UpdateNonExistingRatingError() {
 
 func (s *errorHandlerSuite) Test_Returns500_GenericError() {
 	recorder := httptest.NewRecorder()
-	s.errorHandler.Handle(recorder, errors.New("random error"))
+	api.HandleError(recorder, errors.New("random error"))
 
 	require.Equal(s.T(), http.StatusInternalServerError, recorder.Result().StatusCode)
 	require.Contains(s.T(), s.logHook.LastEntry().Message, "random error")

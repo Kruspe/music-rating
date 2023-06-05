@@ -6,12 +6,12 @@ import (
 )
 
 func main() {
-	log := config.InitLogging()
-	cfg := config.InitAwsConfig(log)
-	repos := config.InitRepos(cfg, log)
+	config.InitLogging()
+	cfg := config.InitAwsConfig()
+	repos := config.InitRepos(cfg)
 	storage := config.InitStorage(cfg)
 	useCases := config.InitUseCases(repos, storage)
-	api := config.InitApi(useCases, repos, log)
+	api := config.InitApi(useCases, repos)
 
 	lambda.Start(api.ProxyWithContext)
 }

@@ -37,14 +37,12 @@ type ratingRepo interface {
 }
 
 type RatingEndpoint struct {
-	ratingRepo   ratingRepo
-	errorHandler *ErrorHandler
+	ratingRepo ratingRepo
 }
 
-func NewRatingEndpoint(ratingRepo ratingRepo, errorHandler *ErrorHandler) *RatingEndpoint {
+func NewRatingEndpoint(ratingRepo ratingRepo) *RatingEndpoint {
 	return &RatingEndpoint{
-		ratingRepo:   ratingRepo,
-		errorHandler: errorHandler,
+		ratingRepo: ratingRepo,
 	}
 }
 
@@ -52,15 +50,15 @@ func (e *RatingEndpoint) create(w http.ResponseWriter, r *http.Request, userId s
 	var rating ratingRequest
 	err := json.NewDecoder(r.Body).Decode(&rating)
 	if err != nil {
-		e.errorHandler.Handle(w, err)
+		HandleError(w, err)
 		return
 	}
 	if rating.ArtistName == "" {
-		e.errorHandler.Handle(w, model.MissingParameterError{ParameterName: "ArtistName"})
+		HandleError(w, model.MissingParameterError{ParameterName: "ArtistName"})
 		return
 	}
 	if rating.Rating == 0 {
-		e.errorHandler.Handle(w, model.MissingParameterError{ParameterName: "Rating"})
+		HandleError(w, model.MissingParameterError{ParameterName: "Rating"})
 		return
 	}
 
@@ -72,7 +70,7 @@ func (e *RatingEndpoint) create(w http.ResponseWriter, r *http.Request, userId s
 		Year:         rating.Year,
 	})
 	if err != nil {
-		e.errorHandler.Handle(w, err)
+		HandleError(w, err)
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
@@ -81,13 +79,13 @@ func (e *RatingEndpoint) create(w http.ResponseWriter, r *http.Request, userId s
 func (e *RatingEndpoint) getAll(w http.ResponseWriter, r *http.Request, userId string) {
 	ratings, err := e.ratingRepo.GetAll(r.Context(), userId)
 	if err != nil {
-		e.errorHandler.Handle(w, err)
+		HandleError(w, err)
 		return
 	}
 	w.Header().Set("content-type", "application/json")
 	err = json.NewEncoder(w).Encode(e.toRatingsResponse(ratings))
 	if err != nil {
-		e.errorHandler.Handle(w, err)
+		HandleError(w, err)
 		return
 	}
 }
@@ -96,7 +94,7 @@ func (e *RatingEndpoint) put(w http.ResponseWriter, r *http.Request, userId, art
 	var ratingUpdate updateRatingRequest
 	err := json.NewDecoder(r.Body).Decode(&ratingUpdate)
 	if err != nil {
-		e.errorHandler.Handle(w, err)
+		HandleError(w, err)
 		return
 	}
 
@@ -108,7 +106,7 @@ func (e *RatingEndpoint) put(w http.ResponseWriter, r *http.Request, userId, art
 		Year:         ratingUpdate.Year,
 	})
 	if err != nil {
-		e.errorHandler.Handle(w, err)
+		HandleError(w, err)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
