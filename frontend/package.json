@@ -67,6 +67,6 @@
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "eslint-config-airbnb": "^19.0.4",
-    "msw": "^1.2.1"
+    "msw": "^1.2.2"
   }
 }
