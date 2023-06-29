@@ -1,10 +1,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: MusicRating Deployment Utils
 Resources:
-  DeploymentBucketBackend:
+  DeploymentBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: music-rating-deployment-bucket-backend
+      BucketName: music-rating-deployment-bucket
       VersioningConfiguration:
         Status: Enabled
       PublicAccessBlockConfiguration:
@@ -12,33 +12,51 @@ Resources:
         BlockPublicPolicy: TRUE
         IgnorePublicAcls: TRUE
         RestrictPublicBuckets: TRUE
+      LifecycleConfiguration:
+        Rules:
+        - NoncurrentVersionExpirationInDays: 7
+          Status: Enabled
+  DeploymentBucketNameParameter:
+    Type: AWS::SSM::Parameter
+    DependsOn: DeploymentBucket
+    Properties:
+      Description: Deployment bucket name
+      Name: '/music-rating/deployment-bucket/name'
+      Type: String
+      Value: !Ref DeploymentBucket
 
   # Frontend
-  DeploymentBucketFrontend:
+  StaticAssetsBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: music-rating-deployment-bucket-frontend
+      BucketName: music-rating-static-assets
+      VersioningConfiguration:
+        Status: Enabled
       PublicAccessBlockConfiguration:
         BlockPublicAcls: TRUE
         BlockPublicPolicy: TRUE
         IgnorePublicAcls: TRUE
         RestrictPublicBuckets: TRUE
-  DeploymentBucketFrontendNameParameter:
+      LifecycleConfiguration:
+        Rules:
+        - NoncurrentVersionExpirationInDays: 7
+          Status: Enabled
+  StaticAssetsBucketNameParameter:
     Type: AWS::SSM::Parameter
-    DependsOn: DeploymentBucketFrontend
+    DependsOn: StaticAssetsBucket
     Properties:
-      Description: Frontend Deployment Bucket Name
-      Name: '/deployment-bucket-frontend/name'
+      Description: Static assets bucket name
+      Name: '/music-rating/static-assets-bucket/name'
       Type: String
-      Value: !Ref DeploymentBucketFrontend
-  DeploymentBucketFrontendDomainNameParameter:
+      Value: !Ref StaticAssetsBucket
+  StaticAssetsBucketDomainNameParameter:
     Type: AWS::SSM::Parameter
-    DependsOn: DeploymentBucketFrontend
+    DependsOn: StaticAssetsBucket
     Properties:
-      Description: Frontend Deployment Bucket Regional Domain Name
-      Name: '/deployment-bucket-frontend/regional-domain-name'
+      Description: Static assets bucket Regional Domain Name
+      Name: '/music-rating/static-assets-bucket/regional-domain-name'
       Type: String
-      Value: !GetAtt [ DeploymentBucketFrontend, RegionalDomainName ]
+      Value: !GetAtt [ StaticAssetsBucket, RegionalDomainName ]
 
   # Deployment-User
   DeploymentUser:
@@ -64,24 +82,3 @@ Resources:
             - 'ssm:*'
             - 's3:*'
             Resource: '*'
-
-  # FestivalBands
-  DeploymentBucketFestivalBands:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: festival-bands-deployment-bucket
-      VersioningConfiguration:
-        Status: Enabled
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: TRUE
-        BlockPublicPolicy: TRUE
-        IgnorePublicAcls: TRUE
-        RestrictPublicBuckets: TRUE
-  FestivalBandsDeploymentBucket:
-    Type: AWS::SSM::Parameter
-    DependsOn: DeploymentBucketFestivalBands
-    Properties:
-      Description: Deployment bucket name for FestivalBands lambdas
-      Name: /festival-bands/deployment-bucket/name
-      Type: String
-      Value: !Ref DeploymentBucketFestivalBands

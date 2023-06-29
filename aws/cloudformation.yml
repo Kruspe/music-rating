@@ -6,9 +6,13 @@ Parameters:
     Type: String
   ParamBackendVersion:
     Type: String
-  ParamDeploymentBucketFrontendDomainName:
+  ParamFrontendVersion:
+    Type: String
+  ParamStaticAssetsBucketDomainName:
     Type: AWS::SSM::Parameter::Value<String>
-  ParamDeploymentBucketFrontendName:
+  ParamStaticAssetsBucketName:
+    Type: AWS::SSM::Parameter::Value<String>
+  ParamDeploymentBucketName:
     Type: AWS::SSM::Parameter::Value<String>
   ParamEUDomainCertificateArn:
     Type: AWS::SSM::Parameter::Value<String>
@@ -18,6 +22,10 @@ Parameters:
     Type: String
     Default: arn:aws:acm:us-east-1:025007687265:certificate/ce1411e2-6f5d-4ffb-be8d-878a78cb6adb
   ParamClientId:
+    Type: String
+  ParamClientSecret:
+    Type: String
+  ParamSessionSecret:
     Type: String
   ParamFestivalBucketName:
     Type: AWS::SSM::Parameter::Value<String>
@@ -43,11 +51,11 @@ Resources:
       TableName: MusicRating
 
   # Backend
-  Api:
+  BackendApi:
     Type: AWS::ApiGatewayV2::Api
     Properties:
       DisableExecuteApiEndpoint: TRUE
-      Name: MusicRating
+      Name: MusicRatingBackend
       ProtocolType: HTTP
       CorsConfiguration:
         AllowOrigins:
@@ -57,81 +65,89 @@ Resources:
         - '*'
         AllowHeaders:
         - '*'
-  ApiDomain:
+  BackendApiDomain:
     Type: AWS::ApiGatewayV2::DomainName
     Properties:
       DomainName: !Sub api.${ParamDomainName}
       DomainNameConfigurations:
       - CertificateArn: !Ref ParamEUDomainCertificateArn
-  ApiStage:
+  BackendApiStage:
     Type: AWS::ApiGatewayV2::Stage
     Properties:
-      ApiId: !Ref Api
+      ApiId: !Ref BackendApi
       AutoDeploy: true
       StageName: $default
-  ApiMapping:
+  BackendApiMapping:
     Type: AWS::ApiGatewayV2::ApiMapping
     Properties:
-      ApiId: !Ref Api
-      DomainName: !Ref ApiDomain
-      Stage: !Ref ApiStage
-  ApiBackendAuthorizer:
+      ApiId: !Ref BackendApi
+      DomainName: !Ref BackendApiDomain
+      Stage: !Ref BackendApiStage
+  BackendApiAuthorizer:
     Type: AWS::ApiGatewayV2::Authorizer
     Properties:
-      ApiId: !Ref Api
+      ApiId: !Ref BackendApi
       AuthorizerType: JWT
       IdentitySource: [ $request.header.Authorization ]
       JwtConfiguration:
         Audience: [ !Sub 'https://api.${ParamDomainName}' ]
         Issuer: https://musicrating.eu.auth0.com/
       Name: MusicRatingUsers
-  ApiBackendIntegration:
+  BackendApiIntegration:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
-      ApiId: !Ref Api
+      ApiId: !Ref BackendApi
       IntegrationType: AWS_PROXY
       IntegrationUri: !GetAtt [ BackendLambda, Arn ]
       PayloadFormatVersion: '2.0'
-  ApiBackendRouteGet:
+#  BackendApiRoute:
+#    Type: AWS::ApiGatewayV2::Route
+#    Properties:
+#      ApiId: !Ref BackendApi
+#      AuthorizerId: !Ref BackendApiAuthorizer
+#      AuthorizationType: JWT
+#      RouteKey: $default
+#      Target: !Join [ '/', [ integrations, !Ref BackendApiIntegration ] ]
+  BackendApiRouteGet:
     Type: AWS::ApiGatewayV2::Route
     Properties:
-      ApiId: !Ref Api
-      AuthorizerId: !Ref ApiBackendAuthorizer
+      ApiId: !Ref BackendApi
+      AuthorizerId: !Ref BackendApiAuthorizer
       AuthorizationType: JWT
       RouteKey: GET /{proxy+}
-      Target: !Join [ '/', [ integrations, !Ref ApiBackendIntegration ] ]
-  ApiBackendRoutePut:
+      Target: !Join [ '/', [ integrations, !Ref BackendApiIntegration ] ]
+  BackendApiRoutePut:
     Type: AWS::ApiGatewayV2::Route
     Properties:
-      ApiId: !Ref Api
-      AuthorizerId: !Ref ApiBackendAuthorizer
+      ApiId: !Ref BackendApi
+      AuthorizerId: !Ref BackendApiAuthorizer
       AuthorizationType: JWT
       RouteKey: PUT /{proxy+}
-      Target: !Join [ '/', [ integrations, !Ref ApiBackendIntegration ] ]
-  ApiBackendRoutePost:
+      Target: !Join [ '/', [ integrations, !Ref BackendApiIntegration ] ]
+  BackendApiRoutePost:
     Type: AWS::ApiGatewayV2::Route
     Properties:
-      ApiId: !Ref Api
-      AuthorizerId: !Ref ApiBackendAuthorizer
+      ApiId: !Ref BackendApi
+      AuthorizerId: !Ref BackendApiAuthorizer
       AuthorizationType: JWT
       RouteKey: POST /{proxy+}
-      Target: !Join [ '/', [ integrations, !Ref ApiBackendIntegration ] ]
-  ApiBackendRouteDelete:
+      Target: !Join [ '/', [ integrations, !Ref BackendApiIntegration ] ]
+  BackendApiRouteDelete:
     Type: AWS::ApiGatewayV2::Route
     Properties:
-      ApiId: !Ref Api
-      AuthorizerId: !Ref ApiBackendAuthorizer
+      ApiId: !Ref BackendApi
+      AuthorizerId: !Ref BackendApiAuthorizer
       AuthorizationType: JWT
       RouteKey: DELETE /{proxy+}
-      Target: !Join [ '/', [ integrations, !Ref ApiBackendIntegration ] ]
-  ApiBackendRoutePatch:
+      Target: !Join [ '/', [ integrations, !Ref BackendApiIntegration ] ]
+  BackendApiRoutePatch:
     Type: AWS::ApiGatewayV2::Route
     Properties:
-      ApiId: !Ref Api
-      AuthorizerId: !Ref ApiBackendAuthorizer
+      ApiId: !Ref BackendApi
+      AuthorizerId: !Ref BackendApiAuthorizer
       AuthorizationType: JWT
       RouteKey: PATCH /{proxy+}
-      Target: !Join [ '/', [ integrations, !Ref ApiBackendIntegration ] ]
+      Target: !Join [ '/', [ integrations, !Ref BackendApiIntegration ] ]
   BackendLambdaRole:
     Type: AWS::IAM::Role
     Properties:
@@ -168,7 +184,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Code:
-        S3Bucket: music-rating-deployment-bucket-backend
+        S3Bucket: !Ref ParamDeploymentBucketName
         S3Key: backend.zip
         S3ObjectVersion: !Ref ParamBackendVersion
       Handler: bootstrap
@@ -184,19 +200,84 @@ Resources:
     Properties:
       Action: 'lambda:InvokeFunction'
       Principal: 'apigateway.amazonaws.com'
-      SourceArn: !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/$default/*/*
+      SourceArn: !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${BackendApi}/$default/*/*
       FunctionName: !Ref BackendLambda
-  ApiARecord:
+  BackendApiARecord:
     Type: AWS::Route53::RecordSet
     Properties:
       AliasTarget:
-        DNSName: !GetAtt [ ApiDomain, RegionalDomainName ]
-        HostedZoneId: !GetAtt [ ApiDomain, RegionalHostedZoneId ]
+        DNSName: !GetAtt [ BackendApiDomain, RegionalDomainName ]
+        HostedZoneId: !GetAtt [ BackendApiDomain, RegionalHostedZoneId ]
       HostedZoneId: !Ref ParamDomainHostedZoneId
-      Name: !Ref ApiDomain
+      Name: !Ref BackendApiDomain
       Type: A
 
   # Frontend
+  FrontendApi:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      Name: MusicRatingFrontend
+      ProtocolType: HTTP
+  FrontendApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref FrontendApi
+      AutoDeploy: true
+      StageName: $default
+  FrontendApiIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref FrontendApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt [ FrontendLambda, Arn ]
+      PayloadFormatVersion: '2.0'
+  FrontendApiRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref FrontendApi
+      RouteKey: $default
+      Target: !Join [ '/', [ integrations, !Ref FrontendApiIntegration ] ]
+  FrontendLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - 'sts:AssumeRole'
+      ManagedPolicyArns:
+      - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  FrontendLambda:
+    Type: AWS::Lambda::Function
+    Properties:
+      MemorySize: 1024
+      Timeout: 5
+      Code:
+        S3Bucket: !Ref ParamDeploymentBucketName
+        S3Key: frontend.zip
+        S3ObjectVersion: !Ref ParamFrontendVersion
+      Handler: index.handler
+      Role: !GetAtt [ BackendLambdaRole, Arn ]
+      Runtime: nodejs18.x
+      Environment:
+        Variables:
+          CLIENT_ID: !Ref ParamClientId
+          CLIENT_SECRET: !Ref ParamClientSecret
+          SESSION_SECRET: !Ref ParamSessionSecret
+          DOMAIN_NAME: !Sub https://${ParamDomainName}
+          API_ENDPOINT: !Sub https://api.${ParamDomainName}
+  FrontendLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: 'lambda:InvokeFunction'
+      Principal: 'apigateway.amazonaws.com'
+      SourceArn: !Sub arn:${AWS::Partition}:execute-api:${AWS::Region}:${AWS::AccountId}:${FrontendApi}/$default/$default
+      FunctionName: !Ref FrontendLambda
+
   CFDistribution:
     Type: AWS::CloudFront::Distribution
     DependsOn:
@@ -204,52 +285,87 @@ Resources:
     Properties:
       DistributionConfig:
         Aliases: [!Ref ParamDomainName]
-        CustomErrorResponses:
-        - ErrorCode: 404
-          ResponseCode: 200
-          ErrorCachingMinTTL: 31536000
-          ResponsePagePath: /index.html
         DefaultCacheBehavior:
+          AllowedMethods:
+          - GET
+          - HEAD
+          - OPTIONS
+          - PUT
+          - POST
+          - PATCH
+          - DELETE
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # CachingDisabled
+          OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac # AllViewerExceptHostHeader
+          TargetOriginId: FrontendApiOrigin
+          ViewerProtocolPolicy: redirect-to-https
+        CacheBehaviors:
+        - PathPattern: /static/*
           AllowedMethods:
           - GET
           - HEAD
           - OPTIONS
           CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized
           OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf # CORS-S3Origin
-          TargetOriginId: MusicRatingOrigin
+          TargetOriginId: StaticAssetsOrigin
           ViewerProtocolPolicy: redirect-to-https
-        CacheBehaviors:
-        - PathPattern: /
+        - PathPattern: /favicon.ico
           AllowedMethods:
           - GET
           - HEAD
-          - OPTIONS
-          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # CachingDisabled
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized
           OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf # CORS-S3Origin
-          TargetOriginId: MusicRatingOrigin
+          TargetOriginId: StaticAssetsOrigin
           ViewerProtocolPolicy: redirect-to-https
-        - PathPattern: /index.html
-          AllowedMethods:
-          - GET
-          - HEAD
-          - OPTIONS
-          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad # CachingDisabled
-          OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf # CORS-S3Origin
-          TargetOriginId: MusicRatingOrigin
-          ViewerProtocolPolicy: redirect-to-https
-        DefaultRootObject: index.html
+        DefaultRootObject: /
         Enabled: true
         Origins:
-        - DomainName: !Ref ParamDeploymentBucketFrontendDomainName
-          Id: MusicRatingOrigin
+        - DomainName: !Sub ${FrontendApi.ApiId}.execute-api.${AWS::Region}.amazonaws.com
+          Id: FrontendApiOrigin
+          CustomOriginConfig:
+            OriginProtocolPolicy: https-only
+        - DomainName: !Ref ParamStaticAssetsBucketDomainName
+          Id: StaticAssetsOrigin
           S3OriginConfig:
-            OriginAccessIdentity:  ''
-          OriginAccessControlId: !GetAtt [ CFOriginAccessControl, Id ]
+            OriginAccessIdentity: ''
+          OriginAccessControlId: !GetAtt [ StaticAssetsBucketOriginAccessControl, Id ]
         PriceClass: PriceClass_100
         ViewerCertificate:
           AcmCertificateArn: !Ref ParamUSDomainCertificateArn
           MinimumProtocolVersion: TLSv1.2_2021
           SslSupportMethod: sni-only
+  StaticAssetsBucketOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: MusicRating-StaticAssets-AccessControl
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+  StaticAssetsBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ParamStaticAssetsBucketName
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: cloudfront.amazonaws.com
+          Action:
+          - 's3:GetObject'
+          Resource: !Join [ '', [ 'arn:aws:s3:::', !Ref ParamStaticAssetsBucketName, '/*' ] ]
+          Condition:
+            ArnEquals:
+              AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${CFDistribution}
+        - Effect: Allow
+          Principal:
+            Service: cloudfront.amazonaws.com
+          Action:
+          - 's3:ListBucket'
+          Resource: !Sub arn:aws:s3:::${ParamStaticAssetsBucketName}
+          Condition:
+            ArnEquals:
+              AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${CFDistribution}
   CFOriginAccessControl:
     Type: AWS::CloudFront::OriginAccessControl
     Properties:
@@ -263,31 +379,6 @@ Resources:
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment: Access to MusicRating frontend src
-  DeploymentBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref ParamDeploymentBucketFrontendName
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-        - Effect: Allow
-          Principal:
-            Service: cloudfront.amazonaws.com
-          Action:
-          - 's3:GetObject'
-          Resource: !Join [ '', [ 'arn:aws:s3:::', !Ref ParamDeploymentBucketFrontendName, '/*' ] ]
-          Condition:
-            ArnEquals:
-              AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${CFDistribution}
-        - Effect: Allow
-          Principal:
-            Service: cloudfront.amazonaws.com
-          Action:
-          - 's3:ListBucket'
-          Resource: !Sub arn:aws:s3:::${ParamDeploymentBucketFrontendName}
-          Condition:
-            ArnEquals:
-              AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/${CFDistribution}
   FrontendARecord:
     Type: AWS::Route53::RecordSet
     Properties:

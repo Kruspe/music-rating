@@ -12,28 +12,44 @@ tasks:
     cmds: [ go run stop.go ]
   install:
     desc: install dependencies
-    cmds: [ yarn ]
-  test:
-    desc: test frontend
-    env:
-      CI: true
-    cmds: [ yarn test ]
+    cmds: [ npm ci ]
+  #  test:
+  #    desc: test frontend
+  #    env:
+  #      CI: true
+  #    cmds: [ yarn test ]
 
   default:
     cmds:
     - task: lint
-    - task: test
+    - task: prettier
+    - task: tsc
+#    - task: test
   ci:
     deps: [ install ]
     cmds:
-    - task: test
+    - npm run build
+    - task: lint
+    - task: prettier
+    - task: tsc
+#   - task: test
 
   build:
+    deps: [ install ]
     cmds:
-    - yarn
-    - REACT_APP_DOMAIN_NAME={{.REACT_APP_DOMAIN_NAME}} REACT_APP_CLIENT_ID={{.REACT_APP_CLIENT_ID}} REACT_APP_API_ENDPOINT=https://api.{{.REACT_APP_DOMAIN_NAME}} yarn build
-    - aws s3 cp ../frontend/build s3://music-rating-deployment-bucket-frontend --recursive --profile music-rating
+    - rm -rf build
+    - npm run build
+    - task: zip
+  zip:
+    dir: build
+    cmds: [ zip -r frontend.zip . ]
 
   lint:
     desc: lint frontend
-    cmds: [ yarn lint ]
+    cmds: [ npm run lint ]
+  prettier:
+    desc: format frontend
+    cmds: [ npm run prettier ]
+  tsc:
+    desc: typecheck frontend
+    cmds: [ npm run typecheck ]

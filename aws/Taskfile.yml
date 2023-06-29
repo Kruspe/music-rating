@@ -3,18 +3,26 @@ version: 3
 tasks:
   deploy:
     cmds:
+    - aws s3 cp ../frontend/public/build s3://music-rating-static-assets/static --recursive --profile music-rating
+    - aws s3 cp ../frontend/public/favicon.ico s3://music-rating-static-assets --profile music-rating
     - aws cloudformation deploy --template-file cloudformation.yml --stack-name MusicRating-App --capabilities CAPABILITY_IAM
       --parameter-overrides
-      ParamDomainName={{.REACT_APP_DOMAIN_NAME}}
+      ParamDomainName={{.DOMAIN_NAME}}
+      ParamDeploymentBucketName=/music-rating/deployment-bucket/name
       ParamBackendVersion={{.BACKEND_VERSION_ID}}
-      ParamDeploymentBucketFrontendDomainName=/deployment-bucket-frontend/regional-domain-name
-      ParamDeploymentBucketFrontendName=/deployment-bucket-frontend/name
-      ParamDomainHostedZoneId=/domain/{{.REACT_APP_DOMAIN_NAME}}/hosted-zone
-      ParamEUDomainCertificateArn=/domain/api.{{.REACT_APP_DOMAIN_NAME}}/certificate
-      ParamClientId={{.REACT_APP_CLIENT_ID}}
+      ParamFrontendVersion={{.FRONTEND_VERSION_ID}}
+      ParamStaticAssetsBucketDomainName=/music-rating/static-assets-bucket/regional-domain-name
+      ParamStaticAssetsBucketName=/music-rating/static-assets-bucket/name
+      ParamDomainHostedZoneId=/domain/{{.DOMAIN_NAME}}/hosted-zone
+      ParamEUDomainCertificateArn=/domain/api.{{.DOMAIN_NAME}}/certificate
+      ParamClientId={{.CLIENT_ID}}
+      ParamClientSecret={{.CLIENT_SECRET}}
+      ParamSessionSecret={{.SESSION_SECRET}}
       ParamFestivalBucketName=/festival-bucket/name
       ParamFestivalBucketArn=/festival-bucket/arn
       --profile music-rating
     vars:
       BACKEND_VERSION_ID:
-        sh: aws s3api put-object --bucket music-rating-deployment-bucket-backend --key backend.zip --body ../backend/out/backend.zip --profile music-rating | jq -r .VersionId
+        sh: aws s3api put-object --bucket music-rating-deployment-bucket --key backend.zip --body ../backend/out/backend.zip --profile music-rating | jq -r .VersionId
+      FRONTEND_VERSION_ID:
+        sh: aws s3api put-object --bucket music-rating-deployment-bucket --key frontend.zip --body ../frontend/build/frontend.zip --profile music-rating | jq -r .VersionId
