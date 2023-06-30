@@ -52,4 +52,7 @@ tasks:
     cmds: [ npm run prettier ]
   tsc:
     desc: typecheck frontend
-    cmds: [ npm run typecheck ]
+    cmds: 
+    - npm run build
+    - npm run typecheck
+    
