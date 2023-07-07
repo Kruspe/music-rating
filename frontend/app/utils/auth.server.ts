@@ -24,7 +24,7 @@ const auth0Strategy = new Auth0Strategy(
   },
   async ({ accessToken, refreshToken, extraParams, profile }) => {
     return { id: profile._json!.sub!, token: accessToken };
-  }
+  },
 );
 
 authenticator.use(auth0Strategy);

@@ -10,13 +10,13 @@ export default function handleRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext,
-  loadContext: AppLoadContext
+  loadContext: AppLoadContext,
 ) {
   return handleBrowserRequest(
     request,
     responseStatusCode,
     responseHeaders,
-    remixContext
+    remixContext,
   );
 }
 
@@ -24,14 +24,14 @@ function handleBrowserRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
-  remixContext: EntryContext
+  remixContext: EntryContext,
 ) {
   const markup = renderToString(
     <RemixServer
       context={remixContext}
       url={request.url}
       abortDelay={ABORT_DELAY}
-    />
+    />,
   );
   responseHeaders.set("Content-Type", "text/html");
 

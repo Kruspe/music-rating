@@ -4,7 +4,7 @@ import { authenticator } from "~/utils/auth.server";
 
 export const get = async <T>(
   request: Request,
-  path: string
+  path: string,
 ): Promise<TypedResponse<T>> => {
   const { token } = await authenticator.isAuthenticated(request, {
     failureRedirect: "/",
