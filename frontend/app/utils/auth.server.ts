@@ -20,7 +20,7 @@ const auth0Strategy = new Auth0Strategy(
     clientID: CLIENT_ID,
     clientSecret: CLIENT_SECRET,
     domain: "musicrating.eu.auth0.com",
-    audience: `${API_ENDPOINT}`,
+    audience: process.env.NODE_ENV === "production" ? API_ENDPOINT : undefined,
   },
   async ({ accessToken, refreshToken, extraParams, profile }) => {
     return { id: profile._json!.sub!, token: accessToken };

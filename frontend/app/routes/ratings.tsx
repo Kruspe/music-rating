@@ -1,8 +1,5 @@
-import type {
-  GridRenderCellParams,
-  GridRenderEditCellParams,
-} from "@mui/x-data-grid";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import type { GridRenderCellParams } from "@mui/x-data-grid";
+import { DataGrid, GridToolbar, useGridApiContext } from "@mui/x-data-grid";
 import { Rating, Typography } from "@mui/material";
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { get } from "~/utils/request.server";
@@ -14,8 +11,26 @@ function renderRating({ value }: GridRenderCellParams) {
   return <Rating readOnly defaultValue={value} precision={0.5} />;
 }
 
-function renderUpdateRating({ value }: GridRenderEditCellParams) {
-  return <Rating precision={0.5} name="rating" defaultValue={value} />;
+function EditRatingCell({
+  id,
+  field,
+  value,
+}: GridRenderCellParams<any, number>) {
+  const apiRef = useGridApiContext();
+  return (
+    <Rating
+      precision={0.5}
+      name="rating"
+      value={value}
+      onChange={(event, newValue) =>
+        apiRef.current.setEditCellValue({ id, field, value: newValue })
+      }
+    />
+  );
+}
+
+function renderEditRating(params: GridRenderCellParams) {
+  return <EditRatingCell {...params} />;
 }
 
 const columns = [
@@ -36,7 +51,7 @@ const columns = [
     field: "rating",
     headerName: "Rating",
     renderCell: renderRating,
-    renderEditCell: renderUpdateRating,
+    renderEditCell: renderEditRating,
     width: 180,
     editable: true,
     flex: 1,
