@@ -50,10 +50,14 @@ export default function RatingCard({ artistName, imageUrl }: RatingCardProps) {
           </Grid>
         )}
         <Grid xs={12}>
-          <Form method="post">
+          <Form method="post" action="/ratings">
             <input hidden name="artist_name" value={artistName} readOnly />
             <Grid xs={12}>
-              <TextField fullWidth name="festival" label="Festival/Concert" />
+              <TextField
+                fullWidth
+                name="festival_name"
+                label="Festival/Concert"
+              />
             </Grid>
             <Grid xs={12}>
               <TextField fullWidth name="year" label="Year" />
@@ -70,7 +74,9 @@ export default function RatingCard({ artistName, imageUrl }: RatingCardProps) {
               justifyContent="center"
               alignItems="center"
             >
-              <Button type="submit">Rate</Button>
+              <Button type="submit" name="intent" value="wacken">
+                Rate
+              </Button>
             </Grid>
           </Form>
         </Grid>
