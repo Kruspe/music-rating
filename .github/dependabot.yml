@@ -4,7 +4,25 @@ updates:
     directory: "/frontend"
     schedule:
       interval: "daily"
+    groups:
+      remix:
+        patterns:
+        - "@remix-run*"
+        - "remix"
+      react:
+        patterns:
+        - "react*"
+      mui:
+        patterns:
+        - "@mui*"
+        - "@emotion"
   - package-ecosystem: "gomod"
     directory: "/backend"
     schedule:
       interval: "daily"
+    groups:
+      aws-sdk:
+        patterns:
+        - "github.com/aws/aws*"
+        - "github.com/awslabs/aws*"
+        
