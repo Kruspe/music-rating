@@ -33,10 +33,10 @@ github.com/aws/aws-sdk-go-v2/internal/timeconv
 ## explicit; go 1.15
 github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream
 github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream/eventstreamapi
-# github.com/aws/aws-sdk-go-v2/config v1.18.42
+# github.com/aws/aws-sdk-go-v2/config v1.18.43
 ## explicit; go 1.15
 github.com/aws/aws-sdk-go-v2/config
-# github.com/aws/aws-sdk-go-v2/credentials v1.13.40
+# github.com/aws/aws-sdk-go-v2/credentials v1.13.41
 ## explicit; go 1.15
 github.com/aws/aws-sdk-go-v2/credentials
 github.com/aws/aws-sdk-go-v2/credentials/ec2rolecreds
@@ -102,7 +102,7 @@ github.com/aws/aws-sdk-go-v2/service/s3/internal/arn
 github.com/aws/aws-sdk-go-v2/service/s3/internal/customizations
 github.com/aws/aws-sdk-go-v2/service/s3/internal/endpoints
 github.com/aws/aws-sdk-go-v2/service/s3/types
-# github.com/aws/aws-sdk-go-v2/service/sso v1.14.1
+# github.com/aws/aws-sdk-go-v2/service/sso v1.15.0
 ## explicit; go 1.15
 github.com/aws/aws-sdk-go-v2/service/sso
 github.com/aws/aws-sdk-go-v2/service/sso/internal/endpoints
@@ -112,7 +112,7 @@ github.com/aws/aws-sdk-go-v2/service/sso/types
 github.com/aws/aws-sdk-go-v2/service/ssooidc
 github.com/aws/aws-sdk-go-v2/service/ssooidc/internal/endpoints
 github.com/aws/aws-sdk-go-v2/service/ssooidc/types
-# github.com/aws/aws-sdk-go-v2/service/sts v1.22.0
+# github.com/aws/aws-sdk-go-v2/service/sts v1.23.0
 ## explicit; go 1.15
 github.com/aws/aws-sdk-go-v2/service/sts
 github.com/aws/aws-sdk-go-v2/service/sts/internal/endpoints
