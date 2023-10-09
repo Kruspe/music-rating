@@ -29,7 +29,7 @@
     "@remix-run/eslint-config": "^1.19.3",
     "@remix-run/serve": "^1.18.0",
     "@types/react": "^18.2.27",
-    "@types/react-dom": "^18.2.11",
+    "@types/react-dom": "^18.2.12",
     "esbuild": "^0.19.4",
     "eslint": "^8.51.0",
     "eslint-config-prettier": "^8.10.0",
