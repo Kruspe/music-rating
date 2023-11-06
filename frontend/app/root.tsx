@@ -19,7 +19,7 @@ import {
   ThemeProvider,
   Toolbar,
 } from "@mui/material";
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { DataFunctionArgs } from "@remix-run/node";
 import { authenticator } from "~/utils/auth.server";
 import type { ReactNode } from "react";
 import { matchPath } from "@remix-run/router";
@@ -52,11 +52,11 @@ const Document = ({ children }: DocumentProps) => {
   );
 };
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: DataFunctionArgs) {
   return authenticator.isAuthenticated(request);
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: DataFunctionArgs) {
   return authenticator.authenticate("auth0", request);
 }
 

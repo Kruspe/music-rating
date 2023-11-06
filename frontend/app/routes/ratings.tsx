@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import type { ActionArgs, LoaderArgs } from "@remix-run/node";
+import type { DataFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import { get } from "~/utils/request.server";
 import { Form, useLoaderData, useSubmit } from "@remix-run/react";
@@ -77,11 +77,11 @@ const columns = [
   },
 ];
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: DataFunctionArgs) {
   return get<RatingData[]>(request, "/ratings");
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: DataFunctionArgs) {
   const { token } = await authenticator.isAuthenticated(request, {
     failureRedirect: "/",
   });
