@@ -12,8 +12,8 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "@mui/icons-material": "^5.14.16",
-    "@mui/material": "^5.14.17",
+    "@mui/icons-material": "^5.14.18",
+    "@mui/material": "^5.14.18",
     "@mui/x-data-grid": "^6.18.1",
     "@remix-run/architect": "^2.2.0",
     "@remix-run/node": "^2.2.0",
