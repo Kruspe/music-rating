@@ -1,6 +1,7 @@
 import { Authenticator } from "remix-auth";
-import { sessionStorage } from "~/utils/session.server";
 import { Auth0Strategy } from "remix-auth-auth0";
+
+import { sessionStorage } from "~/utils/session.server";
 
 type User = {
   id: string;

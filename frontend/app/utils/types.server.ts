@@ -1,12 +1,16 @@
-export type ArtistRatingData = {
-  artist_name: string;
-  image_url: string;
-};
+export interface FestivalArtists {
+  artists: FestivalArtist[];
+}
 
-export type RatingData = {
-  artist_name: string;
-  festival_name: string;
+export interface FestivalArtist {
+  artistName: string;
+  imageUrl: string;
+}
+
+export interface ArtistRating {
+  artistName: string;
+  festivalName: string;
   rating: string;
   year: string;
   comment: string;
-};
+}
