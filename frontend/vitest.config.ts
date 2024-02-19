@@ -15,5 +15,4 @@ export default defineConfig({
     },
   },
   plugins: [react()],
-  // ... Specify options here.
 });

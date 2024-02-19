@@ -1,10 +1,12 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 
+import { testFestivalArtistsData } from "./mock-data/festival";
+
 export const testApi = "http://localhost/api";
 const handlers = [
   http.get(`${testApi}/festivals/wacken`, () => {
-    return HttpResponse.json({});
+    return HttpResponse.json(testFestivalArtistsData);
   }),
 ];
 

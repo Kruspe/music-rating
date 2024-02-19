@@ -5,8 +5,14 @@ import mockServer, { testApi } from "./mocks";
 
 beforeAll(() => {
   mockServer.listen();
-  console.log("bfa");
   vi.stubEnv("API_ENDPOINT", testApi);
+  vi.mock("../app/utils/auth.server", () => ({
+    authenticator: {
+      isAuthenticated: () => ({
+        token: "test-token",
+      }),
+    },
+  }));
 });
 afterEach(() => {
   mockServer.resetHandlers();
