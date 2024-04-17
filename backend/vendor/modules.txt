@@ -1,4 +1,4 @@
-# github.com/aws/aws-lambda-go v1.46.0
+# github.com/aws/aws-lambda-go v1.47.0
 ## explicit; go 1.18
 github.com/aws/aws-lambda-go/events
 github.com/aws/aws-lambda-go/lambda
@@ -148,7 +148,7 @@ github.com/aws/smithy-go/time
 github.com/aws/smithy-go/transport/http
 github.com/aws/smithy-go/transport/http/internal/io
 github.com/aws/smithy-go/waiter
-# github.com/awslabs/aws-lambda-go-api-proxy v0.16.1
+# github.com/awslabs/aws-lambda-go-api-proxy v0.16.2
 ## explicit; go 1.21
 github.com/awslabs/aws-lambda-go-api-proxy/core
 github.com/awslabs/aws-lambda-go-api-proxy/httpadapter
