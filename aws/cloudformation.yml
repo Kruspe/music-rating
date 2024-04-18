@@ -260,7 +260,7 @@ Resources:
         S3Bucket: !Ref ParamDeploymentBucketName
         S3Key: frontend.zip
         S3ObjectVersion: !Ref ParamFrontendVersion
-      Handler: handler.handler
+      Handler: index.handler
       Role: !GetAtt [ BackendLambdaRole, Arn ]
       Runtime: nodejs20.x
       Environment:
