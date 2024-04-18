@@ -1,13 +1,17 @@
 import {
   Form,
   Link,
-  LiveReload,
+  Links,
+  matchPath,
+  Meta,
   Outlet,
   Scripts,
   ScrollRestoration,
   useLoaderData,
   useLocation,
 } from "@remix-run/react";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { authenticator } from "~/utils/auth.server";
 import {
   AppBar,
   Box,
@@ -19,10 +23,6 @@ import {
   ThemeProvider,
   Toolbar,
 } from "@mui/material";
-import type { DataFunctionArgs } from "@remix-run/node";
-import { authenticator } from "~/utils/auth.server";
-import type { ReactNode } from "react";
-import { matchPath } from "@remix-run/router";
 
 const darkTheme = createTheme({
   palette: {
@@ -30,33 +30,11 @@ const darkTheme = createTheme({
   },
 });
 
-interface DocumentProps {
-  children: ReactNode;
-}
-
-const Document = ({ children }: DocumentProps) => {
-  return (
-    <html lang="en">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <title>MusicRating</title>
-      </head>
-      <body>
-        {children}
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
-      </body>
-    </html>
-  );
-};
-
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   return authenticator.isAuthenticated(request);
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   return authenticator.authenticate("auth0", request);
 }
 
@@ -74,6 +52,25 @@ function useRouteMatch(patterns: readonly string[]) {
 
 const routes = ["/ratings", "/wacken"];
 
+export function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>MusicRating</title>
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        {children}
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
 export default function App() {
   const data = useLoaderData<typeof loader>();
   const loggedIn = data && data.id;
@@ -81,37 +78,35 @@ export default function App() {
   const currentTab = useRouteMatch(routes)?.pattern.path;
 
   return (
-    <Document>
-      <ThemeProvider theme={darkTheme}>
-        <CssBaseline />
-        <AppBar position="static">
-          <Toolbar>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-              <Tabs value={currentTab}>
-                <Tab
-                  component={Link}
-                  value="/ratings"
-                  label="My Ratings"
-                  to="/ratings"
-                />
-                <Tab
-                  component={Link}
-                  value="/wacken"
-                  label="Wacken"
-                  to="/wacken"
-                />
-              </Tabs>
-            </Box>
-            <Box sx={{ flexGrow: 1 }} />
-            <Form action={loggedIn ? "/logout" : ""}>
-              <Button variant="contained" type="submit" formMethod="post">
-                {loggedIn ? "Log out" : "Log in"}
-              </Button>
-            </Form>
-          </Toolbar>
-        </AppBar>
-        <Outlet />
-      </ThemeProvider>
-    </Document>
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline />
+      <AppBar position="static">
+        <Toolbar>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Tabs value={currentTab}>
+              <Tab
+                component={Link}
+                value="/ratings"
+                label="My Ratings"
+                to="/ratings"
+              />
+              <Tab
+                component={Link}
+                value="/wacken"
+                label="Wacken"
+                to="/wacken"
+              />
+            </Tabs>
+          </Box>
+          <Box sx={{ flexGrow: 1 }} />
+          <Form action={loggedIn ? "/logout" : ""}>
+            <Button variant="contained" type="submit" formMethod="post">
+              {loggedIn ? "Log out" : "Log in"}
+            </Button>
+          </Form>
+        </Toolbar>
+      </AppBar>
+      <Outlet />
+    </ThemeProvider>
   );
 }

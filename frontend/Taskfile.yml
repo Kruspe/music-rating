@@ -1,11 +1,20 @@
 version: 3
 
 tasks:
+  default:
+    cmds:
+    - task: lint
+    - task: tsc
+#    - task: test
+    - task: build
+
   start:
     dir: ../scripts/frontend
     desc: run frontend in background
     cmds:
     - go run start.go
+    env:
+      API_ENDPOINT: "http://127.0.0.1:8080/api"
   stop:
     dir: ../scripts/frontend
     desc: stop frontend
@@ -13,46 +22,34 @@ tasks:
   install:
     desc: install dependencies
     cmds: [ npm ci ]
-  #  test:
-  #    desc: test frontend
-  #    env:
-  #      CI: true
-  #    cmds: [ yarn test ]
-
-  default:
-    cmds:
-    - task: lint
-    - task: prettier
-    - task: tsc
-#    - task: test
-  ci:
-    deps: [ install ]
-    cmds:
-    - npm run build
-    - task: lint
-    - task: prettier
-    - task: tsc
-#   - task: test
+    sources:
+    - package-lock.json
+    generates:
+    - node_modules/**/*
+  test:
+    desc: test frontend
+    cmds: [ npm run test ]
 
   build:
     deps: [ install ]
     cmds:
-    - rm -rf build
     - npm run build
     - task: zip
   zip:
-    dir: build
-    cmds: [ zip -r frontend.zip . ]
+    dir: build/server
+    cmds: [ zip -r ../frontend.zip . ]
 
   lint:
-    desc: lint frontend
     cmds: [ npm run lint ]
-  prettier:
-    desc: format frontend
-    cmds: [ npm run prettier ]
   tsc:
-    desc: typecheck frontend
-    cmds: 
-    - npm run build
-    - npm run typecheck
-    
+    cmds: [ npm run typecheck ]
+  prettier:
+    cmds: [ npm run prettier ]
+
+  ci:
+    deps: [ install ]
+    cmds:
+    - task: lint
+    - task: tsc
+#    - task: test
+    - task: build

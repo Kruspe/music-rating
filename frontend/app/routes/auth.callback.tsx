@@ -1,8 +1,8 @@
-import type { DataFunctionArgs } from "@remix-run/node";
+import type { LoaderFunctionArgs } from "@remix-run/node";
 
 import { authenticator } from "~/utils/auth.server";
 
-export let loader = ({ request }: DataFunctionArgs) => {
+export const loader = ({ request }: LoaderFunctionArgs) => {
   return authenticator.authenticate("auth0", request, {
     successRedirect: "/ratings",
   });

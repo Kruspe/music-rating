@@ -22,7 +22,7 @@ const auth0Strategy = new Auth0Strategy(
     domain: "musicrating.eu.auth0.com",
     audience: process.env.NODE_ENV === "production" ? API_ENDPOINT : undefined,
   },
-  async ({ accessToken, refreshToken, extraParams, profile }) => {
+  async ({ accessToken, profile }) => {
     return { id: profile._json!.sub!, token: accessToken };
   },
 );

@@ -1,4 +1,4 @@
-import type { GridRenderCellParams } from "@mui/x-data-grid";
+import type { GridRenderCellParams, GridValidRowModel } from "@mui/x-data-grid";
 import { DataGrid, GridToolbar, useGridApiContext } from "@mui/x-data-grid";
 import {
   Button,
@@ -27,7 +27,7 @@ function EditRatingCell({
   id,
   field,
   value,
-}: GridRenderCellParams<any, number>) {
+}: GridRenderCellParams<GridValidRowModel, number>) {
   const apiRef = useGridApiContext();
   return (
     <Rating
