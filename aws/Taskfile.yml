@@ -3,8 +3,7 @@ version: 3
 tasks:
   deploy:
     cmds:
-    - aws s3 cp ../frontend/public/build s3://music-rating-static-assets/static --recursive --profile music-rating
-    - aws s3 cp ../frontend/public/favicon.ico s3://music-rating-static-assets --profile music-rating
+    - aws s3 cp ../frontend/build/client s3://music-rating-static-assets --recursive --profile music-rating
     - aws cloudformation deploy --template-file cloudformation.yml --stack-name MusicRating-App --capabilities CAPABILITY_IAM
       --parameter-overrides
       ParamDomainName={{.DOMAIN_NAME}}
