@@ -1,11 +1,11 @@
-import type { DataFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import RatingCard from "~/routes/wacken/RatingCard";
 import { Typography, Unstable_Grid2 as Grid } from "@mui/material";
 import { get } from "~/utils/request.server";
 import type { ArtistRatingData } from "~/utils/types.server";
+import { LoaderFunctionArgs } from "@remix-run/node";
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   return get<ArtistRatingData[]>(request, "/festivals/wacken");
 }
 

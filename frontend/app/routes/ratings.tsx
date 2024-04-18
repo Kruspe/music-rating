@@ -10,8 +10,11 @@ import {
   Typography,
   Unstable_Grid2 as Grid,
 } from "@mui/material";
-import type { DataFunctionArgs } from "@remix-run/node";
-import { redirect } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  redirect,
+} from "@remix-run/node";
 import { get } from "~/utils/request.server";
 import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import { authenticator } from "~/utils/auth.server";
@@ -77,11 +80,11 @@ const columns = [
   },
 ];
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   return get<RatingData[]>(request, "/ratings");
 }
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const { token } = await authenticator.isAuthenticated(request, {
     failureRedirect: "/",
   });

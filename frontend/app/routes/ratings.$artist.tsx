@@ -1,8 +1,7 @@
-import type { DataFunctionArgs } from "@remix-run/node";
 import { authenticator } from "~/utils/auth.server";
-import { redirect } from "@remix-run/node";
+import { ActionFunctionArgs, redirect } from "@remix-run/node";
 
-export async function action({ request }: DataFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const { token } = await authenticator.isAuthenticated(request, {
     failureRedirect: "/",
   });

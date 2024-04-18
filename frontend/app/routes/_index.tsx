@@ -1,8 +1,8 @@
 import { Typography, Unstable_Grid2 as Grid } from "@mui/material";
-import type { DataFunctionArgs } from "@remix-run/node";
 import { authenticator } from "~/utils/auth.server";
+import { LoaderFunctionArgs } from "@remix-run/node";
 
-export async function loader({ request }: DataFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   return authenticator.isAuthenticated(request, {
     successRedirect: "/ratings",
   });
