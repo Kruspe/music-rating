@@ -40,6 +40,7 @@ tasks:
     cmds: [ zip -r ../frontend.zip . ]
 
   lint:
+    deps: [ task: build ]
     cmds: [ npm run lint ]
   tsc:
     cmds: [ npm run typecheck ]
