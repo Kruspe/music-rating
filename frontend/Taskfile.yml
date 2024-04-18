@@ -14,7 +14,7 @@ tasks:
     cmds:
     - go run start.go
     env:
-      API_ENDPOINT: "http://127.0.0.1:8080/api"
+      API_ENDPOINT: "http://127.0.0.1:8080"
   stop:
     dir: ../scripts/frontend
     desc: stop frontend

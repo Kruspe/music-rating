@@ -8,6 +8,7 @@ import {
   Rating,
   TextField,
   Typography,
+  Unstable_Grid2 as Grid,
 } from "@mui/material";
 import type { DataFunctionArgs } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
@@ -17,7 +18,6 @@ import { authenticator } from "~/utils/auth.server";
 import type { RatingData } from "~/utils/types.server";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
-import Grid from "@mui/material/Unstable_Grid2";
 
 function renderRating({ value }: GridRenderCellParams) {
   return <Rating readOnly defaultValue={value} precision={0.5} />;

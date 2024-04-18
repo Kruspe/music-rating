@@ -1,8 +1,7 @@
 import type { DataFunctionArgs } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import Grid from "@mui/material/Unstable_Grid2";
 import RatingCard from "~/routes/wacken/RatingCard";
-import { Typography } from "@mui/material";
+import { Typography, Unstable_Grid2 as Grid } from "@mui/material";
 import { get } from "~/utils/request.server";
 import type { ArtistRatingData } from "~/utils/types.server";
 
