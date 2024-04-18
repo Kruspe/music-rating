@@ -36,8 +36,9 @@ tasks:
     - npm run build
     - task: zip
   zip:
-    dir: build/server
-    cmds: [ zip -r ../frontend.zip . ]
+    cmds:
+    - npx esbuild handler.ts --bundle --platform=node --target=node20 --outfile=build/index.js
+    - zip build/frontend.zip build/index.js
 
   lint:
     deps: [ task: build ]
