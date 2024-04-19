@@ -299,7 +299,7 @@ Resources:
           TargetOriginId: FrontendApiOrigin
           ViewerProtocolPolicy: redirect-to-https
         CacheBehaviors:
-        - PathPattern: /static/*
+        - PathPattern: /assets/*
           AllowedMethods:
           - GET
           - HEAD
@@ -316,7 +316,6 @@ Resources:
           OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf # CORS-S3Origin
           TargetOriginId: StaticAssetsOrigin
           ViewerProtocolPolicy: redirect-to-https
-        DefaultRootObject: /
         Enabled: true
         Origins:
         - DomainName: !Sub ${FrontendApi.ApiId}.execute-api.${AWS::Region}.amazonaws.com
