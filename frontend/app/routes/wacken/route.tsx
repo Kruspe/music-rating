@@ -6,7 +6,6 @@ import type { ArtistRatingData } from "~/utils/types.server";
 import { LoaderFunctionArgs } from "@remix-run/node";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  console.log(process.env.NODE_ENV);
   return get<ArtistRatingData[]>(request, "/festivals/wacken");
 }
 
