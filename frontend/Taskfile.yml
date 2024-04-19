@@ -38,7 +38,7 @@ tasks:
   zip:
     dir: build
     cmds:
-    - npx esbuild ../handler.ts --bundle --platform=node --target=node20 --outfile=index.js
+    - npx esbuild ../handler.ts --bundle --platform=node --target=node20 --outfile=index.js --define:process.env.NODE_ENV="production"
     - zip frontend.zip index.js
 
   lint:

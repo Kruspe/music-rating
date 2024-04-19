@@ -14,5 +14,6 @@ export const get = async <T>(
       authorization: `Bearer ${token}`,
     },
   });
-  return json(await response.json());
+  const data = await response.json();
+  return json(data);
 };
