@@ -19,7 +19,7 @@ import { get } from "~/utils/request.server";
 import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import { authenticator } from "~/utils/auth.server";
 import type { RatingData } from "~/utils/types.server";
-import AddIcon from "@mui/icons-material/Add";
+import { Add } from "@mui/icons-material";
 import { useState } from "react";
 
 function renderRating({ value }: GridRenderCellParams) {
@@ -126,7 +126,7 @@ export default function RatingsRoute() {
   return (
     <>
       <Fab color="primary" aria-label="add">
-        <AddIcon onClick={() => setShowAdd((prevState) => !prevState)} />
+        <Add onClick={() => setShowAdd((prevState) => !prevState)} />
       </Fab>
       {showAdd && (
         <Dialog open={showAdd} onClose={() => setShowAdd(false)}>
