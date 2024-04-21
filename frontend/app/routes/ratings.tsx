@@ -18,7 +18,7 @@ import {
 import { get } from "~/utils/request.server";
 import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import { authenticator } from "~/utils/auth.server";
-import type { RatingData } from "~/utils/types.server";
+import type { ArtistRating } from "~/utils/types.server";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
 
@@ -81,7 +81,7 @@ const columns = [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  return get<RatingData[]>(request, "/ratings");
+  return get<ArtistRating[]>(request, "/ratings");
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -169,22 +169,22 @@ export default function RatingsRoute() {
         <DataGrid
           columns={columns}
           rows={ratings}
-          getRowId={(row) => row.artist_name}
+          getRowId={(row) => row.artistName}
           autoHeight
           hideFooterSelectedRowCount
           disableColumnFilter
           disableColumnSelector
           processRowUpdate={(row) => {
             const formData = new FormData();
-            formData.append("artist_name", row.artist_name);
-            formData.append("festival_name", row.festival_name);
+            formData.append("artist_name", row.artistName);
+            formData.append("festival_name", row.festivalName);
             formData.append("rating", row.rating);
             formData.append("year", row.year);
             formData.append("comment", row.comment);
 
             submit(formData, {
               method: "PUT",
-              action: `/ratings/${row.artist_name}`,
+              action: `/ratings/${row.artistName}`,
             });
             return row;
           }}

@@ -2,11 +2,11 @@ import { useLoaderData } from "@remix-run/react";
 import RatingCard from "~/routes/wacken/RatingCard";
 import { Typography, Unstable_Grid2 as Grid } from "@mui/material";
 import { get } from "~/utils/request.server";
-import type { ArtistRatingData } from "~/utils/types.server";
+import type { FestivalArtist } from "~/utils/types.server";
 import { LoaderFunctionArgs } from "@remix-run/node";
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  return get<ArtistRatingData[]>(request, "/festivals/wacken");
+  return get<FestivalArtist[]>(request, "/festivals/wacken");
 }
 
 export default function WackenRoute() {
@@ -15,10 +15,10 @@ export default function WackenRoute() {
   return artists.length > 0 ? (
     <Grid container spacing={0.5}>
       {artists.map((artist) => (
-        <Grid key={artist.artist_name}>
+        <Grid key={artist.artistName}>
           <RatingCard
-            artistName={artist.artist_name}
-            imageUrl={artist.image_url}
+            artistName={artist.artistName}
+            imageUrl={artist.imageUrl}
           />
         </Grid>
       ))}
