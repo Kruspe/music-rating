@@ -1,10 +1,11 @@
 import { FestivalArtistData } from "~/utils/.server/requests/festival";
+import { testArtistName } from "./artist";
 
 export const testFestivalName = "wacken";
 
 export const testFestivalArtistsData: FestivalArtistData[] = [
   {
-    artist_name: "Bloodbath",
+    artist_name: testArtistName,
     image_url: "http://bloodbath.com",
   },
   {

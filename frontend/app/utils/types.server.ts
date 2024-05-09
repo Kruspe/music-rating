@@ -1,4 +1,5 @@
 import { FestivalArtistData } from "~/utils/.server/requests/festival";
+import { ArtistRatingData } from "~/utils/.server/requests/rating";
 
 export interface FestivalArtist {
   artistName: string;
@@ -14,8 +15,18 @@ export function toFestivalArtist(d: FestivalArtistData): FestivalArtist {
 
 export interface ArtistRating {
   artistName: string;
-  festivalName: string;
-  rating: string;
-  year: string;
-  comment: string;
+  festivalName?: string;
+  rating: number;
+  year?: number;
+  comment?: string;
+}
+
+export function toArtistRating(d: ArtistRatingData): ArtistRating {
+  return {
+    artistName: d.artist_name,
+    festivalName: d.festival_name,
+    rating: d.rating,
+    year: d.year,
+    comment: d.comment,
+  };
 }

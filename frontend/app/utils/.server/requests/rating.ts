@@ -4,13 +4,14 @@ import {
   FetchResponse,
   hasError,
 } from "~/utils/.server/requests/util";
+import { ArtistRating, toArtistRating } from "~/utils/types.server";
 
-export interface RatingData {
+export interface ArtistRatingData {
   artist_name: string;
-  festival_name: string;
-  rating: string;
-  year: string;
-  comment: string;
+  festival_name?: string;
+  rating: number;
+  year?: number;
+  comment?: string;
 }
 
 export interface RatingRequest {
@@ -37,4 +38,20 @@ export async function saveRating(
   }
 
   return { ok: true };
+}
+
+export async function getRatings(
+  request: Request,
+): Promise<FetchResponse<ArtistRating[]>> {
+  const headers = await createAuthHeader(request);
+  const response = await fetch(`${process.env.API_ENDPOINT}/ratings`, {
+    headers: headers,
+  });
+  if (hasError(response)) {
+    const errorData: ErrorResponseData = await response.json();
+    return { ok: false, error: errorData.error };
+  }
+
+  const responseData: ArtistRatingData[] = await response.json();
+  return { ok: true, data: responseData.map((r) => toArtistRating(r)) };
 }
