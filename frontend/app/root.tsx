@@ -50,7 +50,7 @@ function useRouteMatch(patterns: readonly string[]) {
   return null;
 }
 
-const routes = ["/ratings", "/wacken"];
+const routes = ["/ratings", "/festivals/wacken"];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -92,9 +92,9 @@ export default function App() {
               />
               <Tab
                 component={Link}
-                value="/wacken"
+                value="/festivals/wacken"
                 label="Wacken"
-                to="/wacken"
+                to="/festivals/wacken"
               />
             </Tabs>
           </Box>

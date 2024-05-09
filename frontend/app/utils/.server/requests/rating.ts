@@ -5,6 +5,14 @@ import {
   hasError,
 } from "~/utils/.server/requests/util";
 
+export interface RatingData {
+  artist_name: string;
+  festival_name: string;
+  rating: string;
+  year: string;
+  comment: string;
+}
+
 export interface RatingRequest {
   artist_name: string;
   festival_name: string;
