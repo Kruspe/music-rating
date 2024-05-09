@@ -75,7 +75,7 @@ export default function App() {
   const data = useLoaderData<typeof loader>();
   const loggedIn = data && data.id;
 
-  const currentTab = useRouteMatch(routes)?.pattern.path;
+  const currentTab = useRouteMatch(routes)?.pattern.path ?? false;
 
   return (
     <ThemeProvider theme={darkTheme}>
