@@ -6,7 +6,6 @@ tasks:
     - task: lint
     - task: tsc
     - task: test
-    - task: build
 
   start:
     dir: ../scripts/frontend
@@ -54,5 +53,5 @@ tasks:
     cmds:
     - task: lint
     - task: tsc
-#    - task: test
+    - task: test
     - task: build
