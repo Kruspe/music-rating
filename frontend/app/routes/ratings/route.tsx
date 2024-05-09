@@ -10,17 +10,11 @@ import {
   Typography,
   Unstable_Grid2 as Grid,
 } from "@mui/material";
-import {
-  ActionFunctionArgs,
-  LoaderFunctionArgs,
-  redirect,
-} from "@remix-run/node";
-import { get } from "~/utils/request.server";
+import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useLoaderData, useSubmit } from "@remix-run/react";
-import { authenticator } from "~/utils/auth.server";
-import type { ArtistRating } from "~/utils/types.server";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
+import { getRatings, saveRating } from "~/utils/.server/requests/rating";
 
 function renderRating({ value }: GridRenderCellParams) {
   return <Rating readOnly defaultValue={value} precision={0.5} />;
@@ -81,44 +75,22 @@ const columns = [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  return get<ArtistRating[]>(request, "/ratings");
+  return json(await getRatings(request));
 }
 
 export async function action({ request }: ActionFunctionArgs) {
-  const { token } = await authenticator.isAuthenticated(request, {
-    failureRedirect: "/",
+  const formData = await request.formData();
+  return saveRating(request, {
+    artist_name: formData.get("artist_name") as string,
+    festival_name: formData.get("festival_name") as string,
+    rating: parseFloat(formData.get("rating") as string),
+    year: parseInt(formData.get("year") as string, 10),
+    comment: formData.get("comment") as string,
   });
-
-  const form = await request.formData();
-  const artistName = form.get("artist_name") as string;
-  const festival = form.get("festival_name") as string;
-  const rating = form.get("rating") as string;
-  const year = form.get("year") as string;
-  const comment = form.get("comment") as string;
-
-  await fetch(`${process.env.API_ENDPOINT}/ratings`, {
-    method: "POST",
-    body: JSON.stringify({
-      artist_name: artistName,
-      festival_name: festival,
-      rating: parseFloat(rating),
-      year: parseInt(year, 10),
-      comment: comment,
-    }),
-    headers: {
-      authorization: `Bearer ${token}`,
-    },
-  });
-
-  const intent = form.get("intent") as string;
-  if (intent === "wacken") {
-    return redirect("/wacken");
-  }
-  return null;
 }
 
 export default function RatingsRoute() {
-  const ratings = useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<typeof loader>();
   const submit = useSubmit();
 
   const [showAdd, setShowAdd] = useState(false);
@@ -165,10 +137,10 @@ export default function RatingsRoute() {
           </DialogContent>
         </Dialog>
       )}
-      {ratings.length > 0 ? (
+      {loaderData.data!.length > 0 ? (
         <DataGrid
           columns={columns}
-          rows={ratings}
+          rows={loaderData.data!}
           getRowId={(row) => row.artistName}
           autoHeight
           hideFooterSelectedRowCount
@@ -177,10 +149,16 @@ export default function RatingsRoute() {
           processRowUpdate={(row) => {
             const formData = new FormData();
             formData.append("artist_name", row.artistName);
-            formData.append("festival_name", row.festivalName);
-            formData.append("rating", row.rating);
-            formData.append("year", row.year);
-            formData.append("comment", row.comment);
+            if (row.festivalName) {
+              formData.append("festival_name", row.festivalName);
+            }
+            formData.append("rating", row.rating.toString());
+            if (row.year) {
+              formData.append("year", row.year.toString());
+            }
+            if (row.comment) {
+              formData.append("comment", row.comment);
+            }
 
             submit(formData, {
               method: "PUT",

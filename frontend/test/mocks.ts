@@ -11,6 +11,9 @@ const handlers = [
   http.get(`${testApi}/ratings`, () => {
     return HttpResponse.json(testArtistRatingsData);
   }),
+  http.post(`${testApi}/ratings`, () => {
+    return HttpResponse.json(undefined, { status: 201 });
+  }),
 ];
 
 const mockServer = setupServer(...handlers);

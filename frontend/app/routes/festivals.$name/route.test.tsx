@@ -14,7 +14,7 @@ import { testArtistName } from "../../../test/mock-data/artist";
 import { userEvent } from "@testing-library/user-event";
 
 describe("loader", () => {
-  test("should fetch unrated artists for festival", async () => {
+  test("fetches unrated artists for festival", async () => {
     const unratedArtistsRequestSpy = vi.spyOn(
       festivalRequests,
       "getUnratedFestivalArtists",
@@ -38,7 +38,7 @@ describe("loader", () => {
   });
 });
 
-test("should show RatingCards for unrated artists", async () => {
+test("shows RatingCards for unrated artists", async () => {
   const RemixStub = createRemixStub([
     {
       path: "/festivals/:name",
@@ -66,7 +66,7 @@ test("should show RatingCards for unrated artists", async () => {
   ).toBeVisible();
 });
 
-test("should be able to rate unrated artist", async () => {
+test("rate unrated artist", async () => {
   const newRatingRequest: RatingRequest = {
     artist_name: testArtistName,
     festival_name: testFestivalName,
