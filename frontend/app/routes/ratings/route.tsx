@@ -1,4 +1,8 @@
-import type { GridRenderCellParams, GridValidRowModel } from "@mui/x-data-grid";
+import type {
+  GridColDef,
+  GridRenderCellParams,
+  GridValidRowModel,
+} from "@mui/x-data-grid";
 import { DataGrid, GridToolbar, useGridApiContext } from "@mui/x-data-grid";
 import {
   Button,
@@ -15,6 +19,7 @@ import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
 import { getRatings, saveRating } from "~/utils/.server/requests/rating";
+import { ArtistRating } from "~/utils/types.server";
 
 function renderRating({ value }: GridRenderCellParams) {
   return <Rating readOnly defaultValue={value} precision={0.5} />;
@@ -42,22 +47,30 @@ function renderEditRating(params: GridRenderCellParams) {
   return <EditRatingCell {...params} />;
 }
 
-const columns = [
-  { field: "artist_name", headerName: "Artist", flex: 2 },
+const columns: GridColDef<ArtistRating>[] = [
+  {
+    field: "artist_name",
+    valueGetter: ({ row }) => row.artistName,
+    headerName: "Artist",
+    flex: 2,
+  },
   {
     field: "year",
+    valueGetter: ({ row }) => row.year || "",
     headerName: "Year",
     editable: true,
     flex: 1,
   },
   {
     field: "festival_name",
+    valueGetter: ({ row }) => row.festivalName || "",
     headerName: "Festival",
     editable: true,
     flex: 1.5,
   },
   {
     field: "rating",
+    valueGetter: ({ row }) => row.rating,
     headerName: "Rating",
     renderCell: renderRating,
     renderEditCell: renderEditRating,
@@ -67,6 +80,7 @@ const columns = [
   },
   {
     field: "comment",
+    valueGetter: ({ row }) => row.comment || "",
     headerName: "Comment",
     flex: 4,
     sortable: false,
