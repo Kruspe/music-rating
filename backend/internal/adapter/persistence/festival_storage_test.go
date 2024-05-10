@@ -6,10 +6,11 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/kruspe/music-rating/internal/adapter/persistence"
 	"github.com/kruspe/music-rating/internal/adapter/persistence/persistence_test_helper"
 	"github.com/kruspe/music-rating/internal/model"
-	"github.com/kruspe/music-rating/internal/model/model_test_helper"
+	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"io"
@@ -32,9 +33,9 @@ func (s *storageSuite) SetupSuite() {
 
 func (s *storageSuite) Test_GetArtists() {
 	artists := []model.Artist{
-		model_test_helper.AnArtistWithName("Bloodbath"),
-		model_test_helper.AnArtistWithName("Hypocrisy"),
-		model_test_helper.AnArtistWithName("Benediction"),
+		AnArtistWithName("Bloodbath"),
+		AnArtistWithName("Hypocrisy"),
+		AnArtistWithName("Benediction"),
 	}
 	s3Mock := func(t *testing.T) persistence.S3Client {
 		return persistence_test_helper.MockS3Client{
@@ -76,7 +77,7 @@ func (s *storageSuite) Test_GetArtists() {
 	}
 
 	storage := persistence.NewFestivalStorage(s3Mock(s.T()))
-	artists, err := storage.GetArtists(context.Background(), "festival-name")
+	artists, err := storage.GetArtists(context.Background(), AFestivalName)
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), artists, artists)
 }
@@ -91,6 +92,21 @@ func (s *storageSuite) Test_GetArtists_ReturnsS3Error() {
 		}
 	}
 	storage := persistence.NewFestivalStorage(s3Mock(s.T()))
-	_, err := storage.GetArtists(context.Background(), "festival-name")
+	_, err := storage.GetArtists(context.Background(), AFestivalName)
 	require.ErrorContains(s.T(), err, "an error occurred")
+}
+
+func (s *storageSuite) Test_GetArtists_ReturnsFestivalNotSupportedError_OnNoSuchKeyError() {
+	s3Mock := func(t *testing.T) persistence.S3Client {
+		return persistence_test_helper.MockS3Client{
+			GetObjectMock: func(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
+				t.Helper()
+				return nil, &types.NoSuchKey{}
+			},
+		}
+	}
+	storage := persistence.NewFestivalStorage(s3Mock(s.T()))
+	_, err := storage.GetArtists(context.Background(), AFestivalName)
+	require.Error(s.T(), err)
+	require.IsType(s.T(), &model.FestivalNotSupportedError{}, err)
 }

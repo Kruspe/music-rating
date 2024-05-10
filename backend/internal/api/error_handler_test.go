@@ -63,7 +63,7 @@ func (s *errorHandlerSuite) Test_Returns400_UpdateNonExistingRatingError() {
 
 func (s *errorHandlerSuite) Test_Returns404_WhenFestivalNotSupportedError() {
 	recorder := httptest.NewRecorder()
-	notSupportedError := model.FestivalNotSupportedError{FestivalName: AFestivalName}
+	notSupportedError := &model.FestivalNotSupportedError{FestivalName: AFestivalName}
 	api.HandleError(recorder, notSupportedError)
 	resp := recorder.Result()
 

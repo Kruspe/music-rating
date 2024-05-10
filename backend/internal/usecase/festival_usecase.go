@@ -26,6 +26,11 @@ func NewFestivalUseCase(ratingRepo ratingRepo, festivalStorage FestivalStorage) 
 }
 
 func (u *FestivalUseCase) GetUnratedArtistsForFestival(ctx context.Context, userId, festivalName string) ([]model.Artist, error) {
+	artists, err := u.festivalStorage.GetArtists(ctx, festivalName)
+	if err != nil {
+		return nil, err
+	}
+
 	ratings, err := u.ratingRepo.GetAll(ctx, userId)
 	if err != nil {
 		return nil, err
@@ -33,11 +38,6 @@ func (u *FestivalUseCase) GetUnratedArtistsForFestival(ctx context.Context, user
 	ratedArtists := make(map[string]struct{}, 0)
 	for _, rated := range ratings {
 		ratedArtists[rated.ArtistName] = struct{}{}
-	}
-
-	artists, err := u.festivalStorage.GetArtists(ctx, festivalName)
-	if err != nil {
-		return nil, err
 	}
 
 	unratedArtists := make([]model.Artist, 0)

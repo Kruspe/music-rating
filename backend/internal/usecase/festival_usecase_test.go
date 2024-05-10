@@ -45,3 +45,9 @@ func (s *ratingUseCaseSuite) Test_GetUnratedArtistsForFestival_ReturnsUnratedArt
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), []model.Artist{AnArtistWithName("Benediction")}, unratedArtists)
 }
+
+func (s *ratingUseCaseSuite) Test_GetUnratedArtistsForFestival_ReturnsFestivalNotSupportedError() {
+	_, err := s.ratingUseCase.GetUnratedArtistsForFestival(context.Background(), TestUserId, AnotherFestivalName)
+	require.Error(s.T(), err)
+	require.IsType(s.T(), &model.FestivalNotSupportedError{}, err)
+}

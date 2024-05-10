@@ -3,9 +3,11 @@ package persistence
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/kruspe/music-rating/internal/model"
 	"os"
 )
@@ -35,6 +37,10 @@ func (s *FestivalStorage) GetArtists(ctx context.Context, festivalName string) (
 		Key:    aws.String(fmt.Sprintf("%s.json", festivalName)),
 	})
 	if err != nil {
+		var keyError *types.NoSuchKey
+		if errors.As(err, &keyError) {
+			return nil, &model.FestivalNotSupportedError{FestivalName: festivalName}
+		}
 		return nil, err
 	}
 

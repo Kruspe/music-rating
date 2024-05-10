@@ -20,7 +20,6 @@ func HandleError(w http.ResponseWriter, err error) {
 		if err != nil {
 			log.Error(err)
 		}
-		break
 	case UpdateNonExistingRatingError:
 		log.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -28,15 +27,13 @@ func HandleError(w http.ResponseWriter, err error) {
 		if err != nil {
 			log.Error(err)
 		}
-		break
-	case FestivalNotSupportedError:
+	case *FestivalNotSupportedError:
 		log.Error(err)
 		w.WriteHeader(http.StatusNotFound)
 		err := json.NewEncoder(w).Encode(errorResponse{Error: err.Error()})
 		if err != nil {
 			log.Error(err)
 		}
-		break
 	default:
 		log.Error(err)
 		w.WriteHeader(http.StatusInternalServerError)

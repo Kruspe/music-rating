@@ -113,5 +113,5 @@ func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns404_When
 	var r errorResponse
 	err := json.NewDecoder(recorder.Body).Decode(&r)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), "", r.Error)
+	require.Equal(s.T(), model.FestivalNotSupportedError{FestivalName: AnotherFestivalName}.Error(), r.Error)
 }

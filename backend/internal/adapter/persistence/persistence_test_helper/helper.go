@@ -11,6 +11,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 	"github.com/google/uuid"
 	"github.com/kruspe/music-rating/internal/adapter/persistence"
 	"github.com/kruspe/music-rating/internal/model"
@@ -52,7 +53,7 @@ func (ph *PersistenceHelper) MockFestivals(festivals map[string][]model.Artist) 
 			festivalName := strings.Split(*params.Key, ".json")[0]
 			artists, ok := festivals[festivalName]
 			if !ok {
-				return nil, fmt.Errorf("festival %s not found", festivalName)
+				return nil, &s3Types.NoSuchKey{}
 			}
 			result := make([]persistence.ArtistRecord, 0)
 			for _, artist := range artists {
