@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-const GolangCiLintVersion = "1.51.2"
+const GolangCiLintVersion = "1.58.1"
 
 const GolangCiLintFolder = "third_party/golangci-lint"
 

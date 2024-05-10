@@ -11,9 +11,15 @@ func HandleError(w http.ResponseWriter, err error) {
 	case MissingParameterError:
 		log.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
+		break
 	case UpdateNonExistingRatingError:
 		log.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
+		break
+	case FestivalNotSupportedError:
+		log.Error(err)
+		w.WriteHeader(http.StatusNotFound)
+		break
 	default:
 		log.Error(err)
 		w.WriteHeader(http.StatusInternalServerError)

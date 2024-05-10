@@ -16,6 +16,7 @@ import (
 	"github.com/kruspe/music-rating/internal/model"
 	"github.com/kruspe/music-rating/scripts/setup"
 	"io"
+	"strings"
 )
 
 type MockS3Client struct {
@@ -45,9 +46,14 @@ func NewPersistenceHelper() *PersistenceHelper {
 	}
 }
 
-func (ph *PersistenceHelper) ReturnArtists(artists []model.Artist) persistence.S3Client {
+func (ph *PersistenceHelper) MockFestivals(festivals map[string][]model.Artist) persistence.S3Client {
 	return MockS3Client{
 		GetObjectMock: func(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
+			festivalName := strings.Split(*params.Key, ".json")[0]
+			artists, ok := festivals[festivalName]
+			if !ok {
+				return nil, fmt.Errorf("festival %s not found", festivalName)
+			}
 			result := make([]persistence.ArtistRecord, 0)
 			for _, artist := range artists {
 				result = append(result, persistence.ArtistRecord{

@@ -3,6 +3,7 @@ package api_test
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/kruspe/music-rating/internal/adapter/persistence"
 	. "github.com/kruspe/music-rating/internal/adapter/persistence/persistence_test_helper"
 	"github.com/kruspe/music-rating/internal/api"
@@ -44,14 +45,16 @@ func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndAl
 	require.NoError(s.T(), err)
 
 	unratedArtist := AnArtistWithName("Benediction")
-	festivalStorage := persistence.NewFestivalStorage(s.ph.ReturnArtists([]model.Artist{
-		AnArtistWithName("Bloodbath"),
-		AnArtistWithName("Hypocrisy"),
-		unratedArtist,
+	festivalStorage := persistence.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
+		AFestivalName: {
+			AnArtistWithName("Bloodbath"),
+			AnArtistWithName("Hypocrisy"),
+			unratedArtist,
+		},
 	}))
 	api := api.NewApi(usecase.NewUseCases(s.repos, festivalStorage), s.repos)
 
-	request := NewAuthenticatedRequest(http.MethodGet, "/festivals/wacken", nil)
+	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/festivals/%s", AFestivalName), nil)
 	recorder := httptest.NewRecorder()
 	api.ServeHTTP(recorder, request)
 
@@ -74,14 +77,16 @@ func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndEm
 	err = s.repos.RatingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Benediction"))
 	require.NoError(s.T(), err)
 
-	festivalStorage := persistence.NewFestivalStorage(s.ph.ReturnArtists([]model.Artist{
-		AnArtistWithName("Bloodbath"),
-		AnArtistWithName("Hypocrisy"),
-		AnArtistWithName("Benediction"),
+	festivalStorage := persistence.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
+		AFestivalName: {
+			AnArtistWithName("Bloodbath"),
+			AnArtistWithName("Hypocrisy"),
+			AnArtistWithName("Benediction"),
+		},
 	}))
 	api := api.NewApi(usecase.NewUseCases(s.repos, festivalStorage), s.repos)
 
-	request := NewAuthenticatedRequest(http.MethodGet, "/festivals/wacken", nil)
+	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/festivals/%s", AFestivalName), nil)
 	recorder := httptest.NewRecorder()
 	api.ServeHTTP(recorder, request)
 

@@ -17,10 +17,15 @@ func main() {
 	log.SetFormatter(&log.JSONFormatter{})
 	ph := NewPersistenceHelper()
 	repos := persistence.NewRepositories(ph.Dynamo, ph.TableName)
-	festivalStorage := persistence.NewFestivalStorage(ph.ReturnArtists([]model.Artist{
-		AnArtistWithName("Bloodbath"),
-		AnArtistWithName("Hypocrisy"),
-		AnArtistWithName("Benediction"),
+	festivalStorage := persistence.NewFestivalStorage(ph.MockFestivals(map[string][]model.Artist{
+		AFestivalName: {
+			AnArtistWithName("Bloodbath"),
+			AnArtistWithName("Hypocrisy"),
+			AnArtistWithName("Benediction"),
+		},
+		AnotherFestivalName: {
+			AnArtistWithName("Deserted Fear"),
+		},
 	}))
 	useCases := usecase.NewUseCases(repos, festivalStorage)
 

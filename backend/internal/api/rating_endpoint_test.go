@@ -37,7 +37,7 @@ func Test_RatingHandlerSuite(t *testing.T) {
 func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
 	ph := NewPersistenceHelper()
 	repos := persistence.NewRepositories(ph.Dynamo, ph.TableName)
-	s.api = api.NewApi(usecase.NewUseCases(repos, persistence.NewFestivalStorage(ph.ReturnArtists(nil))), repos)
+	s.api = api.NewApi(usecase.NewUseCases(repos, persistence.NewFestivalStorage(ph.MockFestivals(nil))), repos)
 }
 
 func (s *ratingHandlerSuite) Test_PersistsRating() {

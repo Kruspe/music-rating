@@ -25,7 +25,7 @@ func Test_ApiSuite(t *testing.T) {
 func (s *apiSuite) BeforeTest(_, _ string) {
 	persistenceHelper := persistence_test_helper.NewPersistenceHelper()
 	repos := persistence.NewRepositories(persistenceHelper.Dynamo, persistenceHelper.TableName)
-	useCases := usecase.NewUseCases(repos, persistence.NewFestivalStorage(persistenceHelper.ReturnArtists(nil)))
+	useCases := usecase.NewUseCases(repos, persistence.NewFestivalStorage(persistenceHelper.MockFestivals(nil)))
 	s.api = api.NewApi(useCases, repos)
 }
 
