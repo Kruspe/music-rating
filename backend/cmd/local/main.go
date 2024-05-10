@@ -18,12 +18,12 @@ func main() {
 	ph := NewPersistenceHelper()
 	repos := persistence.NewRepositories(ph.Dynamo, ph.TableName)
 	festivalStorage := persistence.NewFestivalStorage(ph.MockFestivals(map[string][]model.Artist{
-		AFestivalName: {
+		"wacken": {
 			AnArtistWithName("Bloodbath"),
 			AnArtistWithName("Hypocrisy"),
 			AnArtistWithName("Benediction"),
 		},
-		AnotherFestivalName: {
+		"dong": {
 			AnArtistWithName("Deserted Fear"),
 		},
 	}))

@@ -12,6 +12,8 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { RatingRequest } from "~/utils/.server/requests/rating";
 import { testArtistName } from "../../../test/mock-data/artist";
 import { userEvent } from "@testing-library/user-event";
+import mockServer, { testApi } from "../../../test/mocks";
+import { http, HttpResponse } from "msw";
 
 describe("loader", () => {
   test("fetches unrated artists for festival", async () => {
@@ -35,6 +37,26 @@ describe("loader", () => {
       ok: true,
       data: testFestivalArtistsData.map((a) => toFestivalArtist(a)),
     });
+  });
+
+  test("throws error if festival is not supported", async () => {
+    const errorMessage = "Festival not supported";
+    mockServer.use(
+      http.get(`${testApi}/festivals/${testFestivalName}`, () => {
+        return HttpResponse.json({ error: errorMessage }, { status: 404 });
+      }),
+    );
+    let errorData;
+    try {
+      await loader({
+        request: new Request("http://app.com"),
+        params: { name: testFestivalName },
+        context: {},
+      });
+    } catch (error) {
+      errorData = await (error as Response).json();
+    }
+    expect(errorData).toEqual(errorMessage);
   });
 });
 
