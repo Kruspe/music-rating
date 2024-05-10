@@ -58,7 +58,6 @@ func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndAl
 	recorder := httptest.NewRecorder()
 	api.ServeHTTP(recorder, request)
 
-	require.NoError(s.T(), err)
 	require.Equal(s.T(), http.StatusOK, recorder.Result().StatusCode)
 
 	var r []unratedArtistResponse
@@ -95,4 +94,24 @@ func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndEm
 	err = json.NewDecoder(recorder.Body).Decode(&r)
 	require.NoError(s.T(), err)
 	require.Len(s.T(), r, 0)
+}
+
+func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns404_WhenFestivalIsNotSupported() {
+	festivalStorage := persistence.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
+		AFestivalName: {
+			AnArtistWithName("Bloodbath"),
+			AnArtistWithName("Hypocrisy"),
+		},
+	}))
+	api := api.NewApi(usecase.NewUseCases(s.repos, festivalStorage), s.repos)
+
+	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/festivals/%s", AnotherFestivalName), nil)
+	recorder := httptest.NewRecorder()
+	api.ServeHTTP(recorder, request)
+
+	require.Equal(s.T(), http.StatusNotFound, recorder.Result().StatusCode)
+	var r errorResponse
+	err := json.NewDecoder(recorder.Body).Decode(&r)
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), "", r.Error)
 }
