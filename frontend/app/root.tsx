@@ -50,7 +50,7 @@ function useRouteMatch(patterns: readonly string[]) {
   return null;
 }
 
-const routes = ["/ratings", "/festivals/wacken"];
+const routes = ["/ratings", "/festivals/wacken", "/festivals/dong"];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
