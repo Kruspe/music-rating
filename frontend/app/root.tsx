@@ -96,6 +96,12 @@ export default function App() {
                 label="Wacken"
                 to="/festivals/wacken"
               />
+              <Tab
+                component={Link}
+                value="/festivals/dong"
+                label="Dong"
+                to="/festivals/dong"
+              />
             </Tabs>
           </Box>
           <Box sx={{ flexGrow: 1 }} />

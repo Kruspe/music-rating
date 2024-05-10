@@ -12,7 +12,7 @@ test("should have correct routes in header", async () => {
       children: [
         {
           path: "/festivals/:name",
-          Component: () => <p>WackenRoute</p>,
+          Component: () => <p>FestivalRoute</p>,
         },
         {
           path: "/ratings",
@@ -24,7 +24,10 @@ test("should have correct routes in header", async () => {
   render(<RemixStub />);
 
   await user.click(await screen.findByText("Wacken"));
-  expect(await screen.findByText("WackenRoute")).toBeVisible();
+  expect(await screen.findByText("FestivalRoute")).toBeVisible();
+
+  await user.click(await screen.findByText("Dong"));
+  expect(await screen.findByText("FestivalRoute")).toBeVisible();
 
   await user.click(screen.getByText("My Ratings"));
   expect(await screen.findByText("RatingsRoute")).toBeVisible();
