@@ -180,6 +180,10 @@ Resources:
             Action:
             - 's3:GetObject'
             Resource: !Sub ${ParamFestivalBucketArn}/*
+          - Effect: Allow
+            Action:
+            - 's3:ListBucket'
+            Resource: !Sub ${ParamFestivalBucketArn}
   BackendLambda:
     Type: AWS::Lambda::Function
     Properties:
