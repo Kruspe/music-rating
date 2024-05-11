@@ -49,28 +49,24 @@ function renderEditRating(params: GridRenderCellParams) {
 
 const columns: GridColDef<ArtistRating>[] = [
   {
-    field: "artist_name",
-    valueGetter: ({ row }) => row.artistName,
+    field: "artistName",
     headerName: "Artist",
     flex: 2,
   },
   {
     field: "year",
-    valueGetter: ({ row }) => row.year || "",
     headerName: "Year",
     editable: true,
     flex: 1,
   },
   {
-    field: "festival_name",
-    valueGetter: ({ row }) => row.festivalName || "",
+    field: "festivalName",
     headerName: "Festival",
     editable: true,
     flex: 1.5,
   },
   {
     field: "rating",
-    valueGetter: ({ row }) => row.rating,
     headerName: "Rating",
     renderCell: renderRating,
     renderEditCell: renderEditRating,
@@ -80,7 +76,6 @@ const columns: GridColDef<ArtistRating>[] = [
   },
   {
     field: "comment",
-    valueGetter: ({ row }) => row.comment || "",
     headerName: "Comment",
     flex: 4,
     sortable: false,

@@ -1,16 +1,16 @@
 import * as festivalRequests from "~/utils/.server/requests/festival";
 import FestivalRoute, { loader } from "~/routes/festivals.$name/route";
-import {
-  testFestivalArtistsData,
-  testFestivalName,
-} from "../../../test/mock-data/festival";
+import { testFestivalArtistsData } from "../../../test/mock-data/festival";
 import { FestivalArtist, toFestivalArtist } from "~/utils/types.server";
 import { createRemixStub } from "@remix-run/testing";
 import { json, TypedResponse } from "@remix-run/node";
 import { FetchResponse } from "~/utils/.server/requests/util";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { RatingRequest } from "~/utils/.server/requests/rating";
-import { testArtistName } from "../../../test/mock-data/artist";
+import {
+  testArtistName,
+  testFestivalName,
+} from "../../../test/mock-data/artist";
 import { userEvent } from "@testing-library/user-event";
 import mockServer, { testApi } from "../../../test/mocks";
 import { http, HttpResponse } from "msw";

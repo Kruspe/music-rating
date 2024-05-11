@@ -1,12 +1,10 @@
 import { getUnratedFestivalArtists } from "~/utils/.server/requests/festival";
-import {
-  testFestivalArtistsData,
-  testFestivalName,
-} from "../../../../test/mock-data/festival";
+import { testFestivalArtistsData } from "../../../../test/mock-data/festival";
 import { toFestivalArtist } from "~/utils/types.server";
 import mockServer, { testApi } from "../../../../test/mocks";
 import { http, HttpResponse } from "msw";
 import { expect } from "vitest";
+import { testFestivalName } from "../../../../test/mock-data/artist";
 
 describe("getUnratedFestivalArtists", () => {
   test("returns unrated artists", async () => {

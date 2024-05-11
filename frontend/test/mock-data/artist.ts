@@ -1,16 +1,17 @@
 import { ArtistRatingData } from "~/utils/.server/requests/rating";
-import { testFestivalName } from "./festival";
 
+export const testFestivalName = "Wacken";
 export const testArtistName = "Bloodbath";
 
+export const testArtistRatingData: ArtistRatingData = {
+  artist_name: testArtistName,
+  festival_name: testFestivalName,
+  rating: 5,
+  year: 2015,
+  comment: "Old school swedish death metal",
+};
 export const testArtistRatingsData: ArtistRatingData[] = [
-  {
-    artist_name: testArtistName,
-    festival_name: testFestivalName,
-    rating: 5,
-    year: 2015,
-    comment: "Old school swedish death metal",
-  },
+  testArtistRatingData,
   {
     artist_name: "Hypocrisy",
     festival_name: "Dong",

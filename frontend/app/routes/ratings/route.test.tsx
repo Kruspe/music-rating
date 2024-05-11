@@ -1,14 +1,20 @@
 import * as ratingRequests from "~/utils/.server/requests/rating";
-import { action, loader } from "~/routes/ratings/route";
+import { RatingRequest } from "~/utils/.server/requests/rating";
+import RatingsRoute, { action, loader } from "~/routes/ratings/route";
 import {
   testArtistName,
+  testArtistRatingData,
   testArtistRatingsData,
+  testFestivalName,
 } from "../../../test/mock-data/artist";
-import { toArtistRating } from "~/utils/types.server";
-import { RatingRequest } from "~/utils/.server/requests/rating";
-import { testFestivalName } from "../../../test/mock-data/festival";
+import { ArtistRating, toArtistRating } from "~/utils/types.server";
 import mockServer, { testApi } from "../../../test/mocks";
 import { http, HttpResponse } from "msw";
+import { createRemixStub } from "@remix-run/testing";
+import { json, TypedResponse } from "@remix-run/node";
+import { FetchResponse } from "~/utils/.server/requests/util";
+import { render, screen } from "@testing-library/react";
+import { userEvent } from "@testing-library/user-event";
 
 describe("loader", () => {
   test("loads ratings", async () => {
@@ -85,4 +91,70 @@ describe("action", () => {
     });
     expect(response).toEqual({ ok: true });
   });
+});
+
+test("shows all rated bands", async () => {
+  const ratings = testArtistRatingsData.map((r) => toArtistRating(r));
+  const RemixStub = createRemixStub([
+    {
+      path: "/ratings",
+      Component: RatingsRoute,
+      loader: async (): Promise<
+        TypedResponse<FetchResponse<ArtistRating[]>>
+      > => {
+        return json({
+          ok: true,
+          data: ratings,
+        });
+      },
+    },
+  ]);
+  render(<RemixStub initialEntries={["/ratings"]} />);
+
+  for (const rating of ratings) {
+    expect(await screen.findByText(rating.artistName)).toBeVisible();
+  }
+});
+
+test("can update rating", async () => {
+  const user = userEvent.setup();
+  const rating = toArtistRating(testArtistRatingData);
+  const updatedFestivalName = "Dong";
+  const RemixStub = createRemixStub([
+    {
+      path: "/ratings",
+      Component: RatingsRoute,
+      loader: async (): Promise<
+        TypedResponse<FetchResponse<ArtistRating[]>>
+      > => {
+        return json({
+          ok: true,
+          data: [rating],
+        });
+      },
+    },
+    {
+      path: "/ratings/:artistName",
+      Component: () => <p>Update rating</p>,
+      action: async ({ request }): Promise<TypedResponse<FetchResponse>> => {
+        const formData = await request.formData();
+        expect(formData.get("festival_name")).toEqual(updatedFestivalName);
+        expect(formData.get("artist_name")).toEqual(rating.artistName);
+        expect(formData.get("rating")).toEqual(rating.rating.toString());
+        expect(formData.get("year")).toEqual(rating.year?.toString());
+        expect(formData.get("comment")).toEqual(rating.comment);
+
+        return json({ ok: true });
+      },
+    },
+  ]);
+  render(<RemixStub initialEntries={["/ratings"]} />);
+
+  await user.dblClick(await screen.findByText(rating.festivalName!));
+  const festivalInputField = screen.getByDisplayValue(rating.festivalName!);
+  await user.clear(festivalInputField);
+  await user.type(festivalInputField, "Dong");
+  await user.tab();
+
+  expect(screen.queryByText(/AssertionError/i)).not.toBeInTheDocument();
 });
