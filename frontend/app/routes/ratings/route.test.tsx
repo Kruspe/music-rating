@@ -7,6 +7,8 @@ import {
 import { toArtistRating } from "~/utils/types.server";
 import { RatingRequest } from "~/utils/.server/requests/rating";
 import { testFestivalName } from "../../../test/mock-data/festival";
+import mockServer, { testApi } from "../../../test/mocks";
+import { http, HttpResponse } from "msw";
 
 describe("loader", () => {
   test("loads ratings", async () => {
@@ -24,6 +26,26 @@ describe("loader", () => {
       ok: true,
       data: testArtistRatingsData.map((r) => toArtistRating(r)),
     });
+  });
+
+  test("throws error if festival is not supported", async () => {
+    const errorMessage = "Error loading ratings";
+    mockServer.use(
+      http.get(`${testApi}/ratings`, () => {
+        return HttpResponse.json({ error: errorMessage }, { status: 500 });
+      }),
+    );
+    let errorData;
+    try {
+      await loader({
+        request: new Request("http://app.com"),
+        params: {},
+        context: {},
+      });
+    } catch (error) {
+      errorData = await (error as Response).json();
+    }
+    expect(errorData).toEqual(errorMessage);
   });
 });
 

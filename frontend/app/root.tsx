@@ -1,5 +1,6 @@
 import {
   Form,
+  isRouteErrorResponse,
   Link,
   Links,
   matchPath,
@@ -9,6 +10,7 @@ import {
   ScrollRestoration,
   useLoaderData,
   useLocation,
+  useRouteError,
 } from "@remix-run/react";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { authenticator } from "~/utils/auth.server";
@@ -22,6 +24,7 @@ import {
   Tabs,
   ThemeProvider,
   Toolbar,
+  Typography,
 } from "@mui/material";
 
 const darkTheme = createTheme({
@@ -29,6 +32,14 @@ const darkTheme = createTheme({
     mode: "dark",
   },
 });
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return <Typography variant="h3">{error.data}</Typography>;
+  }
+}
 
 export async function loader({ request }: LoaderFunctionArgs) {
   return authenticator.isAuthenticated(request);

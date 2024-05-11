@@ -88,8 +88,14 @@ const columns: GridColDef<ArtistRating>[] = [
   },
 ];
 
+export function ErrorBoundary() {}
+
 export async function loader({ request }: LoaderFunctionArgs) {
-  return json(await getRatings(request));
+  const data = await getRatings(request);
+  if (!data.ok) {
+    throw json(data.error);
+  }
+  return json(data);
 }
 
 export async function action({ request }: ActionFunctionArgs) {
