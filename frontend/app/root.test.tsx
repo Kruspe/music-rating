@@ -29,6 +29,9 @@ test("should have correct routes in header", async () => {
   await user.click(await screen.findByText("Dong"));
   expect(await screen.findByText("FestivalRoute")).toBeVisible();
 
+  await user.click(screen.getByText("RUDE"));
+  expect(await screen.findByText("FestivalRoute")).toBeVisible();
+
   await user.click(screen.getByText("My Ratings"));
   expect(await screen.findByText("RatingsRoute")).toBeVisible();
 });

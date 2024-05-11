@@ -61,7 +61,12 @@ function useRouteMatch(patterns: readonly string[]) {
   return null;
 }
 
-const routes = ["/ratings", "/festivals/wacken", "/festivals/dong"];
+const routes = [
+  "/ratings",
+  "/festivals/wacken",
+  "/festivals/dong",
+  "/festivals/rude",
+];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -112,6 +117,12 @@ export default function App() {
                 value="/festivals/dong"
                 label="Dong"
                 to="/festivals/dong"
+              />
+              <Tab
+                component={Link}
+                value="/festivals/rude"
+                label="RUDE"
+                to="/festivals/rude"
               />
             </Tabs>
           </Box>
