@@ -1,8 +1,4 @@
-import {
-  isRouteErrorResponse,
-  useLoaderData,
-  useRouteError,
-} from "@remix-run/react";
+import { useLoaderData } from "@remix-run/react";
 import RatingCard from "~/routes/festivals.$name/RatingCard";
 import { Typography, Unstable_Grid2 as Grid } from "@mui/material";
 import type { FestivalArtist } from "~/utils/types.server";
