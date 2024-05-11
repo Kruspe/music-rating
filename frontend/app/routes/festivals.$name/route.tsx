@@ -1,10 +1,22 @@
-import { useLoaderData } from "@remix-run/react";
+import {
+  isRouteErrorResponse,
+  useLoaderData,
+  useRouteError,
+} from "@remix-run/react";
 import RatingCard from "~/routes/festivals.$name/RatingCard";
 import { Typography, Unstable_Grid2 as Grid } from "@mui/material";
 import type { FestivalArtist } from "~/utils/types.server";
 import { json, LoaderFunctionArgs, TypedResponse } from "@remix-run/node";
 import { getUnratedFestivalArtists } from "~/utils/.server/requests/festival";
 import { FetchResponse } from "~/utils/.server/requests/util";
+
+export function ErrorBoundary() {
+  const error = useRouteError();
+
+  if (isRouteErrorResponse(error)) {
+    return <Typography variant="h3">{error.data}</Typography>;
+  }
+}
 
 export async function loader({
   request,
