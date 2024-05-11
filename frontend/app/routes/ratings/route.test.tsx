@@ -135,7 +135,6 @@ test("can update rating", async () => {
     },
     {
       path: "/ratings/:artistName",
-      Component: () => <p>Update rating</p>,
       action: async ({ request }): Promise<TypedResponse<FetchResponse>> => {
         const formData = await request.formData();
         expect(formData.get("festival_name")).toEqual(updatedFestivalName);

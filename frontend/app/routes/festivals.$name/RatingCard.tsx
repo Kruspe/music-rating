@@ -7,7 +7,7 @@ import {
   Typography,
   Unstable_Grid2 as Grid,
 } from "@mui/material";
-import { Form } from "@remix-run/react";
+import { Form, useFetcher } from "@remix-run/react";
 
 interface RatingCardProps {
   artistName: string;
@@ -15,6 +15,8 @@ interface RatingCardProps {
 }
 
 export default function RatingCard({ artistName, imageUrl }: RatingCardProps) {
+  const fetcher = useFetcher();
+
   return (
     <Card sx={{ width: 300 }}>
       <Grid container rowSpacing={1}>
@@ -50,7 +52,7 @@ export default function RatingCard({ artistName, imageUrl }: RatingCardProps) {
           </Grid>
         )}
         <Grid xs={12}>
-          <Form method="post" action="/ratings">
+          <fetcher.Form method="post" action="/ratings">
             <input hidden name="artist_name" value={artistName} readOnly />
             <Grid xs={12}>
               <TextField
@@ -74,11 +76,9 @@ export default function RatingCard({ artistName, imageUrl }: RatingCardProps) {
               justifyContent="center"
               alignItems="center"
             >
-              <Button type="submit" name="intent" value="wacken">
-                Rate
-              </Button>
+              <Button type="submit">Rate</Button>
             </Grid>
-          </Form>
+          </fetcher.Form>
         </Grid>
       </Grid>
     </Card>

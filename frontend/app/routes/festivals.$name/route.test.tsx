@@ -112,7 +112,6 @@ test("rate unrated artist", async () => {
     },
     {
       path: "/ratings",
-      Component: () => <p></p>,
       action: async ({ request }): Promise<TypedResponse<FetchResponse>> => {
         const formData = await request.formData();
         expect(formData.get("artist_name")).toEqual(
@@ -140,7 +139,7 @@ test("rate unrated artist", async () => {
     screen.getByLabelText(/year/i),
     newRatingRequest.year.toString(),
   );
-  // this only works with fireEvent and not user event
+  // this only works with fireEvent and not userEvent
   fireEvent.click(screen.getByLabelText("5 Stars"));
   await user.type(screen.getByLabelText(/comment/i), newRatingRequest.comment);
   await user.click(screen.getByText(/rate/i));
