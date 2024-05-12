@@ -48,3 +48,7 @@ func (u *FestivalUseCase) GetUnratedArtistsForFestival(ctx context.Context, user
 	}
 	return unratedArtists, nil
 }
+
+func (u *FestivalUseCase) GetArtistsForFestival(ctx context.Context, festivalName string) ([]model.Artist, error) {
+	return u.festivalStorage.GetArtists(ctx, festivalName)
+}

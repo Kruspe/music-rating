@@ -14,6 +14,7 @@ type unratedArtistResponse struct {
 
 type festivalUseCase interface {
 	GetUnratedArtistsForFestival(ctx context.Context, userId, festivalName string) ([]model.Artist, error)
+	GetArtistsForFestival(ctx context.Context, festivalName string) ([]model.Artist, error)
 }
 
 type FestivalEndpoint struct {
@@ -26,14 +27,26 @@ func NewFestivalEndpoint(festivalUseCase festivalUseCase) *FestivalEndpoint {
 	}
 }
 
-func (e *FestivalEndpoint) GetUnratedArtistsForFestival(w http.ResponseWriter, r *http.Request, userId, festivalName string) {
-	unratedArtists, err := e.festivalUseCase.GetUnratedArtistsForFestival(r.Context(), userId, festivalName)
-	if err != nil {
-		HandleError(w, err)
-		return
+func (e *FestivalEndpoint) GetArtistsForFestival(w http.ResponseWriter, r *http.Request, userId, festivalName string) {
+	var result []model.Artist
+	if r.URL.Query().Get("filter") == "unrated" {
+		unratedArtists, err := e.festivalUseCase.GetUnratedArtistsForFestival(r.Context(), userId, festivalName)
+		if err != nil {
+			HandleError(w, err)
+			return
+		}
+		result = unratedArtists
+	} else {
+		artists, err := e.festivalUseCase.GetArtistsForFestival(r.Context(), festivalName)
+		if err != nil {
+			HandleError(w, err)
+			return
+		}
+		result = artists
 	}
+
 	w.Header().Set("content-type", "application/json")
-	err = json.NewEncoder(w).Encode(e.toUnratedArtistsResponse(unratedArtists))
+	err := json.NewEncoder(w).Encode(e.toUnratedArtistsResponse(result))
 	if err != nil {
 		HandleError(w, err)
 		return

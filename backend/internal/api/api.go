@@ -43,7 +43,7 @@ func (a *Api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		a.ratingEndpoint.put(w, r, userId, artistName)
 	// TODO handle not implemented festivals
 	case match(r.URL.Path, "/festivals/+", &festival):
-		a.festivalEndpoint.GetUnratedArtistsForFestival(w, r, userId, festival)
+		a.festivalEndpoint.GetArtistsForFestival(w, r, userId, festival)
 	default:
 		w.WriteHeader(http.StatusNotFound)
 	}

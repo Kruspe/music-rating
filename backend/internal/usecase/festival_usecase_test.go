@@ -51,3 +51,16 @@ func (s *ratingUseCaseSuite) Test_GetUnratedArtistsForFestival_ReturnsFestivalNo
 	require.Error(s.T(), err)
 	require.IsType(s.T(), &model.FestivalNotSupportedError{}, err)
 }
+
+func (s *ratingUseCaseSuite) Test_GetArtistsForFestival_ReturnsAllArtists() {
+	artists, err := s.ratingUseCase.GetArtistsForFestival(context.Background(), AFestivalName)
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), []model.Artist{AnArtistWithName("Bloodbath"), AnArtistWithName("Hypocrisy"), AnArtistWithName("Benediction")}, artists)
+
+}
+
+func (s *ratingUseCaseSuite) Test_GetArtistsForFestival_ReturnsFestivalNotSupportedError() {
+	_, err := s.ratingUseCase.GetArtistsForFestival(context.Background(), AnotherFestivalName)
+	require.Error(s.T(), err)
+	require.IsType(s.T(), &model.FestivalNotSupportedError{}, err)
+}

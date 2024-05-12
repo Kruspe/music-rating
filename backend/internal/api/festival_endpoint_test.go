@@ -38,7 +38,39 @@ func (s *festivalHandlerSuite) BeforeTest(_, _ string) {
 	s.repos = persistence.NewRepositories(s.ph.Dynamo, s.ph.TableName)
 }
 
-func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndAllUnratedArtists() {
+func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllArtists() {
+	err := s.repos.RatingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Bloodbath"))
+	require.NoError(s.T(), err)
+	err = s.repos.RatingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Hypocrisy"))
+	require.NoError(s.T(), err)
+
+	bloodbath := AnArtistWithName("Bloodbath")
+	hypocrisy := AnArtistWithName("Hypocrisy")
+	festivalStorage := persistence.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
+		AFestivalName: {
+			bloodbath,
+			hypocrisy,
+		},
+	}))
+	api := api.NewApi(usecase.NewUseCases(s.repos, festivalStorage), s.repos)
+
+	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/festivals/%s", AFestivalName), nil)
+	recorder := httptest.NewRecorder()
+	api.ServeHTTP(recorder, request)
+
+	require.Equal(s.T(), http.StatusOK, recorder.Result().StatusCode)
+
+	var r []unratedArtistResponse
+	err = json.NewDecoder(recorder.Body).Decode(&r)
+	require.NoError(s.T(), err)
+	require.Len(s.T(), r, 2)
+	require.Equal(s.T(), bloodbath.Name, r[0].ArtistName)
+	require.Equal(s.T(), bloodbath.ImageUrl, r[0].ImageUrl)
+	require.Equal(s.T(), hypocrisy.Name, r[1].ArtistName)
+	require.Equal(s.T(), hypocrisy.ImageUrl, r[1].ImageUrl)
+}
+
+func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllUnratedArtists_WhenFiltering() {
 	err := s.repos.RatingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Bloodbath"))
 	require.NoError(s.T(), err)
 	err = s.repos.RatingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Hypocrisy"))
@@ -54,7 +86,7 @@ func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndAl
 	}))
 	api := api.NewApi(usecase.NewUseCases(s.repos, festivalStorage), s.repos)
 
-	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/festivals/%s", AFestivalName), nil)
+	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/festivals/%s?filter=unrated", AFestivalName), nil)
 	recorder := httptest.NewRecorder()
 	api.ServeHTTP(recorder, request)
 
@@ -68,7 +100,7 @@ func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndAl
 	require.Equal(s.T(), unratedArtist.ImageUrl, r[0].ImageUrl)
 }
 
-func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndEmptyList_WhenAllArtistsAreRated() {
+func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndEmptyList_WhenFilteringAndAllArtistsAreRated() {
 	err := s.repos.RatingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Bloodbath"))
 	require.NoError(s.T(), err)
 	err = s.repos.RatingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Hypocrisy"))
@@ -85,7 +117,7 @@ func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndEm
 	}))
 	api := api.NewApi(usecase.NewUseCases(s.repos, festivalStorage), s.repos)
 
-	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/festivals/%s", AFestivalName), nil)
+	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/festivals/%s?filter=unrated", AFestivalName), nil)
 	recorder := httptest.NewRecorder()
 	api.ServeHTTP(recorder, request)
 
@@ -96,7 +128,7 @@ func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns200AndEm
 	require.Len(s.T(), r, 0)
 }
 
-func (s *festivalHandlerSuite) Test_GetUnratedArtistsForFestival_Returns404_WhenFestivalIsNotSupported() {
+func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns404_WhenFestivalIsNotSupported() {
 	festivalStorage := persistence.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
 		AFestivalName: {
 			AnArtistWithName("Bloodbath"),
