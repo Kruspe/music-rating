@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { testFestivalArtistsData } from "./mock-data/festival";
-import { testArtistRatingsData } from "./mock-data/artist";
+import { testArtistRatingsData } from "./mock-data/rating";
 
 export const testApi = "http://localhost/api";
 const handlers = [
@@ -13,6 +13,9 @@ const handlers = [
   }),
   http.post(`${testApi}/ratings`, () => {
     return HttpResponse.json(undefined, { status: 201 });
+  }),
+  http.get(`${testApi}/ratings/:festivalName`, () => {
+    return HttpResponse.json(testArtistRatingsData);
   }),
 ];
 

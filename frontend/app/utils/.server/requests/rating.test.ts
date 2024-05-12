@@ -1,7 +1,14 @@
 import mockServer, { testApi } from "../../../../test/mocks";
 import { http, HttpResponse } from "msw";
-import { getRatings, saveRating } from "~/utils/.server/requests/rating";
-import { testArtistRatingsData } from "../../../../test/mock-data/artist";
+import {
+  getFestivalRatings,
+  getRatings,
+  saveRating,
+} from "~/utils/.server/requests/rating";
+import {
+  testArtistRatingsData,
+  testFestivalName,
+} from "../../../../test/mock-data/rating";
 import { toArtistRating } from "~/utils/types.server";
 
 describe("saveRating", () => {
@@ -52,7 +59,7 @@ describe("saveRating", () => {
 });
 
 describe("getRatings", () => {
-  test("saves rating", async () => {
+  test("returns ratings", async () => {
     const response = await getRatings(new Request("http://app.com"));
 
     expect(response).toEqual({
@@ -71,6 +78,40 @@ describe("getRatings", () => {
       }),
     );
     const response = await getRatings(new Request("http://app.com"));
+
+    expect(response).toEqual({
+      ok: false,
+      error: "Something went wrong",
+    });
+  });
+});
+
+describe("getFestivalRatings", () => {
+  test("returns ratings for festival", async () => {
+    const response = await getFestivalRatings(
+      new Request("http://app.com"),
+      testFestivalName,
+    );
+
+    expect(response).toEqual({
+      ok: true,
+      data: testArtistRatingsData.map((r) => toArtistRating(r)),
+    });
+  });
+
+  test("returns error on error", async () => {
+    mockServer.use(
+      http.get(`${testApi}/ratings/:festivalName`, () => {
+        return HttpResponse.json(
+          { error: "Something went wrong" },
+          { status: 500 },
+        );
+      }),
+    );
+    const response = await getFestivalRatings(
+      new Request("http://app.com"),
+      testFestivalName,
+    );
 
     expect(response).toEqual({
       ok: false,

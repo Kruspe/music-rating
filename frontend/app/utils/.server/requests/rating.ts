@@ -55,3 +55,23 @@ export async function getRatings(
   const responseData: ArtistRatingData[] = await response.json();
   return { ok: true, data: responseData.map((r) => toArtistRating(r)) };
 }
+
+export async function getFestivalRatings(
+  request: Request,
+  festivalName: string,
+): Promise<FetchResponse<ArtistRating[]>> {
+  const headers = await createAuthHeader(request);
+  const response = await fetch(
+    `${process.env.API_ENDPOINT}/ratings/${festivalName}`,
+    {
+      headers: headers,
+    },
+  );
+  if (hasError(response)) {
+    const errorData: ErrorResponseData = await response.json();
+    return { ok: false, error: errorData.error };
+  }
+
+  const responseData: ArtistRatingData[] = await response.json();
+  return { ok: true, data: responseData.map((r) => toArtistRating(r)) };
+}

@@ -1,5 +1,5 @@
 import { FestivalArtistData } from "~/utils/.server/requests/festival";
-import { testArtistName } from "./artist";
+import { testArtistName } from "./rating";
 
 export const testFestivalArtistsData: FestivalArtistData[] = [
   {
