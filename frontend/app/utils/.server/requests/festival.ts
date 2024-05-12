@@ -17,7 +17,7 @@ export async function getUnratedFestivalArtists(
 ): Promise<FetchResponse<FestivalArtist[]>> {
   const headers = await createAuthHeader(request);
   const response = await fetch(
-    `${process.env.API_ENDPOINT}/festivals/${festivalName}`,
+    `${process.env.API_ENDPOINT}/festivals/${festivalName}?filter=unrated`,
     {
       headers: headers,
     },

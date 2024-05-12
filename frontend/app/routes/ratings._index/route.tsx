@@ -1,9 +1,3 @@
-import type {
-  GridColDef,
-  GridRenderCellParams,
-  GridValidRowModel,
-} from "@mui/x-data-grid";
-import { DataGrid, GridToolbar, useGridApiContext } from "@mui/x-data-grid";
 import {
   Button,
   Dialog,
@@ -15,7 +9,7 @@ import {
   Unstable_Grid2 as Grid,
 } from "@mui/material";
 import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, useLoaderData, useSubmit } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
 import {
@@ -23,69 +17,7 @@ import {
   saveRating,
   updateRating,
 } from "~/utils/.server/requests/rating";
-import { ArtistRating } from "~/utils/types.server";
-
-function renderRating({ value }: GridRenderCellParams) {
-  return <Rating readOnly defaultValue={value} precision={0.5} />;
-}
-
-function EditRatingCell({
-  id,
-  field,
-  value,
-}: GridRenderCellParams<GridValidRowModel, number>) {
-  const apiRef = useGridApiContext();
-  return (
-    <Rating
-      precision={0.5}
-      name="rating"
-      value={value}
-      onChange={(event, newValue) =>
-        apiRef.current.setEditCellValue({ id, field, value: newValue })
-      }
-    />
-  );
-}
-
-function renderEditRating(params: GridRenderCellParams) {
-  return <EditRatingCell {...params} />;
-}
-
-const columns: GridColDef<ArtistRating>[] = [
-  {
-    field: "artistName",
-    headerName: "Artist",
-    flex: 2,
-  },
-  {
-    field: "year",
-    headerName: "Year",
-    editable: true,
-    flex: 1,
-  },
-  {
-    field: "festivalName",
-    headerName: "Festival",
-    editable: true,
-    flex: 1.5,
-  },
-  {
-    field: "rating",
-    headerName: "Rating",
-    renderCell: renderRating,
-    renderEditCell: renderEditRating,
-    width: 180,
-    editable: true,
-    flex: 1,
-  },
-  {
-    field: "comment",
-    headerName: "Comment",
-    flex: 4,
-    sortable: false,
-    editable: true,
-  },
-];
+import { RatingTable } from "~/components/rating-table";
 
 export function ErrorBoundary() {}
 
@@ -127,7 +59,6 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function RatingsRoute() {
   const loaderData = useLoaderData<typeof loader>();
-  const submit = useSubmit();
 
   const [showAdd, setShowAdd] = useState(false);
 
@@ -174,42 +105,7 @@ export default function RatingsRoute() {
         </Dialog>
       )}
       {loaderData.data!.length > 0 ? (
-        <DataGrid
-          columns={columns}
-          rows={loaderData.data!}
-          getRowId={(row) => row.artistName}
-          autoHeight
-          hideFooterSelectedRowCount
-          disableColumnFilter
-          disableColumnSelector
-          processRowUpdate={(row) => {
-            const formData = new FormData();
-            formData.set("_action", "UPDATE_RATING");
-            formData.append("artist_name", row.artistName);
-            if (row.festivalName) {
-              formData.append("festival_name", row.festivalName);
-            }
-            formData.append("rating", row.rating.toString());
-            if (row.year) {
-              formData.append("year", row.year.toString());
-            }
-            if (row.comment) {
-              formData.append("comment", row.comment);
-            }
-
-            submit(formData, {
-              method: "PUT",
-              action: `/ratings`,
-            });
-            return row;
-          }}
-          slots={{ toolbar: GridToolbar }}
-          slotProps={{
-            toolbar: {
-              showQuickFilter: true,
-            },
-          }}
-        />
+        <RatingTable data={loaderData.data!} updatable />
       ) : (
         <Typography variant="h2">
           You have not rated any bands so far

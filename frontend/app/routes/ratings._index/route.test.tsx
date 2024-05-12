@@ -1,6 +1,6 @@
 import * as ratingRequests from "~/utils/.server/requests/rating";
 import { RatingRequest } from "~/utils/.server/requests/rating";
-import RatingsRoute, { action, loader } from "~/routes/ratings/route";
+import RatingsRoute, { action, loader } from "~/routes/ratings._index/route";
 import {
   testArtistName,
   testArtistRatingData,
