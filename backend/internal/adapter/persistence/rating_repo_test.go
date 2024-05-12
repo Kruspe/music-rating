@@ -37,7 +37,7 @@ func (s *ratingRepoSuite) Test_PersistsRatings() {
 
 	ratings, err := s.repo.GetAll(context.Background(), TestUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.Rating{rating1, rating2}, ratings)
+	require.Equal(s.T(), &model.Ratings{Keys: []string{rating1.ArtistName, rating2.ArtistName}, Values: map[string]model.Rating{rating1.ArtistName: rating1, rating2.ArtistName: rating2}}, ratings)
 }
 
 func (s *ratingRepoSuite) Test_UpdateRating() {
@@ -57,12 +57,14 @@ func (s *ratingRepoSuite) Test_UpdateRating() {
 
 	ratings, err := s.repo.GetAll(context.Background(), TestUserId)
 	require.NoError(s.T(), err)
-	require.Len(s.T(), ratings, 1)
-	require.Equal(s.T(), rating.ArtistName, ratings[0].ArtistName)
-	require.Equal(s.T(), updatedRating.FestivalName, ratings[0].FestivalName)
-	require.Equal(s.T(), updatedRating.Rating, ratings[0].Rating)
-	require.Equal(s.T(), updatedRating.Year, ratings[0].Year)
-	require.Equal(s.T(), "", ratings[0].Comment)
+	require.Len(s.T(), ratings.Keys, 1)
+	require.Equal(s.T(), rating.ArtistName, ratings.Keys[0])
+	require.Len(s.T(), ratings.Values, 1)
+	require.Equal(s.T(), rating.ArtistName, ratings.Values[rating.ArtistName].ArtistName)
+	require.Equal(s.T(), updatedRating.FestivalName, ratings.Values[rating.ArtistName].FestivalName)
+	require.Equal(s.T(), updatedRating.Rating, ratings.Values[rating.ArtistName].Rating)
+	require.Equal(s.T(), updatedRating.Year, ratings.Values[rating.ArtistName].Year)
+	require.Equal(s.T(), "", ratings.Values[rating.ArtistName].Comment)
 }
 
 func (s *ratingRepoSuite) Test_UpdateRating_FailsWhenRatingDoesNotExist() {

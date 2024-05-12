@@ -10,6 +10,11 @@ type Rating struct {
 	Year         int
 }
 
+type Ratings struct {
+	Keys   []string
+	Values map[string]Rating
+}
+
 type UpdateNonExistingRatingError struct {
 	ArtistName string
 }

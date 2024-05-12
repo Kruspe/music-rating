@@ -8,6 +8,7 @@ import (
 	. "github.com/kruspe/music-rating/internal/adapter/persistence/persistence_test_helper"
 	"github.com/kruspe/music-rating/internal/api"
 	. "github.com/kruspe/music-rating/internal/api/api_test_helper"
+	"github.com/kruspe/music-rating/internal/model"
 	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
 	"github.com/kruspe/music-rating/internal/usecase"
 	"github.com/stretchr/testify/require"
@@ -37,7 +38,13 @@ func Test_RatingHandlerSuite(t *testing.T) {
 func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
 	ph := NewPersistenceHelper()
 	repos := persistence.NewRepositories(ph.Dynamo, ph.TableName)
-	s.api = api.NewApi(usecase.NewUseCases(repos, persistence.NewFestivalStorage(ph.MockFestivals(nil))), repos)
+	s.api = api.NewApi(usecase.NewUseCases(repos, persistence.NewFestivalStorage(ph.MockFestivals(map[string][]model.Artist{
+		AFestivalName: {
+			AnArtistWithName("Bloodbath"),
+			AnArtistWithName("Hypocrisy"),
+			AnArtistWithName("Deserted Fear"),
+		},
+	}))), repos)
 }
 
 func (s *ratingHandlerSuite) Test_PersistsRating() {
@@ -58,7 +65,6 @@ func (s *ratingHandlerSuite) Test_PersistsRating() {
 	require.Equal(s.T(), http.StatusCreated, putRecorder.Result().StatusCode)
 
 	get := NewAuthenticatedRequest(http.MethodGet, "/ratings", nil)
-	require.NoError(s.T(), err)
 	getRecorder := httptest.NewRecorder()
 
 	s.api.ServeHTTP(getRecorder, get)
@@ -120,4 +126,55 @@ func (s *ratingHandlerSuite) Test_UpdateRating() {
 	require.Equal(s.T(), AnotherRating, r[0].Rating)
 	require.Equal(s.T(), AnotherYear, r[0].Year)
 	require.Equal(s.T(), AnotherComment, r[0].Comment)
+}
+
+func (s *ratingHandlerSuite) Test_GetAllForFestival() {
+	hypocrisyRating := ARatingForArtistWithRating("Hypocrisy", ARating)
+	s.saveRating(hypocrisyRating)
+	desertedFearRating := ARatingForArtistWithRating("Deserted Fear", AnotherRating)
+	s.saveRating(desertedFearRating)
+
+	get := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/ratings/%s", AFestivalName), nil)
+	getRecorder := httptest.NewRecorder()
+
+	s.api.ServeHTTP(getRecorder, get)
+	resp := getRecorder.Result()
+	require.Equal(s.T(), http.StatusOK, resp.StatusCode)
+
+	var r []ratingResponse
+	err := json.NewDecoder(resp.Body).Decode(&r)
+	require.NoError(s.T(), err)
+	require.Len(s.T(), r, 3)
+	require.Equal(s.T(), desertedFearRating.ArtistName, r[0].ArtistName)
+	require.Equal(s.T(), hypocrisyRating.ArtistName, r[1].ArtistName)
+	require.Equal(s.T(), "Bloodbath", r[2].ArtistName)
+}
+
+func (s *ratingHandlerSuite) Test_GetAllForFestival_Returns404_WhenFestivalIsNotSupported() {
+	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/ratings/%s", AnotherFestivalName), nil)
+	recorder := httptest.NewRecorder()
+	s.api.ServeHTTP(recorder, request)
+
+	require.Equal(s.T(), http.StatusNotFound, recorder.Result().StatusCode)
+	var r errorResponse
+	err := json.NewDecoder(recorder.Body).Decode(&r)
+	require.NoError(s.T(), err)
+	require.Equal(s.T(), model.FestivalNotSupportedError{FestivalName: AnotherFestivalName}.Error(), r.Error)
+}
+
+func (s *ratingHandlerSuite) saveRating(rating model.Rating) {
+	body, err := json.Marshal(map[string]interface{}{
+		"artist_name":   rating.ArtistName,
+		"comment":       rating.Comment,
+		"festival_name": rating.FestivalName,
+		"rating":        rating.Rating,
+		"year":          rating.Year,
+	})
+	require.NoError(s.T(), err)
+	put := NewAuthenticatedRequest(http.MethodPost, "/ratings", bytes.NewReader(body))
+	require.NoError(s.T(), err)
+	putRecorder := httptest.NewRecorder()
+
+	s.api.ServeHTTP(putRecorder, put)
+	require.Equal(s.T(), http.StatusCreated, putRecorder.Result().StatusCode)
 }

@@ -16,7 +16,7 @@ type Api struct {
 
 func NewApi(useCases *usecase.UseCases, repos *persistence.Repositories) *Api {
 	return &Api{
-		ratingEndpoint:   NewRatingEndpoint(repos.RatingRepo),
+		ratingEndpoint:   NewRatingEndpoint(repos.RatingRepo, useCases.FestivalUseCase),
 		festivalEndpoint: NewFestivalEndpoint(useCases.FestivalUseCase),
 	}
 }
@@ -27,7 +27,7 @@ func (a *Api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 	}
 
-	var festival string
+	var festivalName string
 	var artistName string
 	switch {
 	case match(r.URL.Path, "/ratings"):
@@ -41,9 +41,10 @@ func (a *Api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	case match(r.URL.Path, "/ratings/+", &artistName) && r.Method == http.MethodPut:
 		a.ratingEndpoint.put(w, r, userId, artistName)
-	// TODO handle not implemented festivals
-	case match(r.URL.Path, "/festivals/+", &festival):
-		a.festivalEndpoint.GetArtistsForFestival(w, r, userId, festival)
+	case match(r.URL.Path, "/ratings/+", &festivalName) && r.Method == http.MethodGet:
+		a.ratingEndpoint.getAllForFestival(w, r, userId, festivalName)
+	case match(r.URL.Path, "/festivals/+", &festivalName):
+		a.festivalEndpoint.GetArtistsForFestival(w, r, userId, festivalName)
 	default:
 		w.WriteHeader(http.StatusNotFound)
 	}
