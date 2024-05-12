@@ -79,10 +79,12 @@ func (r *RatingRepo) GetAll(ctx context.Context, userId string) ([]model.Rating,
 		if err != nil {
 			return nil, err
 		}
-		err = attributevalue.UnmarshalListOfMaps(items.Items, &ratings)
+		var r []RatingRecord
+		err = attributevalue.UnmarshalListOfMaps(items.Items, &r)
 		if err != nil {
 			return nil, err
 		}
+		ratings = append(ratings, r...)
 	}
 
 	var result []model.Rating
