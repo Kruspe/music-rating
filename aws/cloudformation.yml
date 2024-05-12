@@ -194,6 +194,7 @@ Resources:
       Handler: bootstrap
       Role: !GetAtt [ BackendLambdaRole, Arn ]
       Runtime: provided.al2
+      Architectures: [ arm64 ]
       Environment:
         Variables:
           LOG_LEVEL: error
