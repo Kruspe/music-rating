@@ -1,10 +1,20 @@
 package persistence
 
-import "github.com/aws/aws-sdk-go-v2/service/dynamodb"
+import (
+	"fmt"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+)
 
 type DbKey struct {
 	PK string `dynamodbav:"PK"`
 	SK string `dynamodbav:"SK"`
+}
+
+func ratingDbKey(userId, artistName string) DbKey {
+	return DbKey{
+		PK: fmt.Sprintf("USER#%s", userId),
+		SK: fmt.Sprintf("ARTIST#%s", artistName),
+	}
 }
 
 const (

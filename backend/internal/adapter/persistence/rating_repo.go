@@ -38,10 +38,7 @@ func NewRatingRepo(dynamo *dynamodb.Client, tableName string) *RatingRepo {
 
 func (r *RatingRepo) Save(ctx context.Context, userId string, rating model.Rating) error {
 	record := RatingRecord{
-		DbKey: DbKey{
-			PK: fmt.Sprintf("USER#%s", userId),
-			SK: fmt.Sprintf("ARTIST#%s", rating.ArtistName),
-		},
+		DbKey:        ratingDbKey(userId, rating.ArtistName),
 		Type:         RatingType,
 		ArtistName:   rating.ArtistName,
 		Comment:      rating.Comment,
@@ -88,17 +85,17 @@ func (r *RatingRepo) GetAll(ctx context.Context, userId string) ([]model.Rating,
 	}
 
 	var result []model.Rating
-	for _, r := range ratings {
-		rating, err := strconv.ParseFloat(r.Rating, 32)
+	for _, record := range ratings {
+		rating, err := strconv.ParseFloat(record.Rating, 32)
 		if err != nil {
 			return nil, err
 		}
 		result = append(result, model.Rating{
-			ArtistName:   r.ArtistName,
-			Comment:      r.Comment,
-			FestivalName: r.FestivalName,
+			ArtistName:   record.ArtistName,
+			Comment:      record.Comment,
+			FestivalName: record.FestivalName,
 			Rating:       rating,
-			Year:         r.Year,
+			Year:         record.Year,
 		})
 	}
 	return result, nil
@@ -128,10 +125,7 @@ func (r *RatingRepo) Update(ctx context.Context, userId string, rating model.Rat
 	if err != nil {
 		return err
 	}
-	key, err := attributevalue.MarshalMap(DbKey{
-		PK: fmt.Sprintf("USER#%s", userId),
-		SK: fmt.Sprintf("ARTIST#%s", rating.ArtistName),
-	})
+	key, err := attributevalue.MarshalMap(ratingDbKey(userId, rating.ArtistName))
 	if err != nil {
 		return err
 	}
