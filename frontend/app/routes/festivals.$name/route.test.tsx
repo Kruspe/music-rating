@@ -10,7 +10,7 @@ import { RatingRequest } from "~/utils/.server/requests/rating";
 import {
   testArtistName,
   testFestivalName,
-} from "../../../test/mock-data/artist";
+} from "../../../test/mock-data/rating";
 import { userEvent } from "@testing-library/user-event";
 import mockServer, { testApi } from "../../../test/mocks";
 import { http, HttpResponse } from "msw";
@@ -114,6 +114,7 @@ test("rate unrated artist", async () => {
       path: "/ratings",
       action: async ({ request }): Promise<TypedResponse<FetchResponse>> => {
         const formData = await request.formData();
+        expect(formData.get("_action")).toEqual("SAVE_RATING");
         expect(formData.get("artist_name")).toEqual(
           newRatingRequest.artist_name,
         );

@@ -18,7 +18,11 @@ import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useLoaderData, useSubmit } from "@remix-run/react";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
-import { getRatings, saveRating } from "~/utils/.server/requests/rating";
+import {
+  getRatings,
+  saveRating,
+  updateRating,
+} from "~/utils/.server/requests/rating";
 import { ArtistRating } from "~/utils/types.server";
 
 function renderRating({ value }: GridRenderCellParams) {
@@ -95,13 +99,30 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
-  return saveRating(request, {
-    artist_name: formData.get("artist_name") as string,
-    festival_name: formData.get("festival_name") as string,
-    rating: parseFloat(formData.get("rating") as string),
-    year: parseInt(formData.get("year") as string, 10),
-    comment: formData.get("comment") as string,
-  });
+  let response;
+  switch (formData.get("_action")) {
+    case "SAVE_RATING": {
+      response = saveRating(request, {
+        artist_name: formData.get("artist_name") as string,
+        festival_name: formData.get("festival_name") as string,
+        rating: parseFloat(formData.get("rating") as string),
+        year: parseInt(formData.get("year") as string, 10),
+        comment: formData.get("comment") as string,
+      });
+      break;
+    }
+    case "UPDATE_RATING": {
+      response = updateRating(request, {
+        artist_name: formData.get("artist_name") as string,
+        festival_name: formData.get("festival_name") as string,
+        rating: parseFloat(formData.get("rating") as string),
+        year: parseInt(formData.get("year") as string, 10),
+        comment: formData.get("comment") as string,
+      });
+      break;
+    }
+  }
+  return response;
 }
 
 export default function RatingsRoute() {
@@ -163,6 +184,7 @@ export default function RatingsRoute() {
           disableColumnSelector
           processRowUpdate={(row) => {
             const formData = new FormData();
+            formData.set("_action", "UPDATE_RATING");
             formData.append("artist_name", row.artistName);
             if (row.festivalName) {
               formData.append("festival_name", row.festivalName);
@@ -177,7 +199,7 @@ export default function RatingsRoute() {
 
             submit(formData, {
               method: "PUT",
-              action: `/ratings/${row.artistName}`,
+              action: `/ratings`,
             });
             return row;
           }}

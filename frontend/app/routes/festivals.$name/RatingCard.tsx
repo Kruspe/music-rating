@@ -76,7 +76,9 @@ export default function RatingCard({ artistName, imageUrl }: RatingCardProps) {
               justifyContent="center"
               alignItems="center"
             >
-              <Button type="submit">Rate</Button>
+              <Button type="submit" name="_action" value="SAVE_RATING">
+                Rate
+              </Button>
             </Grid>
           </fetcher.Form>
         </Grid>

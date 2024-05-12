@@ -6,7 +6,7 @@ import {
   testArtistRatingData,
   testArtistRatingsData,
   testFestivalName,
-} from "../../../test/mock-data/artist";
+} from "../../../test/mock-data/rating";
 import { ArtistRating, toArtistRating } from "~/utils/types.server";
 import mockServer, { testApi } from "../../../test/mocks";
 import { http, HttpResponse } from "msw";
@@ -70,6 +70,7 @@ describe("action", () => {
     formData.append("rating", newRatingRequest.rating.toString());
     formData.append("year", newRatingRequest.year.toString());
     formData.append("comment", newRatingRequest.comment);
+    formData.append("_action", "SAVE_RATING");
 
     const saveRatingSpy = vi.spyOn(ratingRequests, "saveRating");
     const response = await action({
@@ -88,6 +89,43 @@ describe("action", () => {
       rating: newRatingRequest.rating,
       year: newRatingRequest.year,
       comment: newRatingRequest.comment,
+    });
+    expect(response).toEqual({ ok: true });
+  });
+
+  test("updates rating", async () => {
+    const updatedRatingRequest: RatingRequest = {
+      artist_name: testArtistName,
+      festival_name: testFestivalName,
+      rating: 5,
+      year: 2015,
+      comment: "Old school swedish death metal",
+    };
+    const formData = new FormData();
+    formData.append("artist_name", updatedRatingRequest.artist_name);
+    formData.append("festival_name", updatedRatingRequest.festival_name);
+    formData.append("rating", updatedRatingRequest.rating.toString());
+    formData.append("year", updatedRatingRequest.year.toString());
+    formData.append("comment", updatedRatingRequest.comment);
+    formData.append("_action", "UPDATE_RATING");
+
+    const saveRatingSpy = vi.spyOn(ratingRequests, "updateRating");
+    const response = await action({
+      request: new Request("http://app.com", {
+        method: "PUT",
+        body: formData,
+      }),
+      params: {},
+      context: {},
+    });
+
+    expect(saveRatingSpy).toHaveBeenCalledTimes(1);
+    expect(saveRatingSpy).toHaveBeenCalledWith(expect.anything(), {
+      artist_name: updatedRatingRequest.artist_name,
+      festival_name: updatedRatingRequest.festival_name,
+      rating: updatedRatingRequest.rating,
+      year: updatedRatingRequest.year,
+      comment: updatedRatingRequest.comment,
     });
     expect(response).toEqual({ ok: true });
   });
@@ -132,17 +170,14 @@ test("can update rating", async () => {
           data: [rating],
         });
       },
-    },
-    {
-      path: "/ratings/:artistName",
       action: async ({ request }): Promise<TypedResponse<FetchResponse>> => {
         const formData = await request.formData();
-        expect(formData.get("festival_name")).toEqual(updatedFestivalName);
+        expect(formData.get("_action")).toEqual("UPDATE_RATING");
         expect(formData.get("artist_name")).toEqual(rating.artistName);
-        expect(formData.get("rating")).toEqual(rating.rating.toString());
+        expect(formData.get("festival_name")).toEqual(updatedFestivalName);
         expect(formData.get("year")).toEqual(rating.year?.toString());
+        expect(formData.get("rating")).toEqual(rating.rating.toString());
         expect(formData.get("comment")).toEqual(rating.comment);
-
         return json({ ok: true });
       },
     },
