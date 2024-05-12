@@ -66,19 +66,23 @@ func (r *RatingRepo) GetAll(ctx context.Context, userId string) ([]model.Rating,
 	if err != nil {
 		return nil, err
 	}
-	items, err := r.dynamo.Query(ctx, &dynamodb.QueryInput{
+	paginator := dynamodb.NewQueryPaginator(r.dynamo, &dynamodb.QueryInput{
 		TableName:                 aws.String(r.tableName),
 		ExpressionAttributeNames:  expr.Names(),
 		ExpressionAttributeValues: expr.Values(),
 		KeyConditionExpression:    expr.KeyCondition(),
 	})
-	if err != nil {
-		return nil, err
-	}
+
 	var ratings []RatingRecord
-	err = attributevalue.UnmarshalListOfMaps(items.Items, &ratings)
-	if err != nil {
-		return nil, err
+	for paginator.HasMorePages() {
+		items, err := paginator.NextPage(ctx)
+		if err != nil {
+			return nil, err
+		}
+		err = attributevalue.UnmarshalListOfMaps(items.Items, &ratings)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	var result []model.Rating
