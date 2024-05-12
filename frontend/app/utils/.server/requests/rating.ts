@@ -40,6 +40,27 @@ export async function saveRating(
   return { ok: true };
 }
 
+export async function updateRating(
+  request: Request,
+  rating: RatingRequest,
+): Promise<FetchResponse> {
+  const headers = await createAuthHeader(request);
+  const response = await fetch(
+    `${process.env.API_ENDPOINT}/ratings/${rating.artist_name}`,
+    {
+      headers: headers,
+      method: "PUT",
+      body: JSON.stringify(rating),
+    },
+  );
+  if (hasError(response)) {
+    const errorData: ErrorResponseData = await response.json();
+    return { ok: false, error: errorData.error };
+  }
+
+  return { ok: true };
+}
+
 export async function getRatings(
   request: Request,
 ): Promise<FetchResponse<ArtistRating[]>> {
