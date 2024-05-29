@@ -15,7 +15,7 @@ import (
 
 type apiSuite struct {
 	suite.Suite
-	api *api.Api
+	router *http.ServeMux
 }
 
 func Test_ApiSuite(t *testing.T) {
@@ -26,13 +26,15 @@ func (s *apiSuite) BeforeTest(_, _ string) {
 	persistenceHelper := persistence_test_helper.NewPersistenceHelper()
 	repos := persistence.NewRepositories(persistenceHelper.Dynamo, persistenceHelper.TableName)
 	useCases := usecase.NewUseCases(repos, persistence.NewFestivalStorage(persistenceHelper.MockFestivals(nil)))
-	s.api = api.NewApi(useCases, repos)
+	festivalEndpoint := api.NewFestivalEndpoint(useCases.FestivalUseCase)
+	ratingEndpoint := api.NewRatingEndpoint(repos.RatingRepo, useCases.FestivalUseCase)
+	s.router = api.NewRouter(festivalEndpoint, ratingEndpoint)
 }
 
 func (s *apiSuite) Test_Returns404_WhenRequestPathDoesNotExist() {
 	request := NewAuthenticatedRequest(http.MethodGet, "/not_existing", nil)
 	recorder := httptest.NewRecorder()
-	s.api.ServeHTTP(recorder, request)
+	s.router.ServeHTTP(recorder, request)
 
 	require.Equal(s.T(), http.StatusNotFound, recorder.Result().StatusCode)
 }
@@ -40,17 +42,7 @@ func (s *apiSuite) Test_Returns404_WhenRequestPathDoesNotExist() {
 func (s *apiSuite) Test_Returns501_ratings_WhenMethodIsNotImplemented() {
 	request := NewAuthenticatedRequest(http.MethodPut, "/ratings", nil)
 	recorder := httptest.NewRecorder()
-	s.api.ServeHTTP(recorder, request)
+	s.router.ServeHTTP(recorder, request)
 
-	require.Equal(s.T(), http.StatusNotImplemented, recorder.Result().StatusCode)
-}
-
-func (s *apiSuite) Test_Returns401_WhenNoSubIsSet() {
-	request, err := http.NewRequest(http.MethodGet, "/api/ratings", nil)
-	require.NoError(s.T(), err)
-	request.Header.Set("authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE1MTYyMzkwMjJ9.tbDepxpstvGdW8TC3G8zg4B6rUYAOvfzdceoH48wgRQ")
-	recorder := httptest.NewRecorder()
-	s.api.ServeHTTP(recorder, request)
-
-	require.Equal(s.T(), http.StatusUnauthorized, recorder.Result().StatusCode)
+	require.Equal(s.T(), http.StatusMethodNotAllowed, recorder.Result().StatusCode)
 }

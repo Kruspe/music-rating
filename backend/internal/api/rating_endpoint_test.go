@@ -28,7 +28,7 @@ type ratingResponse struct {
 
 type ratingHandlerSuite struct {
 	suite.Suite
-	api *api.Api
+	router *http.ServeMux
 }
 
 func Test_RatingHandlerSuite(t *testing.T) {
@@ -38,13 +38,16 @@ func Test_RatingHandlerSuite(t *testing.T) {
 func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
 	ph := NewPersistenceHelper()
 	repos := persistence.NewRepositories(ph.Dynamo, ph.TableName)
-	s.api = api.NewApi(usecase.NewUseCases(repos, persistence.NewFestivalStorage(ph.MockFestivals(map[string][]model.Artist{
+	useCases := usecase.NewUseCases(repos, persistence.NewFestivalStorage(ph.MockFestivals(map[string][]model.Artist{
 		AFestivalName: {
 			AnArtistWithName("Bloodbath"),
 			AnArtistWithName("Hypocrisy"),
 			AnArtistWithName("Deserted Fear"),
 		},
-	}))), repos)
+	})))
+	festivalEndpoint := api.NewFestivalEndpoint(useCases.FestivalUseCase)
+	ratingEndpoint := api.NewRatingEndpoint(repos.RatingRepo, useCases.FestivalUseCase)
+	s.router = api.NewRouter(festivalEndpoint, ratingEndpoint)
 }
 
 func (s *ratingHandlerSuite) Test_PersistsRating() {
@@ -61,13 +64,13 @@ func (s *ratingHandlerSuite) Test_PersistsRating() {
 	require.NoError(s.T(), err)
 	putRecorder := httptest.NewRecorder()
 
-	s.api.ServeHTTP(putRecorder, put)
+	api.AuthMiddleware(s.router).ServeHTTP(putRecorder, put)
 	require.Equal(s.T(), http.StatusCreated, putRecorder.Result().StatusCode)
 
 	get := NewAuthenticatedRequest(http.MethodGet, "/ratings", nil)
 	getRecorder := httptest.NewRecorder()
 
-	s.api.ServeHTTP(getRecorder, get)
+	api.AuthMiddleware(s.router).ServeHTTP(getRecorder, get)
 	require.Equal(s.T(), http.StatusOK, getRecorder.Result().StatusCode)
 
 	var r []ratingResponse
@@ -94,7 +97,7 @@ func (s *ratingHandlerSuite) Test_UpdateRating() {
 	create := NewAuthenticatedRequest(http.MethodPost, "/ratings", bytes.NewReader(putBody))
 	putRecorder := httptest.NewRecorder()
 
-	s.api.ServeHTTP(putRecorder, create)
+	api.AuthMiddleware(s.router).ServeHTTP(putRecorder, create)
 	require.Equal(s.T(), http.StatusCreated, putRecorder.Result().StatusCode)
 
 	updateBody, err := json.Marshal(map[string]interface{}{
@@ -107,14 +110,14 @@ func (s *ratingHandlerSuite) Test_UpdateRating() {
 	update := NewAuthenticatedRequest(http.MethodPut, fmt.Sprintf("/ratings/%s", rating.ArtistName), bytes.NewReader(updateBody))
 	updateRecorder := httptest.NewRecorder()
 
-	s.api.ServeHTTP(updateRecorder, update)
+	api.AuthMiddleware(s.router).ServeHTTP(updateRecorder, update)
 	require.Equal(s.T(), http.StatusOK, updateRecorder.Result().StatusCode)
 
 	get := NewAuthenticatedRequest(http.MethodGet, "/ratings", nil)
 	require.NoError(s.T(), err)
 	getRecorder := httptest.NewRecorder()
 
-	s.api.ServeHTTP(getRecorder, get)
+	api.AuthMiddleware(s.router).ServeHTTP(getRecorder, get)
 	require.Equal(s.T(), http.StatusOK, getRecorder.Result().StatusCode)
 
 	var r []ratingResponse
@@ -137,7 +140,7 @@ func (s *ratingHandlerSuite) Test_GetAllForFestival() {
 	get := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/ratings/%s", AFestivalName), nil)
 	getRecorder := httptest.NewRecorder()
 
-	s.api.ServeHTTP(getRecorder, get)
+	api.AuthMiddleware(s.router).ServeHTTP(getRecorder, get)
 	resp := getRecorder.Result()
 	require.Equal(s.T(), http.StatusOK, resp.StatusCode)
 
@@ -153,7 +156,7 @@ func (s *ratingHandlerSuite) Test_GetAllForFestival() {
 func (s *ratingHandlerSuite) Test_GetAllForFestival_Returns404_WhenFestivalIsNotSupported() {
 	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/ratings/%s", AnotherFestivalName), nil)
 	recorder := httptest.NewRecorder()
-	s.api.ServeHTTP(recorder, request)
+	api.AuthMiddleware(s.router).ServeHTTP(recorder, request)
 
 	require.Equal(s.T(), http.StatusNotFound, recorder.Result().StatusCode)
 	var r errorResponse
@@ -175,6 +178,6 @@ func (s *ratingHandlerSuite) saveRating(rating model.Rating) {
 	require.NoError(s.T(), err)
 	putRecorder := httptest.NewRecorder()
 
-	s.api.ServeHTTP(putRecorder, put)
+	api.AuthMiddleware(s.router).ServeHTTP(putRecorder, put)
 	require.Equal(s.T(), http.StatusCreated, putRecorder.Result().StatusCode)
 }

@@ -33,16 +33,16 @@ func main() {
 	useCases := usecase.NewUseCases(repos, festivalStorage)
 
 	mux := http.NewServeMux()
+	mux.Handle("OPTIONS /", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(200)
+	}))
+	router := api.NewRouter(api.NewFestivalEndpoint(useCases.FestivalUseCase), api.NewRatingEndpoint(repos.RatingRepo, useCases.FestivalUseCase))
 	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "*")
 		w.Header().Set("Access-Control-Allow-Headers", "*")
 		r.Header.Set("Authorization", TestToken)
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(200)
-		} else {
-			api.NewApi(useCases, repos).ServeHTTP(w, r)
-		}
+		api.AuthMiddleware(router).ServeHTTP(w, r)
 	}))
 	err := http.ListenAndServe(":8080", mux)
 	if err != nil {

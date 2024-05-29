@@ -9,8 +9,10 @@ import (
 )
 
 func InitApi(useCases *usecase.UseCases, repos *persistence.Repositories) *httpadapter.HandlerAdapterV2 {
+	ratingEndpoint := api.NewRatingEndpoint(repos.RatingRepo, useCases.FestivalUseCase)
+	festivalEndpoint := api.NewFestivalEndpoint(useCases.FestivalUseCase)
 	mux := http.NewServeMux()
-	mux.Handle("/", api.NewApi(useCases, repos))
+	mux.Handle("/", api.AuthMiddleware(api.NewRouter(festivalEndpoint, ratingEndpoint)))
 
 	return httpadapter.NewV2(mux)
 }

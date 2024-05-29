@@ -1,63 +1,32 @@
 package api
 
 import (
-	"errors"
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/kruspe/music-rating/internal/adapter/persistence"
-	"github.com/kruspe/music-rating/internal/usecase"
 	"net/http"
-	"strings"
 )
 
-type Api struct {
-	festivalEndpoint *FestivalEndpoint
-	ratingEndpoint   *RatingEndpoint
-}
+func NewRouter(festivalEndpoint *FestivalEndpoint, ratingEndpoint *RatingEndpoint) *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.Handle("POST /ratings", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		userId := r.Context().Value(UserIdContextKey).(string)
+		ratingEndpoint.create(w, r, userId)
+	}))
+	mux.Handle("GET /ratings", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		userId := r.Context().Value(UserIdContextKey).(string)
+		ratingEndpoint.getAll(w, r, userId)
+	}))
+	mux.Handle("PUT /ratings/{artistName}", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		userId := r.Context().Value(UserIdContextKey).(string)
+		ratingEndpoint.put(w, r, userId, r.PathValue("artistName"))
+	}))
+	mux.Handle("GET /ratings/{festivalName}", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		userId := r.Context().Value(UserIdContextKey).(string)
+		ratingEndpoint.getAllForFestival(w, r, userId, r.PathValue("festivalName"))
+	}))
+	mux.Handle("GET /festivals/{festivalName}", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		userId := r.Context().Value(UserIdContextKey).(string)
+		festivalEndpoint.GetArtistsForFestival(w, r, userId, r.PathValue("festivalName"))
+	}))
 
-func NewApi(useCases *usecase.UseCases, repos *persistence.Repositories) *Api {
-	return &Api{
-		ratingEndpoint:   NewRatingEndpoint(repos.RatingRepo, useCases.FestivalUseCase),
-		festivalEndpoint: NewFestivalEndpoint(useCases.FestivalUseCase),
-	}
-}
+	return mux
 
-func (a *Api) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	userId, err := a.getUserId(strings.SplitAfter(r.Header.Get("authorization"), "Bearer ")[1])
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-	}
-
-	var festivalName string
-	var artistName string
-	switch {
-	case match(r.URL.Path, "/ratings"):
-		switch r.Method {
-		case http.MethodPost:
-			a.ratingEndpoint.create(w, r, userId)
-		case http.MethodGet:
-			a.ratingEndpoint.getAll(w, r, userId)
-		default:
-			w.WriteHeader(http.StatusNotImplemented)
-		}
-	case match(r.URL.Path, "/ratings/+", &artistName) && r.Method == http.MethodPut:
-		a.ratingEndpoint.put(w, r, userId, artistName)
-	case match(r.URL.Path, "/ratings/+", &festivalName) && r.Method == http.MethodGet:
-		a.ratingEndpoint.getAllForFestival(w, r, userId, festivalName)
-	case match(r.URL.Path, "/festivals/+", &festivalName):
-		a.festivalEndpoint.GetArtistsForFestival(w, r, userId, festivalName)
-	default:
-		w.WriteHeader(http.StatusNotFound)
-	}
-}
-
-func (a *Api) getUserId(token string) (string, error) {
-	var claims jwt.RegisteredClaims
-	_, _, err := jwt.NewParser().ParseUnverified(token, &claims)
-	if err != nil {
-		return "", err
-	}
-	if claims.Subject == "" {
-		return "", errors.New("missing sub in token")
-	}
-	return claims.Subject, nil
 }
