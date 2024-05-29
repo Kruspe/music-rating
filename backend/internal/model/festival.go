@@ -9,8 +9,3 @@ type FestivalNotSupportedError struct {
 func (e FestivalNotSupportedError) Error() string {
 	return fmt.Sprintf("Festival '%s' is not supported yet.", e.FestivalName)
 }
-
-func (e FestivalNotSupportedError) Is(err error) bool {
-	_, ok := err.(*FestivalNotSupportedError)
-	return ok
-}

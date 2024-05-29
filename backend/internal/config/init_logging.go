@@ -1,15 +1,25 @@
 package config
 
 import (
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 	"os"
 )
 
 func InitLogging() {
-	level, err := log.ParseLevel(os.Getenv("LOG_LEVEL"))
-	if err != nil {
-		log.Fatal("could not get log level from environment variable")
+	logLevel := slog.LevelInfo
+	if l, ok := os.LookupEnv("LOG_LEVEL"); ok {
+		switch l {
+		case "DEBUG":
+			logLevel = slog.LevelDebug
+		case "WARN":
+			logLevel = slog.LevelWarn
+		case "ERROR":
+			logLevel = slog.LevelError
+		}
 	}
-	log.SetLevel(level)
-	log.SetFormatter(&log.JSONFormatter{})
+
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: logLevel,
+	}))
+	slog.SetDefault(logger)
 }

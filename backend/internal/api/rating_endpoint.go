@@ -58,11 +58,11 @@ func (e *RatingEndpoint) create(w http.ResponseWriter, r *http.Request, userId s
 		return
 	}
 	if rating.ArtistName == "" {
-		HandleError(w, model.MissingParameterError{ParameterName: "ArtistName"})
+		HandleError(w, &model.MissingParameterError{ParameterName: "ArtistName"})
 		return
 	}
 	if rating.Rating == 0 {
-		HandleError(w, model.MissingParameterError{ParameterName: "Rating"})
+		HandleError(w, &model.MissingParameterError{ParameterName: "Rating"})
 		return
 	}
 

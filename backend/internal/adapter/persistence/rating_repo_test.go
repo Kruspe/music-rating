@@ -70,5 +70,5 @@ func (s *ratingRepoSuite) Test_UpdateRating() {
 func (s *ratingRepoSuite) Test_UpdateRating_FailsWhenRatingDoesNotExist() {
 	updatedRating := ARatingForArtist("non_existing_artist")
 	err := s.repo.Update(context.Background(), TestUserId, updatedRating)
-	require.ErrorIs(s.T(), err, model.UpdateNonExistingRatingError{ArtistName: "non_existing_artist"})
+	require.IsType(s.T(), &model.UpdateNonExistingRatingError{}, err)
 }

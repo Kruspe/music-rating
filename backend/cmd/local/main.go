@@ -8,13 +8,16 @@ import (
 	"github.com/kruspe/music-rating/internal/model"
 	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
 	"github.com/kruspe/music-rating/internal/usecase"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 	"net/http"
+	"os"
 )
 
 func main() {
-	log.SetLevel(log.DebugLevel)
-	log.SetFormatter(&log.JSONFormatter{})
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	}))
+	slog.SetDefault(logger)
 	ph := NewPersistenceHelper()
 	repos := persistence.NewRepositories(ph.Dynamo, ph.TableName)
 	festivalStorage := persistence.NewFestivalStorage(ph.MockFestivals(map[string][]model.Artist{

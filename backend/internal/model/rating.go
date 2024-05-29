@@ -22,8 +22,3 @@ type UpdateNonExistingRatingError struct {
 func (e UpdateNonExistingRatingError) Error() string {
 	return fmt.Sprintf("trying to update non existing rating for '%s'", e.ArtistName)
 }
-
-func (e UpdateNonExistingRatingError) Is(err error) bool {
-	_, ok := err.(*UpdateNonExistingRatingError)
-	return ok
-}

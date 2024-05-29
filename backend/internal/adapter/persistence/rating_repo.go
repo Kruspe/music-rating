@@ -143,7 +143,7 @@ func (r *RatingRepo) Update(ctx context.Context, userId string, rating model.Rat
 	})
 	var conditionalError *types.ConditionalCheckFailedException
 	if errors.As(err, &conditionalError) {
-		return model.UpdateNonExistingRatingError{ArtistName: rating.ArtistName}
+		return &model.UpdateNonExistingRatingError{ArtistName: rating.ArtistName}
 	}
 	return err
 }

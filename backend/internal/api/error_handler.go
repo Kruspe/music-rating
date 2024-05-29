@@ -3,7 +3,7 @@ package api
 import (
 	"encoding/json"
 	. "github.com/kruspe/music-rating/internal/model"
-	log "github.com/sirupsen/logrus"
+	"log/slog"
 	"net/http"
 )
 
@@ -13,33 +13,33 @@ type errorResponse struct {
 
 func HandleError(w http.ResponseWriter, err error) {
 	switch err.(type) {
-	case MissingParameterError:
-		log.Error(err)
+	case *MissingParameterError:
+		slog.Error("Missing parameter", slog.Any("error", err))
 		w.WriteHeader(http.StatusBadRequest)
 		err := json.NewEncoder(w).Encode(errorResponse{Error: err.Error()})
 		if err != nil {
-			log.Error(err)
+			slog.Error("Error encoding response", slog.Any("error", err))
 		}
-	case UpdateNonExistingRatingError:
-		log.Error(err)
+	case *UpdateNonExistingRatingError:
+		slog.Error("Update non existing rating", slog.Any("error", err))
 		w.WriteHeader(http.StatusBadRequest)
 		err := json.NewEncoder(w).Encode(errorResponse{Error: err.Error()})
 		if err != nil {
-			log.Error(err)
+			slog.Error("Error encoding response", slog.Any("error", err))
 		}
 	case *FestivalNotSupportedError:
-		log.Error(err)
+		slog.Error("Festival not supported", slog.Any("error", err))
 		w.WriteHeader(http.StatusNotFound)
 		err := json.NewEncoder(w).Encode(errorResponse{Error: err.Error()})
 		if err != nil {
-			log.Error(err)
+			slog.Error("Error encoding response", slog.Any("error", err))
 		}
 	default:
-		log.Error(err)
+		slog.Error("Generic error", slog.Any("error", err))
 		w.WriteHeader(http.StatusInternalServerError)
 		err := json.NewEncoder(w).Encode(errorResponse{Error: "Something went wrong."})
 		if err != nil {
-			log.Error(err)
+			slog.Error("Error encoding response", slog.Any("error", err))
 		}
 	}
 }
