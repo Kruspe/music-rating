@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
@@ -34,11 +33,12 @@ type PersistenceHelper struct {
 }
 
 func NewPersistenceHelper() *PersistenceHelper {
-	cfg, err := LocalDefaultConfig()
-	if err != nil {
-		panic(err)
-	}
-	dynamo := dynamodb.NewFromConfig(cfg)
+	cfg := aws.NewConfig()
+	dynamo := dynamodb.NewFromConfig(*cfg, func(o *dynamodb.Options) {
+		o.Region = "eu-west-1"
+		o.Credentials = credentials.NewStaticCredentialsProvider("local", "local", "")
+		o.BaseEndpoint = aws.String(fmt.Sprintf("http://localhost:%d", setup.DynamoDBPort))
+	})
 	tableName := uuid.NewString()
 	createTable(dynamo, tableName)
 	return &PersistenceHelper{
@@ -47,7 +47,7 @@ func NewPersistenceHelper() *PersistenceHelper {
 	}
 }
 
-func (ph *PersistenceHelper) MockFestivals(festivals map[string][]model.Artist) persistence.S3Client {
+func (h *PersistenceHelper) MockFestivals(festivals map[string][]model.Artist) persistence.S3Client {
 	return MockS3Client{
 		GetObjectMock: func(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
 			festivalName := strings.Split(*params.Key, ".json")[0]
@@ -72,20 +72,6 @@ func (ph *PersistenceHelper) MockFestivals(festivals map[string][]model.Artist) 
 			}, nil
 		},
 	}
-}
-
-func LocalDefaultConfig() (aws.Config, error) {
-	return config.LoadDefaultConfig(context.TODO(),
-		config.WithRegion("eu-west-1"),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider("local", "local", "")),
-		config.WithEndpointResolverWithOptions(
-			aws.EndpointResolverWithOptionsFunc(
-				func(service, region string, options ...interface{}) (aws.Endpoint, error) {
-					return aws.Endpoint{URL: fmt.Sprintf("http://localhost:%d", setup.DynamoDBPort)}, nil
-				},
-			),
-		),
-	)
 }
 
 func createTable(dynamo *dynamodb.Client, tableName string) {
