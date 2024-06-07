@@ -15,7 +15,6 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { authenticator } from "~/utils/auth.server";
 import {
   AppBar,
-  Box,
   Button,
   ClickAwayListener,
   createTheme,
@@ -190,26 +189,30 @@ export default function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <AppBar position="static">
-        <Toolbar>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <Tabs value={activeTab}>
-              {routes.map((route) => {
-                if (route.path.includes("festivals")) {
-                  return <FestivalTab key={route.id} route={route} />;
-                } else {
-                  return (
-                    <Tab
-                      key={route.id}
-                      component={Link}
-                      label={route.displayName}
-                      to={route.path}
-                    />
-                  );
-                }
-              })}
-            </Tabs>
-          </Box>
-          <Box sx={{ flexGrow: 1 }} />
+        <Toolbar
+          disableGutters
+          sx={{
+            justifyContent: "space-between",
+            paddingLeft: { xs: 0, md: "16px" },
+            paddingRight: { xs: 0, md: "16px" },
+          }}
+        >
+          <Tabs value={activeTab} variant="scrollable" allowScrollButtonsMobile>
+            {routes.map((route) => {
+              if (route.path.includes("festivals")) {
+                return <FestivalTab key={route.id} route={route} />;
+              } else {
+                return (
+                  <Tab
+                    key={route.id}
+                    component={Link}
+                    label={route.displayName}
+                    to={route.path}
+                  />
+                );
+              }
+            })}
+          </Tabs>
           <Form action={loggedIn ? "/logout" : ""}>
             <Button variant="contained" type="submit" formMethod="post">
               {loggedIn ? "Log out" : "Log in"}

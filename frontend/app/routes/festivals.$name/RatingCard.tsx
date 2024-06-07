@@ -18,39 +18,23 @@ export default function RatingCard({ artistName, imageUrl }: RatingCardProps) {
   const fetcher = useFetcher();
 
   return (
-    <Card sx={{ width: 300 }}>
-      <Grid container rowSpacing={1}>
-        {imageUrl ? (
-          <Grid xs={12} sx={{ height: 300 }}>
-            <Grid
-              xs={12}
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              sx={{ maxHeight: 300 }}
-            >
+    <Card>
+      <Grid container rowSpacing={1} justifyContent="center">
+        <Grid sx={{ height: 300 }} alignContent="center" textAlign="center">
+          {imageUrl ? (
+            <>
               <Typography variant="h5">{artistName}</Typography>
-            </Grid>
-            <Grid xs={12}>
               <CardMedia
                 component="img"
                 src={imageUrl}
                 alt={`${artistName} image`}
                 sx={{ height: 250 }}
               />
-            </Grid>
-          </Grid>
-        ) : (
-          <Grid
-            xs={12}
-            sx={{ height: 300 }}
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-          >
+            </>
+          ) : (
             <Typography variant="h4">{artistName}</Typography>
-          </Grid>
-        )}
+          )}
+        </Grid>
         <Grid xs={12}>
           <fetcher.Form method="post" action="/ratings">
             <input hidden name="artist_name" value={artistName} readOnly />

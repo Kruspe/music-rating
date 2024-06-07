@@ -38,7 +38,7 @@ export default function FestivalRoute() {
   return loaderData.data!.length > 0 ? (
     <Grid container spacing={0.5}>
       {loaderData.data!.map((artist) => (
-        <Grid key={artist.artistName}>
+        <Grid key={artist.artistName} xs={12} sm={6} lg={3} xl={2}>
           <RatingCard
             artistName={artist.artistName}
             imageUrl={artist.imageUrl}
