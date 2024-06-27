@@ -32,7 +32,6 @@ export async function loader({
 
 export default function FestivalRatingsRoute() {
   const loaderData = useLoaderData<typeof loader>();
-  console.log("here");
 
-  return <RatingTable data={loaderData.data!} />;
+  return <RatingTable data={loaderData.data!} updatable />;
 }
