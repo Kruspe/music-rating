@@ -1,12 +1,11 @@
 package main
 
 import (
-	. "github.com/kruspe/music-rating/internal/adapter/persistence/persistence_test_helper"
 	"github.com/kruspe/music-rating/internal/api"
 	. "github.com/kruspe/music-rating/internal/api/api_test_helper"
 	"github.com/kruspe/music-rating/internal/model"
 	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
-	persistence2 "github.com/kruspe/music-rating/internal/persistence"
+	"github.com/kruspe/music-rating/internal/persistence"
 	. "github.com/kruspe/music-rating/internal/persistence/persistence_test_helper"
 	"github.com/kruspe/music-rating/internal/usecase"
 	"log/slog"
@@ -20,8 +19,8 @@ func main() {
 	}))
 	slog.SetDefault(logger)
 	ph := NewPersistenceHelper()
-	repos := persistence2.NewRepositories(ph.Dynamo, ph.TableName)
-	festivalStorage := persistence2.NewFestivalStorage(ph.MockFestivals(map[string][]model.Artist{
+	repos := persistence.NewRepositories(ph.Dynamo, ph.TableName)
+	festivalStorage := persistence.NewFestivalStorage(ph.MockFestivals(map[string][]model.Artist{
 		"wacken": {
 			AnArtistWithName("Bloodbath"),
 			AnArtistWithName("Hypocrisy"),

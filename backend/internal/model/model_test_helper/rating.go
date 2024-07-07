@@ -15,8 +15,8 @@ const (
 	AnotherYear         = 2015
 )
 
-func ARatingForArtist(name string) model.Rating {
-	return model.Rating{
+func ARatingForArtist(name string) model.ArtistRating {
+	return model.ArtistRating{
 		ArtistName:   name,
 		Comment:      AComment,
 		FestivalName: AFestivalName,
@@ -25,8 +25,8 @@ func ARatingForArtist(name string) model.Rating {
 	}
 }
 
-func ARatingForArtistWithRating(name string, rating float64) model.Rating {
-	return model.Rating{
+func ARatingForArtistWithRating(name string, rating float64) model.ArtistRating {
+	return model.ArtistRating{
 		ArtistName:   name,
 		Comment:      AComment,
 		FestivalName: AFestivalName,

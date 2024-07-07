@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/kruspe/music-rating/internal/model"
 	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
-	persistence2 "github.com/kruspe/music-rating/internal/persistence"
+	"github.com/kruspe/music-rating/internal/persistence"
 	"github.com/kruspe/music-rating/internal/persistence/persistence_test_helper"
 	"github.com/kruspe/music-rating/internal/usecase"
 	"github.com/stretchr/testify/require"
@@ -14,7 +14,7 @@ import (
 
 type ratingUseCaseSuite struct {
 	suite.Suite
-	ratingRepo    *persistence2.RatingRepo
+	ratingRepo    *persistence.RatingRepo
 	ratingUseCase *usecase.FestivalUseCase
 }
 
@@ -24,9 +24,9 @@ func Test_RatingUseCaseSuite(t *testing.T) {
 
 func (s *ratingUseCaseSuite) BeforeTest(_ string, _ string) {
 	ph := persistence_test_helper.NewPersistenceHelper()
-	s.ratingRepo = persistence2.NewRatingRepo(ph.Dynamo, ph.TableName)
+	s.ratingRepo = persistence.NewRatingRepo(ph.Dynamo, ph.TableName)
 
-	s.ratingUseCase = usecase.NewFestivalUseCase(s.ratingRepo, persistence2.NewFestivalStorage(ph.MockFestivals(map[string][]model.Artist{
+	s.ratingUseCase = usecase.NewFestivalUseCase(s.ratingRepo, persistence.NewFestivalStorage(ph.MockFestivals(map[string][]model.Artist{
 		AFestivalName: {
 			AnArtistWithName("Bloodbath"),
 			AnArtistWithName("Hypocrisy"),

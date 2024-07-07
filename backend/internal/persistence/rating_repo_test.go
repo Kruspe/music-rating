@@ -37,7 +37,7 @@ func (s *ratingRepoSuite) Test_PersistsRatings() {
 
 	ratings, err := s.repo.GetAll(context.Background(), AnUserId)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), &model.Ratings{Keys: []string{rating1.ArtistName, rating2.ArtistName}, Values: map[string]model.Rating{rating1.ArtistName: rating1, rating2.ArtistName: rating2}}, ratings)
+	require.Equal(s.T(), &model.Ratings{Keys: []string{rating1.ArtistName, rating2.ArtistName}, Values: map[string]model.ArtistRating{rating1.ArtistName: rating1, rating2.ArtistName: rating2}}, ratings)
 }
 
 func (s *ratingRepoSuite) Test_UpdateRating() {
@@ -45,7 +45,7 @@ func (s *ratingRepoSuite) Test_UpdateRating() {
 	err := s.repo.Save(context.Background(), AnUserId, rating)
 	require.NoError(s.T(), err)
 
-	updatedRating := model.Rating{
+	updatedRating := model.ArtistRating{
 		ArtistName:   "Bloodbath",
 		Comment:      "",
 		FestivalName: "new-festival",

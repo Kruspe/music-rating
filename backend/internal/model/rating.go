@@ -2,7 +2,7 @@ package model
 
 import "fmt"
 
-type Rating struct {
+type ArtistRating struct {
 	ArtistName   string
 	Comment      string
 	FestivalName string
@@ -12,7 +12,7 @@ type Rating struct {
 
 type Ratings struct {
 	Keys   []string
-	Values map[string]Rating
+	Values map[string]ArtistRating
 }
 
 type UpdateNonExistingRatingError struct {

@@ -34,8 +34,8 @@ type updateRatingRequest struct {
 
 type ratingRepo interface {
 	GetAll(ctx context.Context, userId string) (*model.Ratings, error)
-	Save(ctx context.Context, userId string, rating model.Rating) error
-	Update(ctx context.Context, userId string, ratingUpdate model.Rating) error
+	Save(ctx context.Context, userId string, rating model.ArtistRating) error
+	Update(ctx context.Context, userId string, ratingUpdate model.ArtistRating) error
 }
 
 type RatingEndpoint struct {
@@ -66,7 +66,7 @@ func (e *RatingEndpoint) create(w http.ResponseWriter, r *http.Request, userId s
 		return
 	}
 
-	err = e.ratingRepo.Save(r.Context(), userId, model.Rating{
+	err = e.ratingRepo.Save(r.Context(), userId, model.ArtistRating{
 		ArtistName:   rating.ArtistName,
 		Comment:      rating.Comment,
 		FestivalName: rating.FestivalName,
@@ -102,7 +102,7 @@ func (e *RatingEndpoint) put(w http.ResponseWriter, r *http.Request, userId, art
 		return
 	}
 
-	err = e.ratingRepo.Update(r.Context(), userId, model.Rating{
+	err = e.ratingRepo.Update(r.Context(), userId, model.ArtistRating{
 		ArtistName:   artistName,
 		Comment:      ratingUpdate.Comment,
 		FestivalName: ratingUpdate.FestivalName,
@@ -133,7 +133,7 @@ func (e *RatingEndpoint) getAllForFestival(w http.ResponseWriter, r *http.Reques
 
 	matchingRatings := model.Ratings{
 		Keys:   make([]string, 0),
-		Values: make(map[string]model.Rating),
+		Values: make(map[string]model.ArtistRating),
 	}
 	var notRatedArtist []string
 	for _, artist := range artists {
@@ -146,7 +146,7 @@ func (e *RatingEndpoint) getAllForFestival(w http.ResponseWriter, r *http.Reques
 	}
 	for _, artist := range notRatedArtist {
 		matchingRatings.Keys = append(matchingRatings.Keys, artist)
-		matchingRatings.Values[artist] = model.Rating{
+		matchingRatings.Values[artist] = model.ArtistRating{
 			ArtistName: artist,
 		}
 	}

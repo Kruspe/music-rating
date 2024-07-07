@@ -36,7 +36,7 @@ func NewRatingRepo(dynamo *dynamodb.Client, tableName string) *RatingRepo {
 	}
 }
 
-func (r *RatingRepo) Save(ctx context.Context, userId string, rating model.Rating) error {
+func (r *RatingRepo) Save(ctx context.Context, userId string, rating model.ArtistRating) error {
 	record := RatingRecord{
 		DbKey:        ratingDbKey(userId, rating.ArtistName),
 		Type:         RatingType,
@@ -86,7 +86,7 @@ func (r *RatingRepo) GetAll(ctx context.Context, userId string) (*model.Ratings,
 
 	result := &model.Ratings{
 		Keys:   make([]string, len(ratings)),
-		Values: make(map[string]model.Rating),
+		Values: make(map[string]model.ArtistRating),
 	}
 	for i, record := range ratings {
 		rating, err := strconv.ParseFloat(record.Rating, 32)
@@ -94,7 +94,7 @@ func (r *RatingRepo) GetAll(ctx context.Context, userId string) (*model.Ratings,
 			return nil, err
 		}
 		result.Keys[i] = record.ArtistName
-		result.Values[record.ArtistName] = model.Rating{
+		result.Values[record.ArtistName] = model.ArtistRating{
 			ArtistName:   record.ArtistName,
 			Comment:      record.Comment,
 			FestivalName: record.FestivalName,
@@ -105,7 +105,7 @@ func (r *RatingRepo) GetAll(ctx context.Context, userId string) (*model.Ratings,
 	return result, nil
 }
 
-func (r *RatingRepo) Update(ctx context.Context, userId string, rating model.Rating) error {
+func (r *RatingRepo) Update(ctx context.Context, userId string, rating model.ArtistRating) error {
 	updateExpr := expression.Set(expression.Name("rating"), expression.Value(rating.Rating))
 	if rating.Year == 0 {
 		updateExpr.Remove(expression.Name("year"))

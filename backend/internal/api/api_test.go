@@ -3,7 +3,7 @@ package api_test
 import (
 	"github.com/kruspe/music-rating/internal/api"
 	. "github.com/kruspe/music-rating/internal/api/api_test_helper"
-	persistence2 "github.com/kruspe/music-rating/internal/persistence"
+	"github.com/kruspe/music-rating/internal/persistence"
 	"github.com/kruspe/music-rating/internal/persistence/persistence_test_helper"
 	"github.com/kruspe/music-rating/internal/usecase"
 	"github.com/stretchr/testify/require"
@@ -24,8 +24,8 @@ func Test_ApiSuite(t *testing.T) {
 
 func (s *apiSuite) BeforeTest(_, _ string) {
 	persistenceHelper := persistence_test_helper.NewPersistenceHelper()
-	repos := persistence2.NewRepositories(persistenceHelper.Dynamo, persistenceHelper.TableName)
-	useCases := usecase.NewUseCases(repos, persistence2.NewFestivalStorage(persistenceHelper.MockFestivals(nil)))
+	repos := persistence.NewRepositories(persistenceHelper.Dynamo, persistenceHelper.TableName)
+	useCases := usecase.NewUseCases(repos, persistence.NewFestivalStorage(persistenceHelper.MockFestivals(nil)))
 	festivalEndpoint := api.NewFestivalEndpoint(useCases.FestivalUseCase)
 	ratingEndpoint := api.NewRatingEndpoint(repos.RatingRepo, useCases.FestivalUseCase)
 	s.router = api.NewRouter(festivalEndpoint, ratingEndpoint)
