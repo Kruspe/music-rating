@@ -33,7 +33,7 @@ type updateRatingRequest struct {
 }
 
 type ratingRepo interface {
-	GetAll(ctx context.Context, userId string) (model.Ratings, error)
+	GetAll(ctx context.Context, userId string) (*model.Ratings, error)
 	Save(ctx context.Context, userId string, rating model.ArtistRating) error
 	Update(ctx context.Context, userId string, ratingUpdate model.ArtistRating) error
 }
@@ -78,7 +78,7 @@ func (e *RatingEndpoint) getAll(w http.ResponseWriter, r *http.Request, userId s
 		return
 	}
 	w.Header().Set("content-type", "application/json")
-	err = json.NewEncoder(w).Encode(e.toRatingsResponse(ratings))
+	err = json.NewEncoder(w).Encode(e.toRatingsResponse(*ratings))
 	if err != nil {
 		HandleError(w, err)
 		return
@@ -121,11 +121,15 @@ func (e *RatingEndpoint) getAllForFestival(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	matchingRatings := make(model.Ratings)
+	festivalRatings := model.Ratings{
+		Keys:   make([]string, 0, len(artists)),
+		Values: make(map[string]model.ArtistRating),
+	}
 	var notRatedArtist []string
 	for _, artist := range artists {
-		if rating, found := ratings[artist.Name]; found {
-			matchingRatings[artist.Name] = rating
+		if rating, found := ratings.Values[artist.Name]; found {
+			festivalRatings.Keys = append(festivalRatings.Keys, artist.Name)
+			festivalRatings.Values[artist.Name] = rating
 		} else {
 			notRatedArtist = append(notRatedArtist, artist.Name)
 		}
@@ -136,11 +140,12 @@ func (e *RatingEndpoint) getAllForFestival(w http.ResponseWriter, r *http.Reques
 			HandleError(w, err)
 			return
 		}
-		matchingRatings[artist] = *rating
+		festivalRatings.Keys = append(festivalRatings.Keys, artist)
+		festivalRatings.Values[artist] = *rating
 	}
 
 	w.Header().Set("content-type", "application/json")
-	err = json.NewEncoder(w).Encode(e.toRatingsResponse(matchingRatings))
+	err = json.NewEncoder(w).Encode(e.toRatingsResponse(festivalRatings))
 	if err != nil {
 		HandleError(w, err)
 		return
@@ -148,25 +153,25 @@ func (e *RatingEndpoint) getAllForFestival(w http.ResponseWriter, r *http.Reques
 }
 
 func (e *RatingEndpoint) toRatingsResponse(ratings model.Ratings) []ratingResponse {
-	result := make([]ratingResponse, 0)
-	for _, rating := range ratings {
+	result := make([]ratingResponse, 0, len(ratings.Keys))
+	for _, key := range ratings.Keys {
 		var (
 			festivalName string
 			year         int
 			comment      string
 		)
-		if rating.FestivalName != nil {
-			festivalName = *rating.FestivalName
+		if ratings.Values[key].FestivalName != nil {
+			festivalName = *ratings.Values[key].FestivalName
 		}
-		if rating.Year != nil {
-			year = *rating.Year
+		if ratings.Values[key].Year != nil {
+			year = *ratings.Values[key].Year
 		}
-		if rating.Comment != nil {
-			comment = *rating.Comment
+		if ratings.Values[key].Comment != nil {
+			comment = *ratings.Values[key].Comment
 		}
 		result = append(result, ratingResponse{
-			ArtistName:   rating.ArtistName,
-			Rating:       rating.Rating,
+			ArtistName:   key,
+			Rating:       ratings.Values[key].Rating,
 			FestivalName: festivalName,
 			Year:         year,
 			Comment:      comment,

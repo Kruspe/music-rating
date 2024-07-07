@@ -31,7 +31,10 @@ func NewArtistRating(artistName string, rating float64, festivalName *string, ye
 	}, nil
 }
 
-type Ratings map[string]ArtistRating
+type Ratings struct {
+	Keys   []string
+	Values map[string]ArtistRating
+}
 
 type UpdateNonExistingRatingError struct {
 	ArtistName string

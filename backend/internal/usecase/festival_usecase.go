@@ -10,7 +10,7 @@ type FestivalStorage interface {
 }
 
 type ratingRepo interface {
-	GetAll(ctx context.Context, userId string) (model.Ratings, error)
+	GetAll(ctx context.Context, userId string) (*model.Ratings, error)
 }
 
 type FestivalUseCase struct {
@@ -38,7 +38,7 @@ func (u *FestivalUseCase) GetUnratedArtistsForFestival(ctx context.Context, user
 
 	unratedArtists := make([]model.Artist, 0)
 	for _, artist := range artists {
-		if _, found := ratings[artist.Name]; !found {
+		if _, found := ratings.Values[artist.Name]; !found {
 			unratedArtists = append(unratedArtists, artist)
 		}
 	}
