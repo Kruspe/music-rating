@@ -171,7 +171,7 @@ func (e *RatingEndpoint) toRatingsResponse(ratings model.Ratings) []ratingRespon
 		}
 		result = append(result, ratingResponse{
 			ArtistName:   key,
-			Rating:       ratings.Values[key].Rating,
+			Rating:       ratings.Values[key].Rating.Float64(),
 			FestivalName: festivalName,
 			Year:         year,
 			Comment:      comment,

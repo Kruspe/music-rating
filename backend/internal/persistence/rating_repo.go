@@ -42,7 +42,7 @@ func (r *RatingRepo) Save(ctx context.Context, userId string, rating model.Artis
 		DbKey:        ratingDbKey(userId, rating.ArtistName),
 		UserId:       userId,
 		ArtistName:   rating.ArtistName,
-		Rating:       strconv.FormatFloat(rating.Rating, 'f', 1, 32),
+		Rating:       rating.Rating.String(),
 		FestivalName: rating.FestivalName,
 		Year:         rating.Year,
 		Comment:      rating.Comment,

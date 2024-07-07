@@ -11,8 +11,8 @@ const (
 	AnotherComment      = "another-comment"
 	AFestivalName       = "festival-name"
 	AnotherFestivalName = "another-festival-name"
-	ARating             = float64(5)
-	AnotherRating       = float64(1)
+	ARating             = model.Rating(5)
+	AnotherRating       = model.Rating(1)
 	AYear               = 2020
 	AnotherYear         = 2015
 )
@@ -21,7 +21,7 @@ func AnArtistRating(name string) model.ArtistRating {
 	festivalName := AFestivalName
 	year := AYear
 	comment := AComment
-	rating, err := model.NewArtistRating(name, ARating, &festivalName, &year, &comment)
+	rating, err := model.NewArtistRating(name, ARating.Float64(), &festivalName, &year, &comment)
 	if err != nil {
 		log.Panicln("could not create test ArtistRating", err)
 	}

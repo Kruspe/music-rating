@@ -4,7 +4,7 @@ import "fmt"
 
 type ArtistRating struct {
 	ArtistName   string
-	Rating       float64
+	Rating       Rating
 	FestivalName *string
 	Year         *int
 	Comment      *string
@@ -24,7 +24,7 @@ func NewArtistRating(artistName string, rating float64, festivalName *string, ye
 	}
 	return &ArtistRating{
 		ArtistName:   artistName,
-		Rating:       r.Float64(),
+		Rating:       *r,
 		FestivalName: festivalName,
 		Year:         year,
 		Comment:      comment,
@@ -48,6 +48,10 @@ type Rating float64
 
 func (r Rating) Float64() float64 {
 	return float64(r)
+}
+
+func (r Rating) String() string {
+	return fmt.Sprintf("%.1f", r)
 }
 
 func NewRating(rating float64) (*Rating, error) {

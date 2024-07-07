@@ -78,7 +78,7 @@ func (s *ratingHandlerSuite) Test_PersistsRating() {
 	require.NoError(s.T(), err)
 	require.Len(s.T(), r, 1)
 	require.Equal(s.T(), rating.ArtistName, r[0].ArtistName)
-	require.Equal(s.T(), rating.Rating, r[0].Rating)
+	require.Equal(s.T(), rating.Rating.Float64(), r[0].Rating)
 	require.Equal(s.T(), *rating.FestivalName, r[0].FestivalName)
 	require.Equal(s.T(), *rating.Year, r[0].Year)
 	require.Equal(s.T(), *rating.Comment, r[0].Comment)
@@ -126,15 +126,15 @@ func (s *ratingHandlerSuite) Test_UpdateRating() {
 	require.Len(s.T(), r, 1)
 	require.Equal(s.T(), rating.ArtistName, r[0].ArtistName)
 	require.Equal(s.T(), AnotherFestivalName, r[0].FestivalName)
-	require.Equal(s.T(), AnotherRating, r[0].Rating)
+	require.Equal(s.T(), AnotherRating.Float64(), r[0].Rating)
 	require.Equal(s.T(), AnotherYear, r[0].Year)
 	require.Equal(s.T(), AnotherComment, r[0].Comment)
 }
 
 func (s *ratingHandlerSuite) Test_GetAllForFestival() {
-	hypocrisyRating := AnArtistRatingWithRating("Hypocrisy", ARating)
+	hypocrisyRating := AnArtistRatingWithRating("Hypocrisy", ARating.Float64())
 	s.saveRating(hypocrisyRating)
-	desertedFearRating := AnArtistRatingWithRating("Deserted Fear", AnotherRating)
+	desertedFearRating := AnArtistRatingWithRating("Deserted Fear", AnotherRating.Float64())
 	s.saveRating(desertedFearRating)
 
 	get := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/ratings/%s", AFestivalName), nil)

@@ -20,7 +20,7 @@ func (s *ratingSuite) Test_NewArtistRating() {
 	festivalName := AFestivalName
 	year := AYear
 	comment := AComment
-	rating, err := model.NewArtistRating(AnArtistName, ARating, &festivalName, &year, &comment)
+	rating, err := model.NewArtistRating(AnArtistName, ARating.Float64(), &festivalName, &year, &comment)
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), AnArtistName, rating.ArtistName)
 	require.Equal(s.T(), ARating, rating.Rating)
