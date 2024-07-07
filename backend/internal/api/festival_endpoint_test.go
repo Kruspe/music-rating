@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/kruspe/music-rating/internal/adapter/persistence"
 	. "github.com/kruspe/music-rating/internal/adapter/persistence/persistence_test_helper"
 	"github.com/kruspe/music-rating/internal/api"
 	. "github.com/kruspe/music-rating/internal/api/api_test_helper"
 	"github.com/kruspe/music-rating/internal/model"
 	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
+	persistence2 "github.com/kruspe/music-rating/internal/persistence"
+	. "github.com/kruspe/music-rating/internal/persistence/persistence_test_helper"
 	"github.com/kruspe/music-rating/internal/usecase"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -25,7 +26,7 @@ type unratedArtistResponse struct {
 
 type festivalHandlerSuite struct {
 	suite.Suite
-	repos *persistence.Repositories
+	repos *persistence2.Repositories
 	ph    *PersistenceHelper
 }
 
@@ -35,7 +36,7 @@ func TestFestivalHandlerSuite(t *testing.T) {
 
 func (s *festivalHandlerSuite) BeforeTest(_, _ string) {
 	s.ph = NewPersistenceHelper()
-	s.repos = persistence.NewRepositories(s.ph.Dynamo, s.ph.TableName)
+	s.repos = persistence2.NewRepositories(s.ph.Dynamo, s.ph.TableName)
 }
 
 func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllArtists() {
@@ -46,7 +47,7 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllArtist
 
 	bloodbath := AnArtistWithName("Bloodbath")
 	hypocrisy := AnArtistWithName("Hypocrisy")
-	festivalStorage := persistence.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
+	festivalStorage := persistence2.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
 		AFestivalName: {
 			bloodbath,
 			hypocrisy,
@@ -79,7 +80,7 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllUnrate
 	require.NoError(s.T(), err)
 
 	unratedArtist := AnArtistWithName("Benediction")
-	festivalStorage := persistence.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
+	festivalStorage := persistence2.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
 		AFestivalName: {
 			AnArtistWithName("Bloodbath"),
 			AnArtistWithName("Hypocrisy"),
@@ -112,7 +113,7 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndEmptyList
 	err = s.repos.RatingRepo.Save(context.Background(), AnUserId, ARatingForArtist("Benediction"))
 	require.NoError(s.T(), err)
 
-	festivalStorage := persistence.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
+	festivalStorage := persistence2.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
 		AFestivalName: {
 			AnArtistWithName("Bloodbath"),
 			AnArtistWithName("Hypocrisy"),
@@ -135,7 +136,7 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndEmptyList
 }
 
 func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns404_WhenFestivalIsNotSupported() {
-	festivalStorage := persistence.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
+	festivalStorage := persistence2.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
 		AFestivalName: {
 			AnArtistWithName("Bloodbath"),
 			AnArtistWithName("Hypocrisy"),

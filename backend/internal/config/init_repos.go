@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
-	"github.com/kruspe/music-rating/internal/adapter/persistence"
+	"github.com/kruspe/music-rating/internal/persistence"
 	"log/slog"
 	"os"
 )

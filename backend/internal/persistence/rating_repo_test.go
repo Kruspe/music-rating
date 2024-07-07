@@ -2,10 +2,10 @@ package persistence_test
 
 import (
 	"context"
-	"github.com/kruspe/music-rating/internal/adapter/persistence"
-	. "github.com/kruspe/music-rating/internal/adapter/persistence/persistence_test_helper"
 	"github.com/kruspe/music-rating/internal/model"
 	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
+	"github.com/kruspe/music-rating/internal/persistence"
+	. "github.com/kruspe/music-rating/internal/persistence/persistence_test_helper"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"testing"

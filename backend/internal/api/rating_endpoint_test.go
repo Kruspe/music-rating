@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/kruspe/music-rating/internal/adapter/persistence"
 	. "github.com/kruspe/music-rating/internal/adapter/persistence/persistence_test_helper"
 	"github.com/kruspe/music-rating/internal/api"
 	. "github.com/kruspe/music-rating/internal/api/api_test_helper"
 	"github.com/kruspe/music-rating/internal/model"
 	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
+	persistence2 "github.com/kruspe/music-rating/internal/persistence"
+	. "github.com/kruspe/music-rating/internal/persistence/persistence_test_helper"
 	"github.com/kruspe/music-rating/internal/usecase"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -37,8 +38,8 @@ func Test_RatingHandlerSuite(t *testing.T) {
 
 func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
 	ph := NewPersistenceHelper()
-	repos := persistence.NewRepositories(ph.Dynamo, ph.TableName)
-	useCases := usecase.NewUseCases(repos, persistence.NewFestivalStorage(ph.MockFestivals(map[string][]model.Artist{
+	repos := persistence2.NewRepositories(ph.Dynamo, ph.TableName)
+	useCases := usecase.NewUseCases(repos, persistence2.NewFestivalStorage(ph.MockFestivals(map[string][]model.Artist{
 		AFestivalName: {
 			AnArtistWithName("Bloodbath"),
 			AnArtistWithName("Hypocrisy"),
