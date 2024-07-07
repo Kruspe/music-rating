@@ -27,7 +27,7 @@ func (s *authMiddlewareSuite) Test_AuthorizeMiddleware_CallsNextEndpoint() {
 
 	AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		nextEndpointCalled = true
-		require.Equal(s.T(), TestUserId, r.Context().Value(UserIdContextKey))
+		require.Equal(s.T(), AnUserId, r.Context().Value(UserIdContextKey))
 	})).ServeHTTP(recorder, request)
 
 	require.True(s.T(), nextEndpointCalled)

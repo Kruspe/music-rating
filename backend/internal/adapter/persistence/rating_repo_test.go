@@ -30,19 +30,19 @@ func (s *ratingRepoSuite) BeforeTest(_ string, _ string) {
 func (s *ratingRepoSuite) Test_PersistsRatings() {
 	rating1 := ARatingForArtist("Bloodbath")
 	rating2 := ARatingForArtist("Hypocrisy")
-	err := s.repo.Save(context.Background(), TestUserId, rating1)
+	err := s.repo.Save(context.Background(), AnUserId, rating1)
 	require.NoError(s.T(), err)
-	err = s.repo.Save(context.Background(), TestUserId, rating2)
+	err = s.repo.Save(context.Background(), AnUserId, rating2)
 	require.NoError(s.T(), err)
 
-	ratings, err := s.repo.GetAll(context.Background(), TestUserId)
+	ratings, err := s.repo.GetAll(context.Background(), AnUserId)
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), &model.Ratings{Keys: []string{rating1.ArtistName, rating2.ArtistName}, Values: map[string]model.Rating{rating1.ArtistName: rating1, rating2.ArtistName: rating2}}, ratings)
 }
 
 func (s *ratingRepoSuite) Test_UpdateRating() {
 	rating := ARatingForArtist("Bloodbath")
-	err := s.repo.Save(context.Background(), TestUserId, rating)
+	err := s.repo.Save(context.Background(), AnUserId, rating)
 	require.NoError(s.T(), err)
 
 	updatedRating := model.Rating{
@@ -52,10 +52,10 @@ func (s *ratingRepoSuite) Test_UpdateRating() {
 		Rating:       2,
 		Year:         666,
 	}
-	err = s.repo.Update(context.Background(), TestUserId, updatedRating)
+	err = s.repo.Update(context.Background(), AnUserId, updatedRating)
 	require.NoError(s.T(), err)
 
-	ratings, err := s.repo.GetAll(context.Background(), TestUserId)
+	ratings, err := s.repo.GetAll(context.Background(), AnUserId)
 	require.NoError(s.T(), err)
 	require.Len(s.T(), ratings.Keys, 1)
 	require.Equal(s.T(), rating.ArtistName, ratings.Keys[0])
@@ -69,6 +69,6 @@ func (s *ratingRepoSuite) Test_UpdateRating() {
 
 func (s *ratingRepoSuite) Test_UpdateRating_FailsWhenRatingDoesNotExist() {
 	updatedRating := ARatingForArtist("non_existing_artist")
-	err := s.repo.Update(context.Background(), TestUserId, updatedRating)
+	err := s.repo.Update(context.Background(), AnUserId, updatedRating)
 	require.IsType(s.T(), &model.UpdateNonExistingRatingError{}, err)
 }

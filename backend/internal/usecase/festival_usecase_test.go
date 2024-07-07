@@ -36,18 +36,18 @@ func (s *ratingUseCaseSuite) BeforeTest(_ string, _ string) {
 }
 
 func (s *ratingUseCaseSuite) Test_GetUnratedArtistsForFestival_ReturnsUnratedArtists() {
-	err := s.ratingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Bloodbath"))
+	err := s.ratingRepo.Save(context.Background(), AnUserId, ARatingForArtist("Bloodbath"))
 	require.NoError(s.T(), err)
-	err = s.ratingRepo.Save(context.Background(), TestUserId, ARatingForArtist("Hypocrisy"))
+	err = s.ratingRepo.Save(context.Background(), AnUserId, ARatingForArtist("Hypocrisy"))
 	require.NoError(s.T(), err)
 
-	unratedArtists, err := s.ratingUseCase.GetUnratedArtistsForFestival(context.Background(), TestUserId, AFestivalName)
+	unratedArtists, err := s.ratingUseCase.GetUnratedArtistsForFestival(context.Background(), AnUserId, AFestivalName)
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), []model.Artist{AnArtistWithName("Benediction")}, unratedArtists)
 }
 
 func (s *ratingUseCaseSuite) Test_GetUnratedArtistsForFestival_ReturnsFestivalNotSupportedError() {
-	_, err := s.ratingUseCase.GetUnratedArtistsForFestival(context.Background(), TestUserId, AnotherFestivalName)
+	_, err := s.ratingUseCase.GetUnratedArtistsForFestival(context.Background(), AnUserId, AnotherFestivalName)
 	require.Error(s.T(), err)
 	require.IsType(s.T(), &model.FestivalNotSupportedError{}, err)
 }
