@@ -36,9 +36,9 @@ func (s *ratingUseCaseSuite) BeforeTest(_ string, _ string) {
 }
 
 func (s *ratingUseCaseSuite) Test_GetUnratedArtistsForFestival_ReturnsUnratedArtists() {
-	err := s.ratingRepo.Save(context.Background(), AnUserId, ARatingForArtist("Bloodbath"))
+	err := s.ratingRepo.Save(context.Background(), AnUserId, AnArtistRating("Bloodbath"))
 	require.NoError(s.T(), err)
-	err = s.ratingRepo.Save(context.Background(), AnUserId, ARatingForArtist("Hypocrisy"))
+	err = s.ratingRepo.Save(context.Background(), AnUserId, AnArtistRating("Hypocrisy"))
 	require.NoError(s.T(), err)
 
 	unratedArtists, err := s.ratingUseCase.GetUnratedArtistsForFestival(context.Background(), AnUserId, AFestivalName)

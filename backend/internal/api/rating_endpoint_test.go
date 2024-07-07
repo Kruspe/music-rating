@@ -51,7 +51,7 @@ func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
 }
 
 func (s *ratingHandlerSuite) Test_PersistsRating() {
-	rating := ARatingForArtist("Bloodbath")
+	rating := AnArtistRating("Bloodbath")
 	body, err := json.Marshal(map[string]interface{}{
 		"artist_name":   rating.ArtistName,
 		"comment":       rating.Comment,
@@ -78,14 +78,14 @@ func (s *ratingHandlerSuite) Test_PersistsRating() {
 	require.NoError(s.T(), err)
 	require.Len(s.T(), r, 1)
 	require.Equal(s.T(), rating.ArtistName, r[0].ArtistName)
-	require.Equal(s.T(), rating.FestivalName, r[0].FestivalName)
 	require.Equal(s.T(), rating.Rating, r[0].Rating)
-	require.Equal(s.T(), rating.Year, r[0].Year)
-	require.Equal(s.T(), rating.Comment, r[0].Comment)
+	require.Equal(s.T(), *rating.FestivalName, r[0].FestivalName)
+	require.Equal(s.T(), *rating.Year, r[0].Year)
+	require.Equal(s.T(), *rating.Comment, r[0].Comment)
 }
 
 func (s *ratingHandlerSuite) Test_UpdateRating() {
-	rating := ARatingForArtist("Bloodbath")
+	rating := AnArtistRating("Bloodbath")
 	putBody, err := json.Marshal(map[string]interface{}{
 		"artist_name":   rating.ArtistName,
 		"comment":       rating.Comment,
@@ -132,9 +132,9 @@ func (s *ratingHandlerSuite) Test_UpdateRating() {
 }
 
 func (s *ratingHandlerSuite) Test_GetAllForFestival() {
-	hypocrisyRating := ARatingForArtistWithRating("Hypocrisy", ARating)
+	hypocrisyRating := AnArtistRatingWithRating("Hypocrisy", ARating)
 	s.saveRating(hypocrisyRating)
-	desertedFearRating := ARatingForArtistWithRating("Deserted Fear", AnotherRating)
+	desertedFearRating := AnArtistRatingWithRating("Deserted Fear", AnotherRating)
 	s.saveRating(desertedFearRating)
 
 	get := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/ratings/%s", AFestivalName), nil)

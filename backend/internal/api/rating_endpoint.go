@@ -51,28 +51,19 @@ func NewRatingEndpoint(ratingRepo ratingRepo, festivalUseCase festivalUseCase) *
 }
 
 func (e *RatingEndpoint) create(w http.ResponseWriter, r *http.Request, userId string) {
-	var rating ratingRequest
-	err := json.NewDecoder(r.Body).Decode(&rating)
+	var ratingRequest ratingRequest
+	err := json.NewDecoder(r.Body).Decode(&ratingRequest)
 	if err != nil {
 		HandleError(w, err)
 		return
 	}
-	if rating.ArtistName == "" {
-		HandleError(w, &model.MissingParameterError{ParameterName: "ArtistName"})
-		return
-	}
-	if rating.Rating == 0 {
-		HandleError(w, &model.MissingParameterError{ParameterName: "Rating"})
+	rating, err := model.NewArtistRating(ratingRequest.ArtistName, ratingRequest.Rating, &ratingRequest.FestivalName, &ratingRequest.Year, &ratingRequest.Comment)
+	if err != nil {
+		HandleError(w, err)
 		return
 	}
 
-	err = e.ratingRepo.Save(r.Context(), userId, model.ArtistRating{
-		ArtistName:   rating.ArtistName,
-		Comment:      rating.Comment,
-		FestivalName: rating.FestivalName,
-		Rating:       rating.Rating,
-		Year:         rating.Year,
-	})
+	err = e.ratingRepo.Save(r.Context(), userId, *rating)
 	if err != nil {
 		HandleError(w, err)
 		return
@@ -101,14 +92,13 @@ func (e *RatingEndpoint) put(w http.ResponseWriter, r *http.Request, userId, art
 		HandleError(w, err)
 		return
 	}
+	rating, err := model.NewArtistRating(artistName, ratingUpdate.Rating, &ratingUpdate.FestivalName, &ratingUpdate.Year, &ratingUpdate.Comment)
+	if err != nil {
+		HandleError(w, err)
+		return
+	}
 
-	err = e.ratingRepo.Update(r.Context(), userId, model.ArtistRating{
-		ArtistName:   artistName,
-		Comment:      ratingUpdate.Comment,
-		FestivalName: ratingUpdate.FestivalName,
-		Rating:       ratingUpdate.Rating,
-		Year:         ratingUpdate.Year,
-	})
+	err = e.ratingRepo.Update(r.Context(), userId, *rating)
 	if err != nil {
 		HandleError(w, err)
 		return
@@ -141,9 +131,12 @@ func (e *RatingEndpoint) getAllForFestival(w http.ResponseWriter, r *http.Reques
 		}
 	}
 	for _, artist := range notRatedArtist {
-		matchingRatings[artist] = model.ArtistRating{
-			ArtistName: artist,
+		rating, err := model.NewArtistRating(artist, 0, nil, nil, nil)
+		if err != nil {
+			HandleError(w, err)
+			return
 		}
+		matchingRatings[artist] = *rating
 	}
 
 	w.Header().Set("content-type", "application/json")
@@ -157,12 +150,26 @@ func (e *RatingEndpoint) getAllForFestival(w http.ResponseWriter, r *http.Reques
 func (e *RatingEndpoint) toRatingsResponse(ratings model.Ratings) []ratingResponse {
 	result := make([]ratingResponse, 0)
 	for _, rating := range ratings {
+		var (
+			festivalName string
+			year         int
+			comment      string
+		)
+		if rating.FestivalName != nil {
+			festivalName = *rating.FestivalName
+		}
+		if rating.Year != nil {
+			year = *rating.Year
+		}
+		if rating.Comment != nil {
+			comment = *rating.Comment
+		}
 		result = append(result, ratingResponse{
 			ArtistName:   rating.ArtistName,
-			Comment:      rating.Comment,
-			FestivalName: rating.FestivalName,
 			Rating:       rating.Rating,
-			Year:         rating.Year,
+			FestivalName: festivalName,
+			Year:         year,
+			Comment:      comment,
 		})
 	}
 	return result

@@ -28,8 +28,8 @@ func (s *ratingRepoSuite) BeforeTest(_ string, _ string) {
 }
 
 func (s *ratingRepoSuite) Test_PersistsRatings() {
-	rating1 := ARatingForArtist("Bloodbath")
-	rating2 := ARatingForArtist("Hypocrisy")
+	rating1 := AnArtistRating("Bloodbath")
+	rating2 := AnArtistRating("Hypocrisy")
 	err := s.repo.Save(context.Background(), AnUserId, rating1)
 	require.NoError(s.T(), err)
 	err = s.repo.Save(context.Background(), AnUserId, rating2)
@@ -41,32 +41,30 @@ func (s *ratingRepoSuite) Test_PersistsRatings() {
 }
 
 func (s *ratingRepoSuite) Test_UpdateRating() {
-	rating := ARatingForArtist("Bloodbath")
+	rating := AnArtistRating("Bloodbath")
 	err := s.repo.Save(context.Background(), AnUserId, rating)
 	require.NoError(s.T(), err)
 
-	updatedRating := model.ArtistRating{
-		ArtistName:   "Bloodbath",
-		Comment:      "",
-		FestivalName: "new-festival",
-		Rating:       2,
-		Year:         666,
-	}
-	err = s.repo.Update(context.Background(), AnUserId, updatedRating)
+	newFestivalName := "new-festival"
+	newYear := 666
+	updatedArtistRating, err := model.NewArtistRating(rating.ArtistName, float64(2), &newFestivalName, &newYear, nil)
+	require.NoError(s.T(), err)
+
+	err = s.repo.Update(context.Background(), AnUserId, *updatedArtistRating)
 	require.NoError(s.T(), err)
 
 	ratings, err := s.repo.GetAll(context.Background(), AnUserId)
 	require.NoError(s.T(), err)
 	require.Len(s.T(), ratings, 1)
 	require.Equal(s.T(), rating.ArtistName, ratings[rating.ArtistName].ArtistName)
-	require.Equal(s.T(), updatedRating.FestivalName, ratings[rating.ArtistName].FestivalName)
-	require.Equal(s.T(), updatedRating.Rating, ratings[rating.ArtistName].Rating)
-	require.Equal(s.T(), updatedRating.Year, ratings[rating.ArtistName].Year)
-	require.Equal(s.T(), "", ratings[rating.ArtistName].Comment)
+	require.Equal(s.T(), updatedArtistRating.FestivalName, ratings[rating.ArtistName].FestivalName)
+	require.Equal(s.T(), updatedArtistRating.Rating, ratings[rating.ArtistName].Rating)
+	require.Equal(s.T(), updatedArtistRating.Year, ratings[rating.ArtistName].Year)
+	require.Nil(s.T(), ratings[rating.ArtistName].Comment)
 }
 
 func (s *ratingRepoSuite) Test_UpdateRating_FailsWhenRatingDoesNotExist() {
-	updatedRating := ARatingForArtist("non_existing_artist")
+	updatedRating := AnArtistRating("non_existing_artist")
 	err := s.repo.Update(context.Background(), AnUserId, updatedRating)
 	require.IsType(s.T(), &model.UpdateNonExistingRatingError{}, err)
 }

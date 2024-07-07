@@ -39,9 +39,9 @@ func (s *festivalHandlerSuite) BeforeTest(_, _ string) {
 }
 
 func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllArtists() {
-	err := s.repos.RatingRepo.Save(context.Background(), AnUserId, ARatingForArtist("Bloodbath"))
+	err := s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Bloodbath"))
 	require.NoError(s.T(), err)
-	err = s.repos.RatingRepo.Save(context.Background(), AnUserId, ARatingForArtist("Hypocrisy"))
+	err = s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Hypocrisy"))
 	require.NoError(s.T(), err)
 
 	bloodbath := AnArtistWithName("Bloodbath")
@@ -73,9 +73,9 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllArtist
 }
 
 func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllUnratedArtists_WhenFiltering() {
-	err := s.repos.RatingRepo.Save(context.Background(), AnUserId, ARatingForArtist("Bloodbath"))
+	err := s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Bloodbath"))
 	require.NoError(s.T(), err)
-	err = s.repos.RatingRepo.Save(context.Background(), AnUserId, ARatingForArtist("Hypocrisy"))
+	err = s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Hypocrisy"))
 	require.NoError(s.T(), err)
 
 	unratedArtist := AnArtistWithName("Benediction")
@@ -105,11 +105,11 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllUnrate
 }
 
 func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndEmptyList_WhenFilteringAndAllArtistsAreRated() {
-	err := s.repos.RatingRepo.Save(context.Background(), AnUserId, ARatingForArtist("Bloodbath"))
+	err := s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Bloodbath"))
 	require.NoError(s.T(), err)
-	err = s.repos.RatingRepo.Save(context.Background(), AnUserId, ARatingForArtist("Hypocrisy"))
+	err = s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Hypocrisy"))
 	require.NoError(s.T(), err)
-	err = s.repos.RatingRepo.Save(context.Background(), AnUserId, ARatingForArtist("Benediction"))
+	err = s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Benediction"))
 	require.NoError(s.T(), err)
 
 	festivalStorage := persistence.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{

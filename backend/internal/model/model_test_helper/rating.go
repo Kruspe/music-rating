@@ -2,9 +2,11 @@ package model_test_helper
 
 import (
 	"github.com/kruspe/music-rating/internal/model"
+	"log"
 )
 
 const (
+	AnArtistName        = "artist-name"
 	AComment            = "comment"
 	AnotherComment      = "another-comment"
 	AFestivalName       = "festival-name"
@@ -15,22 +17,24 @@ const (
 	AnotherYear         = 2015
 )
 
-func ARatingForArtist(name string) model.ArtistRating {
-	return model.ArtistRating{
-		ArtistName:   name,
-		Comment:      AComment,
-		FestivalName: AFestivalName,
-		Rating:       ARating,
-		Year:         AYear,
+func AnArtistRating(name string) model.ArtistRating {
+	festivalName := AFestivalName
+	year := AYear
+	comment := AComment
+	rating, err := model.NewArtistRating(name, ARating, &festivalName, &year, &comment)
+	if err != nil {
+		log.Panicln("could not create test ArtistRating", err)
 	}
+	return *rating
 }
 
-func ARatingForArtistWithRating(name string, rating float64) model.ArtistRating {
-	return model.ArtistRating{
-		ArtistName:   name,
-		Comment:      AComment,
-		FestivalName: AFestivalName,
-		Rating:       rating,
-		Year:         AYear,
+func AnArtistRatingWithRating(name string, rating float64) model.ArtistRating {
+	festivalName := AFestivalName
+	year := AYear
+	comment := AComment
+	artistRating, err := model.NewArtistRating(name, rating, &festivalName, &year, &comment)
+	if err != nil {
+		log.Panicln("could not create test ArtistRating", err)
 	}
+	return *artistRating
 }

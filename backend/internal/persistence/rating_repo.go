@@ -13,15 +13,16 @@ import (
 	"strconv"
 )
 
-type RatingRecord struct {
+type ratingRecord struct {
 	DbKey
-	Type         string `dynamodbav:"type"`
-	ArtistName   string `dynamodbav:"artist_name"`
-	Comment      string `dynamodbav:"comment,omitempty"`
-	FestivalName string `dynamodbav:"festival_name,omitempty"`
-	Rating       string `dynamodbav:"rating"`
-	UserId       string `dynamodbav:"user_id"`
-	Year         int    `dynamodbav:"year,omitempty"`
+	UserId       string  `dynamodbav:"user_id"`
+	ArtistName   string  `dynamodbav:"artist_name"`
+	Rating       string  `dynamodbav:"rating"`
+	FestivalName *string `dynamodbav:"festival_name,omitempty"`
+	Year         *int    `dynamodbav:"year,omitempty"`
+	Comment      *string `dynamodbav:"comment,omitempty"`
+
+	Type string `dynamodbav:"type"`
 }
 
 type RatingRepo struct {
@@ -37,15 +38,15 @@ func NewRatingRepo(dynamo *dynamodb.Client, tableName string) *RatingRepo {
 }
 
 func (r *RatingRepo) Save(ctx context.Context, userId string, rating model.ArtistRating) error {
-	record := RatingRecord{
+	record := ratingRecord{
 		DbKey:        ratingDbKey(userId, rating.ArtistName),
-		Type:         RatingType,
-		ArtistName:   rating.ArtistName,
-		Comment:      rating.Comment,
-		FestivalName: rating.FestivalName,
-		Rating:       strconv.FormatFloat(rating.Rating, 'f', 1, 32),
 		UserId:       userId,
+		ArtistName:   rating.ArtistName,
+		Rating:       strconv.FormatFloat(rating.Rating, 'f', 1, 32),
+		FestivalName: rating.FestivalName,
 		Year:         rating.Year,
+		Comment:      rating.Comment,
+		Type:         RatingType,
 	}
 	item, err := attributevalue.MarshalMap(record)
 	if err != nil {
@@ -70,13 +71,13 @@ func (r *RatingRepo) GetAll(ctx context.Context, userId string) (model.Ratings, 
 		KeyConditionExpression:    expr.KeyCondition(),
 	})
 
-	var ratings []RatingRecord
+	var ratings []ratingRecord
 	for paginator.HasMorePages() {
 		items, err := paginator.NextPage(ctx)
 		if err != nil {
 			return nil, err
 		}
-		var r []RatingRecord
+		var r []ratingRecord
 		err = attributevalue.UnmarshalListOfMaps(items.Items, &r)
 		if err != nil {
 			return nil, err
@@ -86,34 +87,28 @@ func (r *RatingRepo) GetAll(ctx context.Context, userId string) (model.Ratings, 
 
 	result := make(model.Ratings)
 	for _, record := range ratings {
-		rating, err := strconv.ParseFloat(record.Rating, 32)
+		artistRating, err := toArtistRating(record)
 		if err != nil {
 			return nil, err
 		}
-		result[record.ArtistName] = model.ArtistRating{
-			ArtistName:   record.ArtistName,
-			Comment:      record.Comment,
-			FestivalName: record.FestivalName,
-			Rating:       rating,
-			Year:         record.Year,
-		}
+		result[record.ArtistName] = *artistRating
 	}
 	return result, nil
 }
 
 func (r *RatingRepo) Update(ctx context.Context, userId string, rating model.ArtistRating) error {
 	updateExpr := expression.Set(expression.Name("rating"), expression.Value(rating.Rating))
-	if rating.Year == 0 {
+	if rating.Year == nil {
 		updateExpr.Remove(expression.Name("year"))
 	} else {
 		updateExpr.Set(expression.Name("year"), expression.Value(rating.Year))
 	}
-	if rating.FestivalName == "" {
+	if rating.FestivalName == nil {
 		updateExpr.Remove(expression.Name("festival_name"))
 	} else {
 		updateExpr.Set(expression.Name("festival_name"), expression.Value(rating.FestivalName))
 	}
-	if rating.Comment == "" {
+	if rating.Comment == nil {
 		updateExpr.Remove(expression.Name("comment"))
 	} else {
 		updateExpr.Set(expression.Name("comment"), expression.Value(rating.Comment))
@@ -142,4 +137,12 @@ func (r *RatingRepo) Update(ctx context.Context, userId string, rating model.Art
 		return &model.UpdateNonExistingRatingError{ArtistName: rating.ArtistName}
 	}
 	return err
+}
+
+func toArtistRating(record ratingRecord) (*model.ArtistRating, error) {
+	rating, err := strconv.ParseFloat(record.Rating, 32)
+	if err != nil {
+		return nil, err
+	}
+	return model.NewArtistRating(record.ArtistName, rating, record.FestivalName, record.Year, record.Comment)
 }
