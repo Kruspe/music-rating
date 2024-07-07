@@ -58,7 +58,7 @@ func (r *RatingRepo) Save(ctx context.Context, userId string, rating model.Artis
 	return err
 }
 
-func (r *RatingRepo) GetAll(ctx context.Context, userId string) (*model.Ratings, error) {
+func (r *RatingRepo) GetAll(ctx context.Context, userId string) (model.Ratings, error) {
 	expr, err := expression.NewBuilder().WithKeyCondition(expression.KeyEqual(expression.Key("PK"), expression.Value(fmt.Sprintf("USER#%s", userId)))).Build()
 	if err != nil {
 		return nil, err
@@ -84,17 +84,13 @@ func (r *RatingRepo) GetAll(ctx context.Context, userId string) (*model.Ratings,
 		ratings = append(ratings, r...)
 	}
 
-	result := &model.Ratings{
-		Keys:   make([]string, len(ratings)),
-		Values: make(map[string]model.ArtistRating),
-	}
-	for i, record := range ratings {
+	result := make(model.Ratings)
+	for _, record := range ratings {
 		rating, err := strconv.ParseFloat(record.Rating, 32)
 		if err != nil {
 			return nil, err
 		}
-		result.Keys[i] = record.ArtistName
-		result.Values[record.ArtistName] = model.ArtistRating{
+		result[record.ArtistName] = model.ArtistRating{
 			ArtistName:   record.ArtistName,
 			Comment:      record.Comment,
 			FestivalName: record.FestivalName,

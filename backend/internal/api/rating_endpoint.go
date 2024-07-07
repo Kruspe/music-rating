@@ -33,7 +33,7 @@ type updateRatingRequest struct {
 }
 
 type ratingRepo interface {
-	GetAll(ctx context.Context, userId string) (*model.Ratings, error)
+	GetAll(ctx context.Context, userId string) (model.Ratings, error)
 	Save(ctx context.Context, userId string, rating model.ArtistRating) error
 	Update(ctx context.Context, userId string, ratingUpdate model.ArtistRating) error
 }
@@ -87,7 +87,7 @@ func (e *RatingEndpoint) getAll(w http.ResponseWriter, r *http.Request, userId s
 		return
 	}
 	w.Header().Set("content-type", "application/json")
-	err = json.NewEncoder(w).Encode(e.toRatingsResponse(*ratings))
+	err = json.NewEncoder(w).Encode(e.toRatingsResponse(ratings))
 	if err != nil {
 		HandleError(w, err)
 		return
@@ -131,22 +131,17 @@ func (e *RatingEndpoint) getAllForFestival(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	matchingRatings := model.Ratings{
-		Keys:   make([]string, 0),
-		Values: make(map[string]model.ArtistRating),
-	}
+	matchingRatings := make(model.Ratings)
 	var notRatedArtist []string
 	for _, artist := range artists {
-		if rating, found := ratings.Values[artist.Name]; found {
-			matchingRatings.Keys = append(matchingRatings.Keys, artist.Name)
-			matchingRatings.Values[artist.Name] = rating
+		if rating, found := ratings[artist.Name]; found {
+			matchingRatings[artist.Name] = rating
 		} else {
 			notRatedArtist = append(notRatedArtist, artist.Name)
 		}
 	}
 	for _, artist := range notRatedArtist {
-		matchingRatings.Keys = append(matchingRatings.Keys, artist)
-		matchingRatings.Values[artist] = model.ArtistRating{
+		matchingRatings[artist] = model.ArtistRating{
 			ArtistName: artist,
 		}
 	}
@@ -161,13 +156,13 @@ func (e *RatingEndpoint) getAllForFestival(w http.ResponseWriter, r *http.Reques
 
 func (e *RatingEndpoint) toRatingsResponse(ratings model.Ratings) []ratingResponse {
 	result := make([]ratingResponse, 0)
-	for _, key := range ratings.Keys {
+	for _, rating := range ratings {
 		result = append(result, ratingResponse{
-			ArtistName:   ratings.Values[key].ArtistName,
-			Comment:      ratings.Values[key].Comment,
-			FestivalName: ratings.Values[key].FestivalName,
-			Rating:       ratings.Values[key].Rating,
-			Year:         ratings.Values[key].Year,
+			ArtistName:   rating.ArtistName,
+			Comment:      rating.Comment,
+			FestivalName: rating.FestivalName,
+			Rating:       rating.Rating,
+			Year:         rating.Year,
 		})
 	}
 	return result
