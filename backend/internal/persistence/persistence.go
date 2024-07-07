@@ -22,11 +22,6 @@ const (
 )
 
 const (
-	ServiceOfferingType      = "SERVICE_OFFERING"
-	ServiceOfferingOwnerType = "SERVICE_OFFERING_OWNER"
-)
-
-const (
 	SkPkGsi = "SK-PK-GSI"
 )
 
