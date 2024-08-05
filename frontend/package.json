@@ -17,9 +17,9 @@
     "@mui/icons-material": "^5.16.1",
     "@mui/material": "^5.16.1",
     "@mui/x-data-grid": "^7.10.0",
-    "@remix-run/node": "^2.11.0",
-    "@remix-run/react": "^2.11.0",
-    "@remix-run/serve": "^2.11.0",
+    "@remix-run/node": "^2.11.1",
+    "@remix-run/react": "^2.11.1",
+    "@remix-run/serve": "^2.11.1",
     "isbot": "^5.1.13",
     "react": "18.3.0-canary-01ab35a9a-20240228",
     "react-dom": "18.3.0-canary-01ab35a9a-20240228",
@@ -27,8 +27,8 @@
     "remix-auth-auth0": "^1.10.0"
   },
   "devDependencies": {
-    "@remix-run/dev": "^2.11.0",
-    "@remix-run/testing": "^2.11.0",
+    "@remix-run/dev": "^2.11.1",
+    "@remix-run/testing": "^2.11.1",
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
