@@ -1,3 +1,13 @@
+# v1.35.0 (2024-09-20)
+
+* **Feature**: Add tracing and metrics support to service clients.
+* **Feature**: Generate account endpoint for DynamoDB requests when the account ID is available
+* **Dependency Update**: Updated to the latest SDK module versions
+
+# v1.34.10 (2024-09-17)
+
+* **Bug Fix**: **BREAKFIX**: Only generate AccountIDEndpointMode config for services that use it. This is a compiler break, but removes no actual functionality, as no services currently use the account ID in endpoint resolution.
+
 # v1.34.9 (2024-09-09)
 
 * **Documentation**: Doc-only update for DynamoDB. Added information about async behavior for TagResource and UntagResource APIs and updated the description of ResourceInUseException.
