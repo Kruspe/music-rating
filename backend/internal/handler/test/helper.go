@@ -1,4 +1,4 @@
-package api_test_helper
+package test
 
 import (
 	"io"

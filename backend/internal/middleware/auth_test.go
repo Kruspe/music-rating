@@ -1,7 +1,8 @@
-package api
+package middleware_test
 
 import (
-	. "github.com/kruspe/music-rating/internal/api/api_test_helper"
+	"github.com/kruspe/music-rating/internal/handler/test"
+	"github.com/kruspe/music-rating/internal/middleware"
 	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -21,13 +22,13 @@ func Test_AuthMiddlewareSuite(t *testing.T) {
 func (s *authMiddlewareSuite) Test_AuthorizeMiddleware_CallsNextEndpoint() {
 	request, err := http.NewRequest(http.MethodGet, "/api/ratings", nil)
 	require.NoError(s.T(), err)
-	request.Header.Set("authorization", TestToken)
+	request.Header.Set("authorization", test.TestToken)
 	recorder := httptest.NewRecorder()
 	nextEndpointCalled := false
 
-	AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	middleware.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		nextEndpointCalled = true
-		require.Equal(s.T(), AnUserId, r.Context().Value(UserIdContextKey))
+		require.Equal(s.T(), AnUserId, r.Context().Value(middleware.UserIdContextKey))
 	})).ServeHTTP(recorder, request)
 
 	require.True(s.T(), nextEndpointCalled)
@@ -41,7 +42,7 @@ func (s *authMiddlewareSuite) Test_AuthorizeMiddleware_Returns401_WhenTokenIsInv
 	recorder := httptest.NewRecorder()
 	nextEndpointCalled := false
 
-	AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	middleware.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		nextEndpointCalled = true
 	})).ServeHTTP(recorder, request)
 
@@ -56,7 +57,7 @@ func (s *authMiddlewareSuite) Test_AuthorizeMiddleware_Returns401_WhenNoSubIsSet
 	recorder := httptest.NewRecorder()
 	nextEndpointCalled := false
 
-	AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	middleware.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		nextEndpointCalled = true
 	})).ServeHTTP(recorder, request)
 

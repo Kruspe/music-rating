@@ -1,11 +1,12 @@
-package api_test
+package rating_test
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/kruspe/music-rating/internal/api"
-	. "github.com/kruspe/music-rating/internal/api/api_test_helper"
+	"github.com/kruspe/music-rating/internal/handler"
+	"github.com/kruspe/music-rating/internal/handler/errors"
+	. "github.com/kruspe/music-rating/internal/handler/test"
 	"github.com/kruspe/music-rating/internal/model"
 	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
 	"github.com/kruspe/music-rating/internal/persistence"
@@ -28,7 +29,7 @@ type ratingResponse struct {
 
 type ratingHandlerSuite struct {
 	suite.Suite
-	router *http.ServeMux
+	mux *http.ServeMux
 }
 
 func Test_RatingHandlerSuite(t *testing.T) {
@@ -45,9 +46,11 @@ func (s *ratingHandlerSuite) BeforeTest(_ string, _ string) {
 			AnArtistWithName("Deserted Fear"),
 		},
 	})))
-	festivalEndpoint := api.NewFestivalEndpoint(useCases.FestivalUseCase)
-	ratingEndpoint := api.NewRatingEndpoint(repos.RatingRepo, useCases.FestivalUseCase)
-	s.router = api.NewRouter(festivalEndpoint, ratingEndpoint)
+	s.mux = http.NewServeMux()
+	handler.Register(s.mux, &handler.Config{
+		RatingRepo:      repos.RatingRepo,
+		FestivalUseCase: useCases.FestivalUseCase,
+	})
 }
 
 func (s *ratingHandlerSuite) Test_PersistsRating() {
@@ -64,13 +67,13 @@ func (s *ratingHandlerSuite) Test_PersistsRating() {
 	require.NoError(s.T(), err)
 	putRecorder := httptest.NewRecorder()
 
-	api.AuthMiddleware(s.router).ServeHTTP(putRecorder, put)
+	s.mux.ServeHTTP(putRecorder, put)
 	require.Equal(s.T(), http.StatusCreated, putRecorder.Result().StatusCode)
 
 	get := NewAuthenticatedRequest(http.MethodGet, "/ratings", nil)
 	getRecorder := httptest.NewRecorder()
 
-	api.AuthMiddleware(s.router).ServeHTTP(getRecorder, get)
+	s.mux.ServeHTTP(getRecorder, get)
 	require.Equal(s.T(), http.StatusOK, getRecorder.Result().StatusCode)
 
 	var r []ratingResponse
@@ -97,7 +100,7 @@ func (s *ratingHandlerSuite) Test_UpdateRating() {
 	create := NewAuthenticatedRequest(http.MethodPost, "/ratings", bytes.NewReader(putBody))
 	putRecorder := httptest.NewRecorder()
 
-	api.AuthMiddleware(s.router).ServeHTTP(putRecorder, create)
+	s.mux.ServeHTTP(putRecorder, create)
 	require.Equal(s.T(), http.StatusCreated, putRecorder.Result().StatusCode)
 
 	updateBody, err := json.Marshal(map[string]interface{}{
@@ -110,14 +113,14 @@ func (s *ratingHandlerSuite) Test_UpdateRating() {
 	update := NewAuthenticatedRequest(http.MethodPut, fmt.Sprintf("/ratings/%s", rating.ArtistName), bytes.NewReader(updateBody))
 	updateRecorder := httptest.NewRecorder()
 
-	api.AuthMiddleware(s.router).ServeHTTP(updateRecorder, update)
+	s.mux.ServeHTTP(updateRecorder, update)
 	require.Equal(s.T(), http.StatusOK, updateRecorder.Result().StatusCode)
 
 	get := NewAuthenticatedRequest(http.MethodGet, "/ratings", nil)
 	require.NoError(s.T(), err)
 	getRecorder := httptest.NewRecorder()
 
-	api.AuthMiddleware(s.router).ServeHTTP(getRecorder, get)
+	s.mux.ServeHTTP(getRecorder, get)
 	require.Equal(s.T(), http.StatusOK, getRecorder.Result().StatusCode)
 
 	var r []ratingResponse
@@ -140,7 +143,7 @@ func (s *ratingHandlerSuite) Test_GetAllForFestival() {
 	get := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/ratings/%s", AFestivalName), nil)
 	getRecorder := httptest.NewRecorder()
 
-	api.AuthMiddleware(s.router).ServeHTTP(getRecorder, get)
+	s.mux.ServeHTTP(getRecorder, get)
 	resp := getRecorder.Result()
 	require.Equal(s.T(), http.StatusOK, resp.StatusCode)
 
@@ -156,10 +159,10 @@ func (s *ratingHandlerSuite) Test_GetAllForFestival() {
 func (s *ratingHandlerSuite) Test_GetAllForFestival_Returns404_WhenFestivalIsNotSupported() {
 	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/ratings/%s", AnotherFestivalName), nil)
 	recorder := httptest.NewRecorder()
-	api.AuthMiddleware(s.router).ServeHTTP(recorder, request)
+	s.mux.ServeHTTP(recorder, request)
 
 	require.Equal(s.T(), http.StatusNotFound, recorder.Result().StatusCode)
-	var r errorResponse
+	var r errors.ErrorResponse
 	err := json.NewDecoder(recorder.Body).Decode(&r)
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), model.FestivalNotSupportedError{FestivalName: AnotherFestivalName}.Error(), r.Error)
@@ -178,6 +181,6 @@ func (s *ratingHandlerSuite) saveRating(rating model.ArtistRating) {
 	require.NoError(s.T(), err)
 	putRecorder := httptest.NewRecorder()
 
-	api.AuthMiddleware(s.router).ServeHTTP(putRecorder, put)
+	s.mux.ServeHTTP(putRecorder, put)
 	require.Equal(s.T(), http.StatusCreated, putRecorder.Result().StatusCode)
 }

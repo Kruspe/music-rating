@@ -1,18 +1,18 @@
 package config
 
 import (
-	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"
-	"github.com/kruspe/music-rating/internal/api"
+	"github.com/kruspe/music-rating/internal/handler"
 	"github.com/kruspe/music-rating/internal/persistence"
 	"github.com/kruspe/music-rating/internal/usecase"
 	"net/http"
 )
 
-func InitApi(useCases *usecase.UseCases, repos *persistence.Repositories) *httpadapter.HandlerAdapterV2 {
-	ratingEndpoint := api.NewRatingEndpoint(repos.RatingRepo, useCases.FestivalUseCase)
-	festivalEndpoint := api.NewFestivalEndpoint(useCases.FestivalUseCase)
+func InitApi(useCases *usecase.UseCases, repos *persistence.Repositories) *http.ServeMux {
 	mux := http.NewServeMux()
-	mux.Handle("/", api.AuthMiddleware(api.NewRouter(festivalEndpoint, ratingEndpoint)))
+	handler.Register(mux, &handler.Config{
+		RatingRepo:      repos.RatingRepo,
+		FestivalUseCase: useCases.FestivalUseCase,
+	})
 
-	return httpadapter.NewV2(mux)
+	return mux
 }

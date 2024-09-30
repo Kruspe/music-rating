@@ -1,8 +1,8 @@
-package api_test
+package handler_test
 
 import (
-	"github.com/kruspe/music-rating/internal/api"
-	. "github.com/kruspe/music-rating/internal/api/api_test_helper"
+	"github.com/kruspe/music-rating/internal/handler"
+	. "github.com/kruspe/music-rating/internal/handler/test"
 	"github.com/kruspe/music-rating/internal/persistence"
 	"github.com/kruspe/music-rating/internal/persistence/persistence_test_helper"
 	"github.com/kruspe/music-rating/internal/usecase"
@@ -15,7 +15,7 @@ import (
 
 type apiSuite struct {
 	suite.Suite
-	router *http.ServeMux
+	mux *http.ServeMux
 }
 
 func Test_ApiSuite(t *testing.T) {
@@ -26,15 +26,17 @@ func (s *apiSuite) BeforeTest(_, _ string) {
 	persistenceHelper := persistence_test_helper.NewPersistenceHelper()
 	repos := persistence.NewRepositories(persistenceHelper.Dynamo, persistenceHelper.TableName)
 	useCases := usecase.NewUseCases(repos, persistence.NewFestivalStorage(persistenceHelper.MockFestivals(nil)))
-	festivalEndpoint := api.NewFestivalEndpoint(useCases.FestivalUseCase)
-	ratingEndpoint := api.NewRatingEndpoint(repos.RatingRepo, useCases.FestivalUseCase)
-	s.router = api.NewRouter(festivalEndpoint, ratingEndpoint)
+	s.mux = http.NewServeMux()
+	handler.Register(s.mux, &handler.Config{
+		RatingRepo:      repos.RatingRepo,
+		FestivalUseCase: useCases.FestivalUseCase,
+	})
 }
 
 func (s *apiSuite) Test_Returns404_WhenRequestPathDoesNotExist() {
 	request := NewAuthenticatedRequest(http.MethodGet, "/not_existing", nil)
 	recorder := httptest.NewRecorder()
-	s.router.ServeHTTP(recorder, request)
+	s.mux.ServeHTTP(recorder, request)
 
 	require.Equal(s.T(), http.StatusNotFound, recorder.Result().StatusCode)
 }
@@ -42,7 +44,7 @@ func (s *apiSuite) Test_Returns404_WhenRequestPathDoesNotExist() {
 func (s *apiSuite) Test_Returns501_ratings_WhenMethodIsNotImplemented() {
 	request := NewAuthenticatedRequest(http.MethodPut, "/ratings", nil)
 	recorder := httptest.NewRecorder()
-	s.router.ServeHTTP(recorder, request)
+	s.mux.ServeHTTP(recorder, request)
 
 	require.Equal(s.T(), http.StatusMethodNotAllowed, recorder.Result().StatusCode)
 }

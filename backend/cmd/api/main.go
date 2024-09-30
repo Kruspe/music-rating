@@ -4,9 +4,10 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/awslabs/aws-lambda-go-api-proxy/httpadapter"
 	"github.com/kruspe/music-rating/internal/config"
+	"net/http"
 )
 
-var api *httpadapter.HandlerAdapterV2
+var mux *http.ServeMux
 
 func init() {
 	config.InitLogging()
@@ -14,10 +15,10 @@ func init() {
 	repos := config.InitRepos(cfg)
 	storage := config.InitStorage(cfg)
 	useCases := config.InitUseCases(repos, storage)
-	api = config.InitApi(useCases, repos)
+	mux = config.InitApi(useCases, repos)
 
 }
 
 func main() {
-	lambda.Start(api.ProxyWithContext)
+	lambda.Start(httpadapter.NewV2(mux).ProxyWithContext)
 }

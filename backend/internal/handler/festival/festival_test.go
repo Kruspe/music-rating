@@ -1,11 +1,12 @@
-package api_test
+package festival_test
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/kruspe/music-rating/internal/api"
-	. "github.com/kruspe/music-rating/internal/api/api_test_helper"
+	"github.com/kruspe/music-rating/internal/handler"
+	"github.com/kruspe/music-rating/internal/handler/errors"
+	. "github.com/kruspe/music-rating/internal/handler/test"
 	"github.com/kruspe/music-rating/internal/model"
 	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
 	"github.com/kruspe/music-rating/internal/persistence"
@@ -53,12 +54,15 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllArtist
 		},
 	}))
 	useCases := usecase.NewUseCases(s.repos, festivalStorage)
-	festivalEndpoint := api.NewFestivalEndpoint(useCases.FestivalUseCase)
-	ratingEndpoint := api.NewRatingEndpoint(s.repos.RatingRepo, useCases.FestivalUseCase)
 
 	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/festivals/%s", AFestivalName), nil)
 	recorder := httptest.NewRecorder()
-	api.AuthMiddleware(api.NewRouter(festivalEndpoint, ratingEndpoint)).ServeHTTP(recorder, request)
+	mux := http.NewServeMux()
+	handler.Register(mux, &handler.Config{
+		RatingRepo:      s.repos.RatingRepo,
+		FestivalUseCase: useCases.FestivalUseCase,
+	})
+	mux.ServeHTTP(recorder, request)
 
 	require.Equal(s.T(), http.StatusOK, recorder.Result().StatusCode)
 
@@ -87,12 +91,15 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllUnrate
 		},
 	}))
 	useCases := usecase.NewUseCases(s.repos, festivalStorage)
-	festivalEndpoint := api.NewFestivalEndpoint(useCases.FestivalUseCase)
-	ratingEndpoint := api.NewRatingEndpoint(s.repos.RatingRepo, useCases.FestivalUseCase)
 
 	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/festivals/%s?filter=unrated", AFestivalName), nil)
 	recorder := httptest.NewRecorder()
-	api.AuthMiddleware(api.NewRouter(festivalEndpoint, ratingEndpoint)).ServeHTTP(recorder, request)
+	mux := http.NewServeMux()
+	handler.Register(mux, &handler.Config{
+		RatingRepo:      s.repos.RatingRepo,
+		FestivalUseCase: useCases.FestivalUseCase,
+	})
+	mux.ServeHTTP(recorder, request)
 
 	require.Equal(s.T(), http.StatusOK, recorder.Result().StatusCode)
 
@@ -120,12 +127,15 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndEmptyList
 		},
 	}))
 	useCases := usecase.NewUseCases(s.repos, festivalStorage)
-	festivalEndpoint := api.NewFestivalEndpoint(useCases.FestivalUseCase)
-	ratingEndpoint := api.NewRatingEndpoint(s.repos.RatingRepo, useCases.FestivalUseCase)
 
 	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/festivals/%s?filter=unrated", AFestivalName), nil)
 	recorder := httptest.NewRecorder()
-	api.AuthMiddleware(api.NewRouter(festivalEndpoint, ratingEndpoint)).ServeHTTP(recorder, request)
+	mux := http.NewServeMux()
+	handler.Register(mux, &handler.Config{
+		RatingRepo:      s.repos.RatingRepo,
+		FestivalUseCase: useCases.FestivalUseCase,
+	})
+	mux.ServeHTTP(recorder, request)
 
 	require.Equal(s.T(), http.StatusOK, recorder.Result().StatusCode)
 	var r []unratedArtistResponse
@@ -142,15 +152,18 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns404_WhenFestiva
 		},
 	}))
 	useCases := usecase.NewUseCases(s.repos, festivalStorage)
-	festivalEndpoint := api.NewFestivalEndpoint(useCases.FestivalUseCase)
-	ratingEndpoint := api.NewRatingEndpoint(s.repos.RatingRepo, useCases.FestivalUseCase)
 
 	request := NewAuthenticatedRequest(http.MethodGet, fmt.Sprintf("/festivals/%s", AnotherFestivalName), nil)
 	recorder := httptest.NewRecorder()
-	api.AuthMiddleware(api.NewRouter(festivalEndpoint, ratingEndpoint)).ServeHTTP(recorder, request)
+	mux := http.NewServeMux()
+	handler.Register(mux, &handler.Config{
+		RatingRepo:      s.repos.RatingRepo,
+		FestivalUseCase: useCases.FestivalUseCase,
+	})
+	mux.ServeHTTP(recorder, request)
 
 	require.Equal(s.T(), http.StatusNotFound, recorder.Result().StatusCode)
-	var r errorResponse
+	var r errors.ErrorResponse
 	err := json.NewDecoder(recorder.Body).Decode(&r)
 	require.NoError(s.T(), err)
 	require.Equal(s.T(), model.FestivalNotSupportedError{FestivalName: AnotherFestivalName}.Error(), r.Error)
