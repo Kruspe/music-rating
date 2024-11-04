@@ -12,7 +12,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.36.3
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.66.2
 	github.com/awslabs/aws-lambda-go-api-proxy v0.16.2
-	github.com/golang-jwt/jwt/v4 v4.5.0
+	github.com/golang-jwt/jwt/v4 v4.5.1
 	github.com/google/uuid v1.6.0
 	github.com/kruspe/music-rating/scripts v0.0.0-20230407120113-632dbacb0482
 	github.com/stretchr/testify v1.9.0
