@@ -49,10 +49,10 @@ github.com/aws/aws-sdk-go-v2/credentials/endpointcreds/internal/client
 github.com/aws/aws-sdk-go-v2/credentials/processcreds
 github.com/aws/aws-sdk-go-v2/credentials/ssocreds
 github.com/aws/aws-sdk-go-v2/credentials/stscreds
-# github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.15.15
+# github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.15.16
 ## explicit; go 1.21
 github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue
-# github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.7.50
+# github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.7.51
 ## explicit; go 1.21
 github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression
 # github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.19
@@ -73,7 +73,7 @@ github.com/aws/aws-sdk-go-v2/internal/ini
 github.com/aws/aws-sdk-go-v2/internal/v4a
 github.com/aws/aws-sdk-go-v2/internal/v4a/internal/crypto
 github.com/aws/aws-sdk-go-v2/internal/v4a/internal/v4
-# github.com/aws/aws-sdk-go-v2/service/dynamodb v1.36.5
+# github.com/aws/aws-sdk-go-v2/service/dynamodb v1.37.0
 ## explicit; go 1.21
 github.com/aws/aws-sdk-go-v2/service/dynamodb
 github.com/aws/aws-sdk-go-v2/service/dynamodb/internal/customizations
