@@ -95,7 +95,7 @@ export default function RatingsRoute() {
                   <TextField fullWidth name="comment" label="Comment" />
                 </Grid>
                 <Grid>
-                  <Button variant="outlined" type="submit">
+                  <Button variant="outlined" type="submit" name="_action" value="SAVE_RATING">
                     Rate
                   </Button>
                 </Grid>
