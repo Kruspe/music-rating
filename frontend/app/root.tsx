@@ -22,6 +22,7 @@ import {
   List,
   ListItemButton,
   Paper,
+  Popper,
   Tab,
   Tabs,
   ThemeProvider,
@@ -29,7 +30,6 @@ import {
   Typography,
 } from "@mui/material";
 import { useRef, useState } from "react";
-import { Popper } from "@mui/base";
 
 const darkTheme = createTheme({
   palette: {

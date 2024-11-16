@@ -4,7 +4,7 @@ import {
   useRouteError,
 } from "@remix-run/react";
 import RatingCard from "~/routes/festivals.$name/RatingCard";
-import { Typography, Unstable_Grid2 as Grid } from "@mui/material";
+import { Typography, Grid2 as Grid } from "@mui/material";
 import type { FestivalArtist } from "~/utils/types.server";
 import { json, LoaderFunctionArgs, TypedResponse } from "@remix-run/node";
 import { getUnratedFestivalArtists } from "~/utils/.server/requests/festival";
@@ -38,7 +38,7 @@ export default function FestivalRoute() {
   return loaderData.data!.length > 0 ? (
     <Grid container spacing={0.5}>
       {loaderData.data!.map((artist) => (
-        <Grid key={artist.artistName} xs={12} sm={6} lg={3} xl={2}>
+        <Grid key={artist.artistName} size={{ xs: 12, sm: 6, lg: 3, xl: 2 }}>
           <RatingCard
             artistName={artist.artistName}
             imageUrl={artist.imageUrl}

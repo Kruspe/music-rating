@@ -1,4 +1,4 @@
-import { Typography, Unstable_Grid2 as Grid } from "@mui/material";
+import { Typography, Grid2 as Grid } from "@mui/material";
 import { authenticator } from "~/utils/auth.server";
 import { LoaderFunctionArgs } from "@remix-run/node";
 
