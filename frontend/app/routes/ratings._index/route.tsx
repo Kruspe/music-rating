@@ -6,7 +6,7 @@ import {
   Rating,
   TextField,
   Typography,
-  Unstable_Grid2 as Grid,
+  Grid2 as Grid,
 } from "@mui/material";
 import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
@@ -75,27 +75,32 @@ export default function RatingsRoute() {
                 <Grid>
                   <Typography variant="h6">Add rating</Typography>
                 </Grid>
-                <Grid xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <TextField fullWidth name="artist_name" label="Artist" />
                 </Grid>
-                <Grid xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <TextField
                     fullWidth
                     name="festival_name"
                     label="Festival/Concert"
                   />
                 </Grid>
-                <Grid xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <TextField fullWidth name="year" label="Year" />
                 </Grid>
-                <Grid xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <Rating precision={0.5} name="rating" />
                 </Grid>
-                <Grid xs={12}>
+                <Grid size={{ xs: 12 }}>
                   <TextField fullWidth name="comment" label="Comment" />
                 </Grid>
                 <Grid>
-                  <Button variant="outlined" type="submit" name="_action" value="SAVE_RATING">
+                  <Button
+                    variant="outlined"
+                    type="submit"
+                    name="_action"
+                    value="SAVE_RATING"
+                  >
                     Rate
                   </Button>
                 </Grid>
