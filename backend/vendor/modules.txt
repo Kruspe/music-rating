@@ -49,10 +49,10 @@ github.com/aws/aws-sdk-go-v2/credentials/endpointcreds/internal/client
 github.com/aws/aws-sdk-go-v2/credentials/processcreds
 github.com/aws/aws-sdk-go-v2/credentials/ssocreds
 github.com/aws/aws-sdk-go-v2/credentials/stscreds
-# github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.15.18
+# github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.15.20
 ## explicit; go 1.21
 github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue
-# github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.7.53
+# github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.7.55
 ## explicit; go 1.21
 github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression
 # github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.21
@@ -73,13 +73,13 @@ github.com/aws/aws-sdk-go-v2/internal/ini
 github.com/aws/aws-sdk-go-v2/internal/v4a
 github.com/aws/aws-sdk-go-v2/internal/v4a/internal/crypto
 github.com/aws/aws-sdk-go-v2/internal/v4a/internal/v4
-# github.com/aws/aws-sdk-go-v2/service/dynamodb v1.37.2
+# github.com/aws/aws-sdk-go-v2/service/dynamodb v1.38.0
 ## explicit; go 1.21
 github.com/aws/aws-sdk-go-v2/service/dynamodb
 github.com/aws/aws-sdk-go-v2/service/dynamodb/internal/customizations
 github.com/aws/aws-sdk-go-v2/service/dynamodb/internal/endpoints
 github.com/aws/aws-sdk-go-v2/service/dynamodb/types
-# github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.24.7
+# github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.24.8
 ## explicit; go 1.21
 github.com/aws/aws-sdk-go-v2/service/dynamodbstreams/types
 # github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.12.1
@@ -99,7 +99,7 @@ github.com/aws/aws-sdk-go-v2/service/internal/presigned-url
 github.com/aws/aws-sdk-go-v2/service/internal/s3shared
 github.com/aws/aws-sdk-go-v2/service/internal/s3shared/arn
 github.com/aws/aws-sdk-go-v2/service/internal/s3shared/config
-# github.com/aws/aws-sdk-go-v2/service/s3 v1.70.0
+# github.com/aws/aws-sdk-go-v2/service/s3 v1.71.0
 ## explicit; go 1.21
 github.com/aws/aws-sdk-go-v2/service/s3
 github.com/aws/aws-sdk-go-v2/service/s3/internal/arn
