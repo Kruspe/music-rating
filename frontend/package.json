@@ -30,7 +30,7 @@
     "@remix-run/dev": "^2.15.2",
     "@remix-run/testing": "^2.15.2",
     "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.1.0",
+    "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.0",
     "@types/aws-lambda": "^8.10.147",
     "@types/react": "^18.2.20",
