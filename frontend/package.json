@@ -16,7 +16,7 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.2",
     "@mui/material": "^6.1.7",
-    "@mui/x-data-grid": "^7.24.1",
+    "@mui/x-data-grid": "^7.25.0",
     "@remix-run/node": "^2.15.3",
     "@remix-run/react": "^2.15.3",
     "@remix-run/serve": "^2.15.3",
