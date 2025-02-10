@@ -23,10 +23,10 @@ type ratingResponse struct {
 
 type ratingRequest struct {
 	ArtistName   string  `json:"artist_name"`
-	Comment      string  `json:"comment"`
-	FestivalName string  `json:"festival_name"`
+	Comment      *string `json:"comment"`
+	FestivalName *string `json:"festival_name"`
 	Rating       float64 `json:"rating"`
-	Year         int     `json:"year"`
+	Year         *int    `json:"year"`
 }
 
 type updateRatingRequest struct {
@@ -71,7 +71,7 @@ func (e *Rating) Create() http.Handler {
 			HandleError(w, err)
 			return
 		}
-		rating, err := model.NewArtistRating(ratingRequest.ArtistName, ratingRequest.Rating, &ratingRequest.FestivalName, &ratingRequest.Year, &ratingRequest.Comment)
+		rating, err := model.NewArtistRating(ratingRequest.ArtistName, ratingRequest.Rating, ratingRequest.FestivalName, ratingRequest.Year, ratingRequest.Comment)
 		if err != nil {
 			HandleError(w, err)
 			return
