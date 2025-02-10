@@ -121,7 +121,7 @@ test("rate unrated artist", async () => {
         expect(formData.get("festival_name")).toEqual(
           newRatingRequest.festival_name,
         );
-        expect(formData.get("year")).toEqual(newRatingRequest.year.toString());
+        expect(formData.get("year")).toEqual(newRatingRequest.year!.toString());
         expect(formData.get("rating")).toEqual(
           newRatingRequest.rating.toString(),
         );
@@ -134,15 +134,15 @@ test("rate unrated artist", async () => {
 
   await user.type(
     await screen.findByLabelText(/festival/i),
-    newRatingRequest.festival_name,
+    newRatingRequest.festival_name!,
   );
   await user.type(
     screen.getByLabelText(/year/i),
-    newRatingRequest.year.toString(),
+    newRatingRequest.year!.toString(),
   );
   // this only works with fireEvent and not userEvent
   fireEvent.click(screen.getByLabelText("5 Stars"));
-  await user.type(screen.getByLabelText(/comment/i), newRatingRequest.comment);
+  await user.type(screen.getByLabelText(/comment/i), newRatingRequest.comment!);
   await user.click(screen.getByText(/rate/i));
 
   expect(screen.queryByText(/AssertionError/i)).not.toBeInTheDocument();

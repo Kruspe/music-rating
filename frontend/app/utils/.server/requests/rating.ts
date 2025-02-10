@@ -16,10 +16,10 @@ export interface ArtistRatingData {
 
 export interface RatingRequest {
   artist_name: string;
-  festival_name: string;
+  festival_name?: string;
   rating: number;
-  year: number;
-  comment: string;
+  year?: number;
+  comment?: string;
 }
 
 export async function saveRating(

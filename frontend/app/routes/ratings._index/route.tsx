@@ -14,6 +14,7 @@ import { Add } from "@mui/icons-material";
 import { useState } from "react";
 import {
   getRatings,
+  RatingRequest,
   saveRating,
   updateRating,
 } from "~/utils/.server/requests/rating";
@@ -31,26 +32,27 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();
+  const rating: RatingRequest = {
+    artist_name: formData.get("artist_name") as string,
+    rating: parseFloat(formData.get("rating") as string),
+  };
+  if (formData.get("festival_name")) {
+    rating.festival_name = formData.get("festival_name") as string;
+  }
+  if (formData.get("year")) {
+    rating.year = parseInt(formData.get("year") as string, 10);
+  }
+  if (formData.get("comment")) {
+    rating.comment = formData.get("comment") as string;
+  }
   let response;
   switch (formData.get("_action")) {
     case "SAVE_RATING": {
-      response = saveRating(request, {
-        artist_name: formData.get("artist_name") as string,
-        festival_name: formData.get("festival_name") as string,
-        rating: parseFloat(formData.get("rating") as string),
-        year: parseInt(formData.get("year") as string, 10),
-        comment: formData.get("comment") as string,
-      });
+      response = saveRating(request, rating);
       break;
     }
     case "UPDATE_RATING": {
-      response = updateRating(request, {
-        artist_name: formData.get("artist_name") as string,
-        festival_name: formData.get("festival_name") as string,
-        rating: parseFloat(formData.get("rating") as string),
-        year: parseInt(formData.get("year") as string, 10),
-        comment: formData.get("comment") as string,
-      });
+      response = updateRating(request, rating);
       break;
     }
   }

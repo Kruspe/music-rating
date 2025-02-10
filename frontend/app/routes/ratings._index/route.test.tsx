@@ -66,10 +66,10 @@ describe("action", () => {
     };
     const formData = new FormData();
     formData.append("artist_name", newRatingRequest.artist_name);
-    formData.append("festival_name", newRatingRequest.festival_name);
+    formData.append("festival_name", newRatingRequest.festival_name!);
     formData.append("rating", newRatingRequest.rating.toString());
-    formData.append("year", newRatingRequest.year.toString());
-    formData.append("comment", newRatingRequest.comment);
+    formData.append("year", newRatingRequest.year!.toString());
+    formData.append("comment", newRatingRequest.comment!);
     formData.append("_action", "SAVE_RATING");
 
     const saveRatingSpy = vi.spyOn(ratingRequests, "saveRating");
@@ -103,10 +103,10 @@ describe("action", () => {
     };
     const formData = new FormData();
     formData.append("artist_name", updatedRatingRequest.artist_name);
-    formData.append("festival_name", updatedRatingRequest.festival_name);
+    formData.append("festival_name", updatedRatingRequest.festival_name!);
     formData.append("rating", updatedRatingRequest.rating.toString());
-    formData.append("year", updatedRatingRequest.year.toString());
-    formData.append("comment", updatedRatingRequest.comment);
+    formData.append("year", updatedRatingRequest.year!.toString());
+    formData.append("comment", updatedRatingRequest.comment!);
     formData.append("_action", "UPDATE_RATING");
 
     const saveRatingSpy = vi.spyOn(ratingRequests, "updateRating");
