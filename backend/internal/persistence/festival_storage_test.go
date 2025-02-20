@@ -77,9 +77,9 @@ func (s *storageSuite) Test_GetArtists() {
 	}
 
 	storage := persistence.NewFestivalStorage(s3Mock(s.T()))
-	artists, err := storage.GetArtists(context.Background(), AFestivalName)
+	result, err := storage.GetArtists(context.Background(), AFestivalName)
 	require.NoError(s.T(), err)
-	require.Equal(s.T(), artists, artists)
+	require.Equal(s.T(), artists, result)
 }
 
 func (s *storageSuite) Test_GetArtists_ReturnsS3Error() {
