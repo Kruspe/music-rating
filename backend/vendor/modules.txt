@@ -49,10 +49,10 @@ github.com/aws/aws-sdk-go-v2/credentials/endpointcreds/internal/client
 github.com/aws/aws-sdk-go-v2/credentials/processcreds
 github.com/aws/aws-sdk-go-v2/credentials/ssocreds
 github.com/aws/aws-sdk-go-v2/credentials/stscreds
-# github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.18.14
+# github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.19.0
 ## explicit; go 1.22
 github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue
-# github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.7.81
+# github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression v1.7.82
 ## explicit; go 1.22
 github.com/aws/aws-sdk-go-v2/feature/dynamodb/expression
 # github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.30
