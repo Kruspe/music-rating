@@ -14,7 +14,7 @@ import (
 )
 
 type ratingRecord struct {
-	DbKey
+	dbKey
 	UserId       string  `dynamodbav:"user_id"`
 	ArtistName   string  `dynamodbav:"artist_name"`
 	Rating       string  `dynamodbav:"rating"`
@@ -39,7 +39,7 @@ func NewRatingRepo(dynamo *dynamodb.Client, tableName string) *RatingRepo {
 
 func (r *RatingRepo) Save(ctx context.Context, userId string, rating model.ArtistRating) error {
 	record := ratingRecord{
-		DbKey:        ratingDbKey(userId, rating.ArtistName),
+		dbKey:        ratingDbKey(userId, rating.ArtistName),
 		UserId:       userId,
 		ArtistName:   rating.ArtistName,
 		Rating:       rating.Rating.String(),

@@ -5,13 +5,13 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
-type DbKey struct {
+type dbKey struct {
 	PK string `dynamodbav:"PK"`
 	SK string `dynamodbav:"SK"`
 }
 
-func ratingDbKey(userId, artistName string) DbKey {
-	return DbKey{
+func ratingDbKey(userId, artistName string) dbKey {
+	return dbKey{
 		PK: fmt.Sprintf("USER#%s", userId),
 		SK: fmt.Sprintf("ARTIST#%s", artistName),
 	}
