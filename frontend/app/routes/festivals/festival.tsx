@@ -1,40 +1,25 @@
-import {
-  isRouteErrorResponse,
-  useLoaderData,
-  useRouteError,
-} from "@remix-run/react";
-import RatingCard from "~/routes/festivals.$name/RatingCard";
-import { Typography, Grid2 as Grid } from "@mui/material";
-import type { FestivalArtist } from "~/utils/types.server";
-import { json, LoaderFunctionArgs, TypedResponse } from "@remix-run/node";
+import { data, isRouteErrorResponse } from "react-router";
+import { Typography, Grid } from "@mui/material";
+import RatingCard from "~/routes/festivals/RatingCard";
 import { getUnratedFestivalArtists } from "~/utils/.server/requests/festival";
-import { FetchResponse } from "~/utils/.server/requests/util";
+import type { Route } from "./+types/festival";
 
-export function ErrorBoundary() {
-  const error = useRouteError();
-
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   if (isRouteErrorResponse(error)) {
     return <Typography variant="h3">{error.data}</Typography>;
   }
 }
 
-export async function loader({
-  request,
-  params,
-}: LoaderFunctionArgs): Promise<
-  TypedResponse<FetchResponse<FestivalArtist[]>>
-> {
+export async function loader({ request, params }: Route.LoaderArgs) {
   const { name } = params;
   const response = await getUnratedFestivalArtists(request, name!);
   if (!response.ok) {
-    throw json(response.error);
+    throw data(response.error);
   }
-  return json(response);
+  return data(response);
 }
 
-export default function FestivalRoute() {
-  const loaderData = useLoaderData<typeof loader>();
-
+export default function FestivalRoute({ loaderData }: Route.ComponentProps) {
   return loaderData.data!.length > 0 ? (
     <Grid container spacing={0.5}>
       {loaderData.data!.map((artist) => (

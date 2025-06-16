@@ -1,4 +1,4 @@
-import { createCookieSessionStorage } from "@remix-run/node";
+import { createCookieSessionStorage } from "react-router";
 
 const { SESSION_SECRET } = process.env;
 if (!SESSION_SECRET) {

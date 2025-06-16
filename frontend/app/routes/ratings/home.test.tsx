@@ -1,18 +1,16 @@
 import * as ratingRequests from "~/utils/.server/requests/rating";
-import { RatingRequest } from "~/utils/.server/requests/rating";
-import RatingsRoute, { action, loader } from "~/routes/ratings._index/route";
+import { type RatingRequest } from "~/utils/.server/requests/rating";
+import RatingsRoute, { action, loader } from "~/routes/ratings/home";
 import {
   testArtistName,
   testArtistRatingData,
   testArtistRatingsData,
   testFestivalName,
 } from "../../../test/mock-data/rating";
-import { ArtistRating, toArtistRating } from "~/utils/types.server";
+import { toArtistRating } from "~/utils/types.server";
 import mockServer, { testApi } from "../../../test/mocks";
 import { http, HttpResponse } from "msw";
-import { createRemixStub } from "@remix-run/testing";
-import { json, TypedResponse } from "@remix-run/node";
-import { FetchResponse } from "~/utils/.server/requests/util";
+import { createRoutesStub, data } from "react-router";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 
@@ -24,11 +22,10 @@ describe("loader", () => {
       params: {},
       context: {},
     });
-    const responseData = await response.json();
 
     expect(getRatingsSpy).toHaveBeenCalledTimes(1);
     expect(getRatingsSpy).toHaveBeenCalledWith(expect.anything());
-    expect(responseData).toEqual({
+    expect(response.data).toEqual({
       ok: true,
       data: testArtistRatingsData.map((r) => toArtistRating(r)),
     });
@@ -49,9 +46,9 @@ describe("loader", () => {
         context: {},
       });
     } catch (error) {
-      errorData = await (error as Response).json();
+      errorData = error;
     }
-    expect(errorData).toEqual(errorMessage);
+    expect(errorData).toMatchObject({ data: errorMessage });
   });
 });
 
@@ -133,14 +130,13 @@ describe("action", () => {
 
 test("shows all rated bands", async () => {
   const ratings = testArtistRatingsData.map((r) => toArtistRating(r));
-  const RemixStub = createRemixStub([
+  const RemixStub = createRoutesStub([
     {
       path: "/ratings",
+      // @ts-expect-error Type error by react-router (https://github.com/remix-run/react-router/issues/13579)
       Component: RatingsRoute,
-      loader: async (): Promise<
-        TypedResponse<FetchResponse<ArtistRating[]>>
-      > => {
-        return json({
+      loader: async () => {
+        return data({
           ok: true,
           data: ratings,
         });
@@ -158,19 +154,18 @@ test("can update rating", async () => {
   const user = userEvent.setup();
   const rating = toArtistRating(testArtistRatingData);
   const updatedFestivalName = "Dong";
-  const RemixStub = createRemixStub([
+  const RemixStub = createRoutesStub([
     {
       path: "/ratings",
+      // @ts-expect-error Type error by react-router (https://github.com/remix-run/react-router/issues/13579)
       Component: RatingsRoute,
-      loader: async (): Promise<
-        TypedResponse<FetchResponse<ArtistRating[]>>
-      > => {
-        return json({
+      loader: async () => {
+        return data({
           ok: true,
           data: [rating],
         });
       },
-      action: async ({ request }): Promise<TypedResponse<FetchResponse>> => {
+      action: async ({ request }) => {
         const formData = await request.formData();
         expect(formData.get("_action")).toEqual("UPDATE_RATING");
         expect(formData.get("artist_name")).toEqual(rating.artistName);
@@ -178,7 +173,7 @@ test("can update rating", async () => {
         expect(formData.get("year")).toEqual(rating.year?.toString());
         expect(formData.get("rating")).toEqual(rating.rating.toString());
         expect(formData.get("comment")).toEqual(rating.comment);
-        return json({ ok: true });
+        return data({ ok: true });
       },
     },
   ]);

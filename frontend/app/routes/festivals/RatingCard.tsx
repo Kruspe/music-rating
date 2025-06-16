@@ -5,9 +5,9 @@ import {
   Rating,
   TextField,
   Typography,
-  Grid2 as Grid,
+  Grid,
 } from "@mui/material";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher } from "react-router";
 
 interface RatingCardProps {
   artistName: string;

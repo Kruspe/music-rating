@@ -1,4 +1,5 @@
-import { authenticator } from "~/utils/auth.server";
+import { redirect } from "react-router";
+import { sessionStorage } from "~/utils/session.server";
 
 export interface FetchResponse<T = void> {
   data?: T;
@@ -12,10 +13,15 @@ export interface ErrorResponseData {
 
 export async function createAuthHeader(request: Request) {
   const headers = new Headers();
-  const { token } = await authenticator.isAuthenticated(request, {
-    failureRedirect: "/",
-  });
-  headers.set("authorization", `Bearer ${token}`);
+  const session = await sessionStorage.getSession(
+    request.headers.get("cookie"),
+  );
+  const user = session.get("user");
+  if (!user) {
+    redirect("/");
+  }
+
+  headers.set("authorization", `Bearer ${user.token}`);
   return headers;
 }
 

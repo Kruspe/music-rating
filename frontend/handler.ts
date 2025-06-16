@@ -1,19 +1,16 @@
+// @ts-expect-error this is where the compiled server lives
 import * as build from "./build/server";
-import {
+import type {
   APIGatewayProxyEventHeaders,
   APIGatewayProxyEventV2,
   APIGatewayProxyHandlerV2,
   APIGatewayProxyResultV2,
 } from "aws-lambda";
-import {
-  AppLoadContext,
-  createRequestHandler as createRemixRequestHandler,
-  readableStreamToString,
-  ServerBuild,
-} from "@remix-run/node";
+import type { AppLoadContext, ServerBuild } from "react-router";
+import { createRequestHandler as createRemixRequestHandler } from "react-router";
+import { readableStreamToString } from "@react-router/node";
 
 export const handler = createRequestHandler({
-  //@ts-expect-error build can be undefined if the project was not build before
   build,
 });
 

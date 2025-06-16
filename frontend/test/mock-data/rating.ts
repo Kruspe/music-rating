@@ -1,4 +1,4 @@
-import { ArtistRatingData } from "~/utils/.server/requests/rating";
+import { type ArtistRatingData } from "~/utils/.server/requests/rating";
 
 export const testFestivalName = "Wacken";
 export const testArtistName = "Bloodbath";

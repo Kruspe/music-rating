@@ -1,13 +1,16 @@
 import { render, screen } from "@testing-library/react";
 import App from "~/root";
-import { createRemixStub } from "@remix-run/testing";
+import { createRoutesStub } from "react-router";
 import { userEvent } from "@testing-library/user-event";
+
+vi.mock("~/utils/auth.server", () => ({}));
 
 test("should have correct routes in header", async () => {
   const user = userEvent.setup();
-  const RemixStub = createRemixStub([
+  const RemixStub = createRoutesStub([
     {
       path: "/",
+      // @ts-expect-error Type error by react-router (https://github.com/remix-run/react-router/issues/13579)
       Component: App,
       children: [
         {

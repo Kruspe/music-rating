@@ -6,31 +6,29 @@ import {
   Rating,
   TextField,
   Typography,
-  Grid2 as Grid,
+  Grid,
 } from "@mui/material";
-import { ActionFunctionArgs, json, LoaderFunctionArgs } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { data, Form } from "react-router";
 import { Add } from "@mui/icons-material";
 import { useState } from "react";
 import {
   getRatings,
-  RatingRequest,
+  type RatingRequest,
   saveRating,
   updateRating,
 } from "~/utils/.server/requests/rating";
 import { RatingTable } from "~/components/rating-table";
+import type { Route } from "./+types/home";
 
-export function ErrorBoundary() {}
-
-export async function loader({ request }: LoaderFunctionArgs) {
-  const data = await getRatings(request);
-  if (!data.ok) {
-    throw json(data.error);
+export async function loader({ request }: Route.LoaderArgs) {
+  const response = await getRatings(request);
+  if (!response.ok) {
+    throw data(response.error);
   }
-  return json(data);
+  return data(response);
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: Route.ActionArgs) {
   const formData = await request.formData();
   const rating: RatingRequest = {
     artist_name: formData.get("artist_name") as string,
@@ -59,9 +57,7 @@ export async function action({ request }: ActionFunctionArgs) {
   return response;
 }
 
-export default function RatingsRoute() {
-  const loaderData = useLoaderData<typeof loader>();
-
+export default function RatingsRoute({ loaderData }: Route.ComponentProps) {
   const [showAdd, setShowAdd] = useState(false);
 
   return (

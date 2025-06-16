@@ -6,9 +6,9 @@ import {
   type GridValidRowModel,
   useGridApiContext,
 } from "@mui/x-data-grid";
-import { ArtistRating } from "~/utils/types.server";
+import type { ArtistRating } from "~/utils/types.server";
 import { Rating } from "@mui/material";
-import { useSubmit } from "@remix-run/react";
+import { useSubmit } from "react-router";
 
 const getColumns = (updatable?: boolean): GridColDef<ArtistRating>[] => [
   {

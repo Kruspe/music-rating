@@ -1,10 +1,10 @@
 import {
   createAuthHeader,
-  ErrorResponseData,
-  FetchResponse,
+  type ErrorResponseData,
+  type FetchResponse,
   hasError,
 } from "~/utils/.server/requests/util";
-import { FestivalArtist, toFestivalArtist } from "~/utils/types.server";
+import { type FestivalArtist, toFestivalArtist } from "~/utils/types.server";
 
 export interface FestivalArtistData {
   artist_name: string;

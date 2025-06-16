@@ -1,11 +1,17 @@
-import { Typography, Grid2 as Grid } from "@mui/material";
-import { authenticator } from "~/utils/auth.server";
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { Grid, Typography } from "@mui/material";
+import { sessionStorage } from "~/utils/session.server";
+import { redirect } from "react-router";
+import type { Route } from "./+types/home";
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  return authenticator.isAuthenticated(request, {
-    successRedirect: "/ratings",
-  });
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await sessionStorage.getSession(
+    request.headers.get("cookie"),
+  );
+  const user = session.get("user");
+  console.log(user);
+  if (user) {
+    return redirect("/ratings");
+  }
 }
 
 export default function IndexRoute() {

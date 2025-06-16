@@ -7,12 +7,9 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
   useLocation,
   useRouteError,
-} from "@remix-run/react";
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { authenticator } from "~/utils/auth.server";
+} from "react-router";
 import {
   AppBar,
   Button,
@@ -30,6 +27,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useRef, useState } from "react";
+import type { Route } from "./+types/root";
+import { authenticator } from "~/utils/auth.server";
+import { sessionStorage } from "~/utils/session.server";
 
 const darkTheme = createTheme({
   palette: {
@@ -57,12 +57,17 @@ export function ErrorBoundary() {
   }
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  return authenticator.isAuthenticated(request);
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await sessionStorage.getSession(
+    request.headers.get("cookie"),
+  );
+  const user = session.get("user");
+
+  return { isAuthenticated: !!user };
 }
 
-export async function action({ request }: ActionFunctionArgs) {
-  return authenticator.authenticate("auth0", request);
+export async function action({ request }: Route.ActionArgs) {
+  await authenticator.authenticate("auth0", request);
 }
 
 const routes: Route[] = [
@@ -169,9 +174,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function App() {
-  const data = useLoaderData<typeof loader>();
-  const loggedIn = data && data.id;
+export default function App({ loaderData }: Route.ComponentProps) {
+  const loggedIn = loaderData && loaderData.isAuthenticated;
 
   const { pathname } = useLocation();
   let activeTab: number | false = false;

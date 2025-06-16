@@ -1,17 +1,13 @@
 import * as ratingRequests from "~/utils/.server/requests/rating";
-import FestivalRatingsRoute, {
-  loader,
-} from "~/routes/ratings.$festivalName/route";
+import FestivalRatingsRoute, { loader } from "~/routes/ratings/festival";
 import {
   testArtistRatingsData,
   testFestivalName,
 } from "../../../test/mock-data/rating";
-import { ArtistRating, toArtistRating } from "~/utils/types.server";
+import { toArtistRating } from "~/utils/types.server";
 import mockServer, { testApi } from "../../../test/mocks";
 import { http, HttpResponse } from "msw";
-import { createRemixStub } from "@remix-run/testing";
-import { json, TypedResponse } from "@remix-run/node";
-import { FetchResponse } from "~/utils/.server/requests/util";
+import { createRoutesStub, data } from "react-router";
 import { render, screen } from "@testing-library/react";
 
 describe("loader", () => {
@@ -25,14 +21,13 @@ describe("loader", () => {
       params: { festivalName: testFestivalName },
       context: {},
     });
-    const responseData = await response.json();
 
     expect(getFestivalRatingsSpy).toHaveBeenCalledTimes(1);
     expect(getFestivalRatingsSpy).toHaveBeenCalledWith(
       expect.anything(),
       testFestivalName,
     );
-    expect(responseData).toEqual({
+    expect(response.data).toEqual({
       ok: true,
       data: testArtistRatingsData.map((r) => toArtistRating(r)),
     });
@@ -49,26 +44,25 @@ describe("loader", () => {
     try {
       await loader({
         request: new Request("http://app.com"),
-        params: {},
+        params: { festivalName: testFestivalName },
         context: {},
       });
     } catch (error) {
-      errorData = await (error as Response).json();
+      errorData = error;
     }
-    expect(errorData).toEqual(errorMessage);
+    expect(errorData).toMatchObject({ data: errorMessage });
   });
 });
 
 test("shows all artists from festival with ratings", async () => {
   const festivalRatings = testArtistRatingsData.map((r) => toArtistRating(r));
-  const RemixStub = createRemixStub([
+  const RemixStub = createRoutesStub([
     {
       path: "/ratings/:festivalName",
+      // @ts-expect-error Type error by react-router (https://github.com/remix-run/react-router/issues/13579)
       Component: FestivalRatingsRoute,
-      loader: async (): Promise<
-        TypedResponse<FetchResponse<ArtistRating[]>>
-      > => {
-        return json({
+      loader: async () => {
+        return data({
           ok: true,
           data: festivalRatings,
         });

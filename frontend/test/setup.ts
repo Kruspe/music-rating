@@ -3,9 +3,15 @@ import "@testing-library/jest-dom";
 
 import mockServer, { testApi } from "./mocks";
 
-vi.mock("~/utils/auth.server", () => ({
-  authenticator: {
-    isAuthenticated: () => true,
+vi.mock("~/utils/session.server", () => ({
+  sessionStorage: {
+    getSession: async () => ({
+      get: (name: string) => {
+        if (name === "user") {
+          return { token: "test-token" };
+        }
+      },
+    }),
   },
 }));
 

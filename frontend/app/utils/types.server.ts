@@ -1,5 +1,5 @@
-import { FestivalArtistData } from "~/utils/.server/requests/festival";
-import { ArtistRatingData } from "~/utils/.server/requests/rating";
+import type { FestivalArtistData } from "~/utils/.server/requests/festival";
+import type { ArtistRatingData } from "~/utils/.server/requests/rating";
 
 export interface FestivalArtist {
   artistName: string;
