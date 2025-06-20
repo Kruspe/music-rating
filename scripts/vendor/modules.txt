@@ -1,4 +1,4 @@
-# github.com/codeclysm/extract/v3 v3.1.0
+# github.com/codeclysm/extract/v3 v3.1.1
 ## explicit; go 1.17
 github.com/codeclysm/extract/v3
 # github.com/go-ole/go-ole v1.2.6
