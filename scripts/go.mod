@@ -3,7 +3,7 @@ module github.com/kruspe/music-rating/scripts
 go 1.20
 
 require (
-	github.com/codeclysm/extract/v3 v3.1.0
+	github.com/codeclysm/extract/v3 v3.1.1
 	github.com/shirou/gopsutil/v3 v3.23.3
 )
 
