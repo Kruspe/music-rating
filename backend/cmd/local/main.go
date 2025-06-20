@@ -2,8 +2,6 @@ package main
 
 import (
 	"github.com/kruspe/music-rating/internal/handler"
-	. "github.com/kruspe/music-rating/internal/handler/test"
-	"github.com/kruspe/music-rating/internal/middleware"
 	"github.com/kruspe/music-rating/internal/model"
 	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
 	"github.com/kruspe/music-rating/internal/persistence"
@@ -41,13 +39,6 @@ func main() {
 		RatingRepo:      repos.RatingRepo,
 		FestivalUseCase: useCases.FestivalUseCase,
 	})
-	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "*")
-		r.Header.Set("Authorization", TestToken)
-		middleware.AuthMiddleware(mux).ServeHTTP(w, r)
-	}))
 	err := http.ListenAndServe(":8080", mux)
 	if err != nil {
 		panic(err)

@@ -8,7 +8,6 @@ export async function loader({ request }: Route.LoaderArgs) {
     request.headers.get("cookie"),
   );
   const user = session.get("user");
-  console.log(user);
   if (user) {
     return redirect("/ratings");
   }

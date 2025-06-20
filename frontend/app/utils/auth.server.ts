@@ -20,7 +20,7 @@ const auth0Strategy = new Auth0Strategy(
     clientSecret: CLIENT_SECRET,
     domain: "musicrating.eu.auth0.com",
     scopes: ["openid"],
-    audience: process.env.NODE_ENV === "production" ? API_ENDPOINT : undefined,
+    audience: API_ENDPOINT,
   },
   async ({ tokens }) => {
     const userId = JSON.parse(
