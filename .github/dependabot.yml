@@ -7,8 +7,10 @@ updates:
     groups:
       remix:
         patterns:
-        - "@remix-run*"
-        - "remix"
+        - "react-router"
+        - "@react-router*"
+        - "remix-auth"
+        - "remix-auth-auth0"
       react:
         patterns:
         - "react*"
