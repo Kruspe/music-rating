@@ -18,6 +18,8 @@ updates:
         patterns:
         - "@mui*"
         - "@emotion"
+        exclude-patterns:
+        - "@mui/x-data-grid"
       eslint:
         patterns:
         - "eslint*"
