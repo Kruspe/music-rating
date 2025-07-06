@@ -18,7 +18,7 @@ export async function createAuthHeader(request: Request) {
   );
   const user = session.get("user");
   if (!user) {
-    redirect("/");
+    throw redirect("/");
   }
 
   headers.set("authorization", `Bearer ${user.token}`);
