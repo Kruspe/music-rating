@@ -7,6 +7,11 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["./test/setup.ts"],
+    server: {
+      deps: {
+        inline: ["@mui/x-data-grid"],
+      },
+    },
   },
   resolve: {
     alias: {
