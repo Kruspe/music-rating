@@ -14,6 +14,7 @@ vi.mock("~/utils/session.server", () => ({
     }),
   },
 }));
+vi.mock("~/utils/auth.server", () => ({}));
 
 beforeAll(() => {
   mockServer.listen();
