@@ -109,11 +109,7 @@ export function RatingTable({ data, updatable }: RatingTableProps) {
           });
           return row;
         }}
-        slotProps={{
-          toolbar: {
-            showQuickFilter: true,
-          },
-        }}
+        showToolbar
       />
     </Grid>
   );
