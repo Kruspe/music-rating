@@ -7,7 +7,7 @@ import {
 } from "@mui/x-data-grid";
 import type { ArtistRating } from "~/utils/types.server";
 import { Grid, Rating } from "@mui/material";
-import { useSubmit } from "react-router";
+import { useLocation, useSubmit } from "react-router";
 
 const getColumns = (updatable?: boolean): GridColDef<ArtistRating>[] => [
   {
@@ -78,6 +78,7 @@ interface RatingTableProps {
 
 export function RatingTable({ data, updatable }: RatingTableProps) {
   const submit = useSubmit();
+  const location = useLocation();
 
   return (
     <Grid container flexDirection="column">
@@ -106,6 +107,7 @@ export function RatingTable({ data, updatable }: RatingTableProps) {
           submit(formData, {
             method: "PUT",
             action: `/ratings`,
+            navigate: location.pathname === "/ratings",
           });
           return row;
         }}
