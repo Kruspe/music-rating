@@ -1,7 +1,7 @@
 # github.com/codeclysm/extract/v4 v4.0.0
 ## explicit; go 1.22
 github.com/codeclysm/extract/v4
-# github.com/ebitengine/purego v0.8.4
+# github.com/ebitengine/purego v0.9.0
 ## explicit; go 1.18
 github.com/ebitengine/purego
 github.com/ebitengine/purego/internal/cgo
@@ -39,7 +39,7 @@ github.com/lufia/plan9stats
 # github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55
 ## explicit; go 1.14
 github.com/power-devops/perfstat
-# github.com/shirou/gopsutil/v4 v4.25.8
+# github.com/shirou/gopsutil/v4 v4.25.9
 ## explicit; go 1.23.0
 github.com/shirou/gopsutil/v4/common
 github.com/shirou/gopsutil/v4/cpu
