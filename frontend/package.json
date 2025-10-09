@@ -48,7 +48,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-testing-library": "^6.2.2",
     "jsdom": "^26.1.0",
-    "msw": "^2.11.4",
+    "msw": "^2.11.5",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3",
     "vite": "^7.1.9",
