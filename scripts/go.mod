@@ -1,10 +1,10 @@
 module github.com/kruspe/music-rating/scripts
 
-go 1.24
+go 1.24.0
 
 require (
 	github.com/codeclysm/extract/v4 v4.0.0
-	github.com/shirou/gopsutil/v4 v4.25.9
+	github.com/shirou/gopsutil/v4 v4.25.10
 )
 
 require (
@@ -21,7 +21,7 @@ require (
 	github.com/tklauser/numcpus v0.10.0 // indirect
 	github.com/ulikunitz/xz v0.5.14 // indirect
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
-	golang.org/x/sys v0.35.0 // indirect
+	golang.org/x/sys v0.37.0 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
