@@ -23,6 +23,7 @@ describe("loader", () => {
       request: new Request("http://app.com"),
       params: { name: testFestivalName },
       context: {},
+      unstable_pattern: "",
     });
 
     expect(unratedArtistsRequestSpy).toHaveBeenCalledTimes(1);
@@ -49,6 +50,7 @@ describe("loader", () => {
         request: new Request("http://app.com"),
         params: { name: testFestivalName },
         context: {},
+        unstable_pattern: "",
       });
     } catch (error) {
       errorData = error as { data: string };
