@@ -21,6 +21,7 @@ describe("loader", () => {
       request: new Request("http://app.com"),
       params: {},
       context: {},
+      unstable_pattern: "",
     });
 
     expect(getRatingsSpy).toHaveBeenCalledTimes(1);
@@ -44,6 +45,7 @@ describe("loader", () => {
         request: new Request("http://app.com"),
         params: {},
         context: {},
+        unstable_pattern: "",
       });
     } catch (error) {
       errorData = error;
@@ -77,6 +79,7 @@ describe("action", () => {
       }),
       params: {},
       context: {},
+      unstable_pattern: "",
     });
 
     expect(saveRatingSpy).toHaveBeenCalledTimes(1);
@@ -114,6 +117,7 @@ describe("action", () => {
       }),
       params: {},
       context: {},
+      unstable_pattern: "",
     });
 
     expect(saveRatingSpy).toHaveBeenCalledTimes(1);

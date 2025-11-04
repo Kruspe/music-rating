@@ -20,6 +20,7 @@ describe("loader", () => {
       request: new Request("http://app.com"),
       params: { festivalName: testFestivalName },
       context: {},
+      unstable_pattern: "",
     });
 
     expect(getFestivalRatingsSpy).toHaveBeenCalledTimes(1);
@@ -46,6 +47,7 @@ describe("loader", () => {
         request: new Request("http://app.com"),
         params: { festivalName: testFestivalName },
         context: {},
+        unstable_pattern: "",
       });
     } catch (error) {
       errorData = error;
