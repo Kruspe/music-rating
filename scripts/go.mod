@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/codeclysm/extract/v4 v4.0.0
-	github.com/shirou/gopsutil/v4 v4.25.11
+	github.com/shirou/gopsutil/v4 v4.25.12
 )
 
 require (
