@@ -27,7 +27,15 @@ function createRequestHandler({
   getLoadContext?: GetLoadContextFunction;
   mode?: string;
 }): APIGatewayProxyHandlerV2 {
-  const handleRequest = createRemixRequestHandler(build, mode);
+  const handleRequest = createRemixRequestHandler(
+    {
+      ...build,
+      allowedActionOrigins: process.env.DOMAIN_NAME
+        ? [process.env.DOMAIN_NAME]
+        : false,
+    },
+    mode,
+  );
 
   return async (event) => {
     const request = createRemixRequest(event);
@@ -49,6 +57,7 @@ function createRemixRequest(event: APIGatewayProxyEventV2): Request {
     "multipart/form-data",
   );
 
+  console.error(url.href, event.headers);
   return new Request(url.href, {
     method: event.requestContext.http.method,
     headers: createRemixHeaders(event.headers, event.cookies),
