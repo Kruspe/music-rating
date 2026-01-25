@@ -37,7 +37,7 @@ tasks:
   zip:
     dir: build
     cmds:
-    - npx esbuild ../handler.ts --bundle --minify --platform=node --target=node20 '--define:process.env.NODE_ENV="production"' --outfile=index.js
+    - npx esbuild ../handler.ts --bundle --minify --platform=node --target=node24 '--define:process.env.NODE_ENV="production"' --outfile=index.js
     - zip frontend.zip index.js
 
   lint:
