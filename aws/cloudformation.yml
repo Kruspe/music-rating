@@ -267,7 +267,7 @@ Resources:
         S3ObjectVersion: !Ref ParamFrontendVersion
       Handler: index.handler
       Role: !GetAtt [ BackendLambdaRole, Arn ]
-      Runtime: nodejs20.x
+      Runtime: nodejs24.x
       Environment:
         Variables:
           CLIENT_ID: !Ref ParamClientId
