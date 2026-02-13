@@ -193,7 +193,7 @@ Resources:
         S3ObjectVersion: !Ref ParamBackendVersion
       Handler: bootstrap
       Role: !GetAtt [ BackendLambdaRole, Arn ]
-      Runtime: provided.al2
+      Runtime: provided.al2023
       Architectures: [ arm64 ]
       Environment:
         Variables:
