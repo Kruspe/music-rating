@@ -1,7 +1,8 @@
-package model_test_helper
+package helper
 
 import (
 	"fmt"
+
 	"github.com/kruspe/music-rating/internal/model"
 )
 

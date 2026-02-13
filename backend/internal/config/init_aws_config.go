@@ -2,9 +2,10 @@ package config
 
 import (
 	"context"
+	"log/slog"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
-	"log/slog"
 )
 
 func InitAwsConfig() aws.Config {

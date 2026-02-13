@@ -1,10 +1,13 @@
-package persistence_test_helper
+package helper
 
 import (
 	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"strings"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -15,8 +18,6 @@ import (
 	"github.com/kruspe/music-rating/internal/model"
 	"github.com/kruspe/music-rating/internal/persistence"
 	"github.com/kruspe/music-rating/scripts/setup"
-	"io"
-	"strings"
 )
 
 type MockS3Client struct {

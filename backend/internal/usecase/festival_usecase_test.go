@@ -2,14 +2,14 @@ package usecase_test
 
 import (
 	"context"
-	"github.com/kruspe/music-rating/internal/model"
-	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
-	"github.com/kruspe/music-rating/internal/persistence"
-	"github.com/kruspe/music-rating/internal/persistence/persistence_test_helper"
-	"github.com/kruspe/music-rating/internal/usecase"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 	"testing"
+
+	"github.com/kruspe/music-rating/internal/model"
+	. "github.com/kruspe/music-rating/internal/model/helper"
+	"github.com/kruspe/music-rating/internal/persistence"
+	"github.com/kruspe/music-rating/internal/persistence/helper"
+	"github.com/kruspe/music-rating/internal/usecase"
+	"github.com/stretchr/testify/suite"
 )
 
 type ratingUseCaseSuite struct {
@@ -23,7 +23,7 @@ func Test_RatingUseCaseSuite(t *testing.T) {
 }
 
 func (s *ratingUseCaseSuite) BeforeTest(_ string, _ string) {
-	ph := persistence_test_helper.NewPersistenceHelper()
+	ph := helper.NewPersistenceHelper()
 	s.ratingRepo = persistence.NewRatingRepo(ph.Dynamo, ph.TableName)
 
 	s.ratingUseCase = usecase.NewFestivalUseCase(s.ratingRepo, persistence.NewFestivalStorage(ph.MockFestivals(map[string][]model.Artist{
@@ -37,30 +37,30 @@ func (s *ratingUseCaseSuite) BeforeTest(_ string, _ string) {
 
 func (s *ratingUseCaseSuite) Test_GetUnratedArtistsForFestival_ReturnsUnratedArtists() {
 	err := s.ratingRepo.Save(context.Background(), AnUserId, AnArtistRating("Bloodbath"))
-	require.NoError(s.T(), err)
+	s.Require().NoError(err)
 	err = s.ratingRepo.Save(context.Background(), AnUserId, AnArtistRating("Hypocrisy"))
-	require.NoError(s.T(), err)
+	s.Require().NoError(err)
 
 	unratedArtists, err := s.ratingUseCase.GetUnratedArtistsForFestival(context.Background(), AnUserId, AFestivalName)
-	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.Artist{AnArtistWithName("Benediction")}, unratedArtists)
+	s.Require().NoError(err)
+	s.Equal([]model.Artist{AnArtistWithName("Benediction")}, unratedArtists)
 }
 
 func (s *ratingUseCaseSuite) Test_GetUnratedArtistsForFestival_ReturnsFestivalNotSupportedError() {
 	_, err := s.ratingUseCase.GetUnratedArtistsForFestival(context.Background(), AnUserId, AnotherFestivalName)
-	require.Error(s.T(), err)
-	require.IsType(s.T(), &model.FestivalNotSupportedError{}, err)
+	s.Require().Error(err)
+	s.Require().ErrorAs(err, new(*model.FestivalNotSupportedError))
 }
 
 func (s *ratingUseCaseSuite) Test_GetArtistsForFestival_ReturnsAllArtists() {
 	artists, err := s.ratingUseCase.GetArtistsForFestival(context.Background(), AFestivalName)
-	require.NoError(s.T(), err)
-	require.Equal(s.T(), []model.Artist{AnArtistWithName("Bloodbath"), AnArtistWithName("Hypocrisy"), AnArtistWithName("Benediction")}, artists)
+	s.Require().NoError(err)
+	s.Equal([]model.Artist{AnArtistWithName("Bloodbath"), AnArtistWithName("Hypocrisy"), AnArtistWithName("Benediction")}, artists)
 
 }
 
 func (s *ratingUseCaseSuite) Test_GetArtistsForFestival_ReturnsFestivalNotSupportedError() {
 	_, err := s.ratingUseCase.GetArtistsForFestival(context.Background(), AnotherFestivalName)
-	require.Error(s.T(), err)
-	require.IsType(s.T(), &model.FestivalNotSupportedError{}, err)
+	s.Require().Error(err)
+	s.Require().ErrorAs(err, new(*model.FestivalNotSupportedError))
 }

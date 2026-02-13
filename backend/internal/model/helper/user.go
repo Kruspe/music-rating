@@ -1,4 +1,4 @@
-package model_test_helper
+package helper
 
 const (
 	AnUserId = "MetalLover666"

@@ -3,14 +3,16 @@ package rating
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"net/http"
+	"slices"
+	"strings"
+
 	. "github.com/kruspe/music-rating/internal/handler/errors"
 	"github.com/kruspe/music-rating/internal/middleware"
 	"github.com/kruspe/music-rating/internal/model"
 	"github.com/kruspe/music-rating/internal/persistence"
 	"github.com/kruspe/music-rating/internal/usecase"
-	"net/http"
-	"slices"
-	"strings"
 )
 
 type ratingResponse struct {
@@ -64,14 +66,18 @@ func NewRatingEndpoint(ratingRepo ratingRepo, festivalUseCase festivalUseCase) *
 
 func (e *Rating) Create() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		userId := r.Context().Value(middleware.UserIdContextKey).(string)
-		var ratingRequest ratingRequest
-		err := json.NewDecoder(r.Body).Decode(&ratingRequest)
+		userId, ok := r.Context().Value(middleware.UserIdContextKey).(string)
+		if !ok {
+			HandleError(w, errors.New("invalid user id"))
+			return
+		}
+		var req ratingRequest
+		err := json.NewDecoder(r.Body).Decode(&req)
 		if err != nil {
 			HandleError(w, err)
 			return
 		}
-		rating, err := model.NewArtistRating(ratingRequest.ArtistName, ratingRequest.Rating, ratingRequest.FestivalName, ratingRequest.Year, ratingRequest.Comment)
+		rating, err := model.NewArtistRating(req.ArtistName, req.Rating, req.FestivalName, req.Year, req.Comment)
 		if err != nil {
 			HandleError(w, err)
 			return
@@ -88,7 +94,11 @@ func (e *Rating) Create() http.Handler {
 
 func (e *Rating) GetAll() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		userId := r.Context().Value(middleware.UserIdContextKey).(string)
+		userId, ok := r.Context().Value(middleware.UserIdContextKey).(string)
+		if !ok {
+			HandleError(w, errors.New("invalid user id"))
+			return
+		}
 		ratings, err := e.ratingRepo.GetAll(r.Context(), userId)
 		if err != nil {
 			HandleError(w, err)
@@ -105,7 +115,11 @@ func (e *Rating) GetAll() http.Handler {
 
 func (e *Rating) Put() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		userId := r.Context().Value(middleware.UserIdContextKey).(string)
+		userId, ok := r.Context().Value(middleware.UserIdContextKey).(string)
+		if !ok {
+			HandleError(w, errors.New("invalid user id"))
+			return
+		}
 		artistName := r.PathValue("artistName")
 		var ratingUpdate updateRatingRequest
 		err := json.NewDecoder(r.Body).Decode(&ratingUpdate)
@@ -130,7 +144,11 @@ func (e *Rating) Put() http.Handler {
 
 func (e *Rating) GetAllForFestival() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		userId := r.Context().Value(middleware.UserIdContextKey).(string)
+		userId, ok := r.Context().Value(middleware.UserIdContextKey).(string)
+		if !ok {
+			HandleError(w, errors.New("invalid user id"))
+			return
+		}
 		festivalName := r.PathValue("festivalName")
 
 		artists, err := e.festivalUseCase.GetArtistsForFestival(r.Context(), festivalName)

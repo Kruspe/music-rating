@@ -1,18 +1,19 @@
 package config
 
 import (
-	"fmt"
+	"errors"
+	"log/slog"
+	"os"
+
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/kruspe/music-rating/internal/persistence"
-	"log/slog"
-	"os"
 )
 
 func InitRepos(cfg aws.Config) *persistence.Repositories {
 	tableName, present := os.LookupEnv("TABLE_NAME")
 	if !present {
-		err := fmt.Errorf("missing table name in environment variables")
+		err := errors.New("missing table name in environment variables")
 		slog.Error("missing env variable", slog.Any("error", err))
 		panic(err)
 	}

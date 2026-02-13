@@ -1,12 +1,13 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/kruspe/music-rating/internal/handler/festival"
 	"github.com/kruspe/music-rating/internal/handler/rating"
 	"github.com/kruspe/music-rating/internal/middleware"
 	"github.com/kruspe/music-rating/internal/persistence"
 	"github.com/kruspe/music-rating/internal/usecase"
-	"net/http"
 )
 
 type Config struct {

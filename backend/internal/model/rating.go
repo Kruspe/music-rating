@@ -46,14 +46,6 @@ func (e UpdateNonExistingRatingError) Error() string {
 
 type Rating float64
 
-func (r Rating) Float64() float64 {
-	return float64(r)
-}
-
-func (r Rating) String() string {
-	return fmt.Sprintf("%.1f", r)
-}
-
 func NewRating(rating float64) (*Rating, error) {
 	if rating < 0 || rating > 5 {
 		return nil, &InvalidFieldError[float64]{
@@ -65,4 +57,12 @@ func NewRating(rating float64) (*Rating, error) {
 
 	r := Rating(rating)
 	return &r, nil
+}
+
+func (r Rating) Float64() float64 {
+	return float64(r)
+}
+
+func (r Rating) String() string {
+	return fmt.Sprintf("%.1f", r)
 }

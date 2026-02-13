@@ -4,19 +4,19 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/kruspe/music-rating/internal/handler"
 	"github.com/kruspe/music-rating/internal/handler/errors"
 	. "github.com/kruspe/music-rating/internal/handler/test"
 	"github.com/kruspe/music-rating/internal/model"
-	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
+	. "github.com/kruspe/music-rating/internal/model/helper"
 	"github.com/kruspe/music-rating/internal/persistence"
-	. "github.com/kruspe/music-rating/internal/persistence/persistence_test_helper"
+	. "github.com/kruspe/music-rating/internal/persistence/helper"
 	"github.com/kruspe/music-rating/internal/usecase"
-	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 type unratedArtistResponse struct {
@@ -41,9 +41,9 @@ func (s *festivalHandlerSuite) BeforeTest(_, _ string) {
 
 func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllArtists() {
 	err := s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Bloodbath"))
-	require.NoError(s.T(), err)
+	s.Require().NoError(err)
 	err = s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Hypocrisy"))
-	require.NoError(s.T(), err)
+	s.Require().NoError(err)
 
 	bloodbath := AnArtistWithName("Bloodbath")
 	hypocrisy := AnArtistWithName("Hypocrisy")
@@ -64,23 +64,23 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllArtist
 	})
 	mux.ServeHTTP(recorder, request)
 
-	require.Equal(s.T(), http.StatusOK, recorder.Result().StatusCode)
+	s.Equal(http.StatusOK, recorder.Result().StatusCode)
 
 	var r []unratedArtistResponse
 	err = json.NewDecoder(recorder.Body).Decode(&r)
-	require.NoError(s.T(), err)
-	require.Len(s.T(), r, 2)
-	require.Equal(s.T(), bloodbath.Name, r[0].ArtistName)
-	require.Equal(s.T(), bloodbath.ImageUrl, r[0].ImageUrl)
-	require.Equal(s.T(), hypocrisy.Name, r[1].ArtistName)
-	require.Equal(s.T(), hypocrisy.ImageUrl, r[1].ImageUrl)
+	s.Require().NoError(err)
+	s.Len(r, 2)
+	s.Equal(bloodbath.Name, r[0].ArtistName)
+	s.Equal(bloodbath.ImageUrl, r[0].ImageUrl)
+	s.Equal(hypocrisy.Name, r[1].ArtistName)
+	s.Equal(hypocrisy.ImageUrl, r[1].ImageUrl)
 }
 
 func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllUnratedArtists_WhenFiltering() {
 	err := s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Bloodbath"))
-	require.NoError(s.T(), err)
+	s.Require().NoError(err)
 	err = s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Hypocrisy"))
-	require.NoError(s.T(), err)
+	s.Require().NoError(err)
 
 	unratedArtist := AnArtistWithName("Benediction")
 	festivalStorage := persistence.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
@@ -101,23 +101,23 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndAllUnrate
 	})
 	mux.ServeHTTP(recorder, request)
 
-	require.Equal(s.T(), http.StatusOK, recorder.Result().StatusCode)
+	s.Equal(http.StatusOK, recorder.Result().StatusCode)
 
 	var r []unratedArtistResponse
 	err = json.NewDecoder(recorder.Body).Decode(&r)
-	require.NoError(s.T(), err)
-	require.Len(s.T(), r, 1)
-	require.Equal(s.T(), unratedArtist.Name, r[0].ArtistName)
-	require.Equal(s.T(), unratedArtist.ImageUrl, r[0].ImageUrl)
+	s.Require().NoError(err)
+	s.Len(r, 1)
+	s.Equal(unratedArtist.Name, r[0].ArtistName)
+	s.Equal(unratedArtist.ImageUrl, r[0].ImageUrl)
 }
 
 func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndEmptyList_WhenFilteringAndAllArtistsAreRated() {
 	err := s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Bloodbath"))
-	require.NoError(s.T(), err)
+	s.Require().NoError(err)
 	err = s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Hypocrisy"))
-	require.NoError(s.T(), err)
+	s.Require().NoError(err)
 	err = s.repos.RatingRepo.Save(context.Background(), AnUserId, AnArtistRating("Benediction"))
-	require.NoError(s.T(), err)
+	s.Require().NoError(err)
 
 	festivalStorage := persistence.NewFestivalStorage(s.ph.MockFestivals(map[string][]model.Artist{
 		AFestivalName: {
@@ -137,11 +137,11 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns200AndEmptyList
 	})
 	mux.ServeHTTP(recorder, request)
 
-	require.Equal(s.T(), http.StatusOK, recorder.Result().StatusCode)
+	s.Equal(http.StatusOK, recorder.Result().StatusCode)
 	var r []unratedArtistResponse
 	err = json.NewDecoder(recorder.Body).Decode(&r)
-	require.NoError(s.T(), err)
-	require.Len(s.T(), r, 0)
+	s.Require().NoError(err)
+	s.Empty(r, 0)
 }
 
 func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns404_WhenFestivalIsNotSupported() {
@@ -162,9 +162,9 @@ func (s *festivalHandlerSuite) Test_GetArtistsForFestival_Returns404_WhenFestiva
 	})
 	mux.ServeHTTP(recorder, request)
 
-	require.Equal(s.T(), http.StatusNotFound, recorder.Result().StatusCode)
+	s.Equal(http.StatusNotFound, recorder.Result().StatusCode)
 	var r errors.ErrorResponse
 	err := json.NewDecoder(recorder.Body).Decode(&r)
-	require.NoError(s.T(), err)
-	require.Equal(s.T(), model.FestivalNotSupportedError{FestivalName: AnotherFestivalName}.Error(), r.Error)
+	s.Require().NoError(err)
+	s.Equal(model.FestivalNotSupportedError{FestivalName: AnotherFestivalName}.Error(), r.Error)
 }

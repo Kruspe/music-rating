@@ -1,16 +1,16 @@
 package handler_test
 
 import (
-	"github.com/kruspe/music-rating/internal/handler"
-	. "github.com/kruspe/music-rating/internal/handler/test"
-	"github.com/kruspe/music-rating/internal/persistence"
-	"github.com/kruspe/music-rating/internal/persistence/persistence_test_helper"
-	"github.com/kruspe/music-rating/internal/usecase"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/kruspe/music-rating/internal/handler"
+	. "github.com/kruspe/music-rating/internal/handler/test"
+	"github.com/kruspe/music-rating/internal/persistence"
+	"github.com/kruspe/music-rating/internal/persistence/helper"
+	"github.com/kruspe/music-rating/internal/usecase"
+	"github.com/stretchr/testify/suite"
 )
 
 type apiSuite struct {
@@ -23,7 +23,7 @@ func Test_ApiSuite(t *testing.T) {
 }
 
 func (s *apiSuite) BeforeTest(_, _ string) {
-	persistenceHelper := persistence_test_helper.NewPersistenceHelper()
+	persistenceHelper := helper.NewPersistenceHelper()
 	repos := persistence.NewRepositories(persistenceHelper.Dynamo, persistenceHelper.TableName)
 	useCases := usecase.NewUseCases(repos, persistence.NewFestivalStorage(persistenceHelper.MockFestivals(nil)))
 	s.mux = http.NewServeMux()
@@ -38,7 +38,7 @@ func (s *apiSuite) Test_Returns404_WhenRequestPathDoesNotExist() {
 	recorder := httptest.NewRecorder()
 	s.mux.ServeHTTP(recorder, request)
 
-	require.Equal(s.T(), http.StatusNotFound, recorder.Result().StatusCode)
+	s.Equal(http.StatusNotFound, recorder.Result().StatusCode)
 }
 
 func (s *apiSuite) Test_Returns501_ratings_WhenMethodIsNotImplemented() {
@@ -46,5 +46,5 @@ func (s *apiSuite) Test_Returns501_ratings_WhenMethodIsNotImplemented() {
 	recorder := httptest.NewRecorder()
 	s.mux.ServeHTTP(recorder, request)
 
-	require.Equal(s.T(), http.StatusMethodNotAllowed, recorder.Result().StatusCode)
+	s.Equal(http.StatusMethodNotAllowed, recorder.Result().StatusCode)
 }

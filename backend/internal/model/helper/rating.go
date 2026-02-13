@@ -1,8 +1,9 @@
-package model_test_helper
+package helper
 
 import (
+	"fmt"
+
 	"github.com/kruspe/music-rating/internal/model"
-	"log"
 )
 
 const (
@@ -23,7 +24,7 @@ func AnArtistRating(name string) model.ArtistRating {
 	comment := AComment
 	rating, err := model.NewArtistRating(name, ARating.Float64(), &festivalName, &year, &comment)
 	if err != nil {
-		log.Panicln("could not create test ArtistRating", err)
+		panic(fmt.Errorf("could not create test ArtistRating %w", err))
 	}
 	return *rating
 }
@@ -34,7 +35,7 @@ func AnArtistRatingWithRating(name string, rating float64) model.ArtistRating {
 	comment := AComment
 	artistRating, err := model.NewArtistRating(name, rating, &festivalName, &year, &comment)
 	if err != nil {
-		log.Panicln("could not create test ArtistRating", err)
+		panic(fmt.Errorf("could not create test ArtistRating %w", err))
 	}
 	return *artistRating
 }

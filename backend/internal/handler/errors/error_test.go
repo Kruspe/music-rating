@@ -3,14 +3,14 @@ package errors_test
 import (
 	"encoding/json"
 	"errors"
-	. "github.com/kruspe/music-rating/internal/handler/errors"
-	"github.com/kruspe/music-rating/internal/model"
-	. "github.com/kruspe/music-rating/internal/model/model_test_helper"
-	"github.com/stretchr/testify/require"
-	"github.com/stretchr/testify/suite"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	. "github.com/kruspe/music-rating/internal/handler/errors"
+	"github.com/kruspe/music-rating/internal/model"
+	. "github.com/kruspe/music-rating/internal/model/helper"
+	"github.com/stretchr/testify/suite"
 )
 
 type errorResponse struct {
@@ -31,12 +31,12 @@ func (s *errorHandlerSuite) Test_Returns400_MissingParameterError() {
 	HandleError(recorder, parameterError)
 	resp := recorder.Result()
 
-	require.Equal(s.T(), http.StatusBadRequest, resp.StatusCode)
+	s.Equal(http.StatusBadRequest, resp.StatusCode)
 
 	var respBody errorResponse
 	err := json.NewDecoder(resp.Body).Decode(&respBody)
-	require.NoError(s.T(), err)
-	require.Equal(s.T(), errorResponse{Error: parameterError.Error()}, respBody)
+	s.Require().NoError(err)
+	s.Equal(errorResponse{Error: parameterError.Error()}, respBody)
 }
 
 func (s *errorHandlerSuite) Test_Returns400_UpdateNonExistingRatingError() {
@@ -45,12 +45,12 @@ func (s *errorHandlerSuite) Test_Returns400_UpdateNonExistingRatingError() {
 	HandleError(recorder, updateError)
 	resp := recorder.Result()
 
-	require.Equal(s.T(), http.StatusBadRequest, resp.StatusCode)
+	s.Equal(http.StatusBadRequest, resp.StatusCode)
 
 	var respBody errorResponse
 	err := json.NewDecoder(resp.Body).Decode(&respBody)
-	require.NoError(s.T(), err)
-	require.Equal(s.T(), errorResponse{Error: updateError.Error()}, respBody)
+	s.Require().NoError(err)
+	s.Equal(errorResponse{Error: updateError.Error()}, respBody)
 }
 
 func (s *errorHandlerSuite) Test_Returns404_WhenFestivalNotSupportedError() {
@@ -59,12 +59,12 @@ func (s *errorHandlerSuite) Test_Returns404_WhenFestivalNotSupportedError() {
 	HandleError(recorder, notSupportedError)
 	resp := recorder.Result()
 
-	require.Equal(s.T(), http.StatusNotFound, resp.StatusCode)
+	s.Equal(http.StatusNotFound, resp.StatusCode)
 
 	var respBody errorResponse
 	err := json.NewDecoder(resp.Body).Decode(&respBody)
-	require.NoError(s.T(), err)
-	require.Equal(s.T(), errorResponse{Error: notSupportedError.Error()}, respBody)
+	s.Require().NoError(err)
+	s.Equal(errorResponse{Error: notSupportedError.Error()}, respBody)
 }
 
 func (s *errorHandlerSuite) Test_Returns500_GenericError() {
@@ -72,10 +72,10 @@ func (s *errorHandlerSuite) Test_Returns500_GenericError() {
 	HandleError(recorder, errors.New("random error"))
 	resp := recorder.Result()
 
-	require.Equal(s.T(), http.StatusInternalServerError, resp.StatusCode)
+	s.Equal(http.StatusInternalServerError, resp.StatusCode)
 
 	var respBody errorResponse
 	err := json.NewDecoder(resp.Body).Decode(&respBody)
-	require.NoError(s.T(), err)
-	require.Equal(s.T(), errorResponse{Error: "Something went wrong."}, respBody)
+	s.Require().NoError(err)
+	s.Equal(errorResponse{Error: "Something went wrong."}, respBody)
 }
