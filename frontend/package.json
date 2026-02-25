@@ -15,7 +15,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.3.8",
     "@mui/material": "^7.2.0",
-    "@mui/x-data-grid": "^8.27.1",
+    "@mui/x-data-grid": "^8.27.3",
     "@react-router/node": "^7.13.1",
     "@react-router/serve": "^7.13.1",
     "isbot": "^5.1.35",
