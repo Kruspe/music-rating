@@ -20,7 +20,8 @@ describe("loader", () => {
       request: new Request("http://app.com"),
       params: { festivalName: testFestivalName },
       context: {},
-      unstable_pattern: "",
+      url: new URL("http://app.com"),
+      pattern: "",
     });
 
     expect(getFestivalRatingsSpy).toHaveBeenCalledTimes(1);
@@ -47,7 +48,8 @@ describe("loader", () => {
         request: new Request("http://app.com"),
         params: { festivalName: testFestivalName },
         context: {},
-        unstable_pattern: "",
+        url: new URL("http://app.com"),
+        pattern: "",
       });
     } catch (error) {
       errorData = error;
@@ -61,7 +63,6 @@ test("shows all artists from festival with ratings", async () => {
   const RemixStub = createRoutesStub([
     {
       path: "/ratings/:festivalName",
-      // @ts-expect-error Type error by react-router (https://github.com/remix-run/react-router/issues/13579)
       Component: FestivalRatingsRoute,
       loader: async () => {
         return data({
