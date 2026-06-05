@@ -23,7 +23,8 @@ describe("loader", () => {
       request: new Request("http://app.com"),
       params: { name: testFestivalName },
       context: {},
-      unstable_pattern: "",
+      url: new URL("http://app.com"),
+      pattern: "",
     });
 
     expect(unratedArtistsRequestSpy).toHaveBeenCalledTimes(1);
@@ -50,7 +51,8 @@ describe("loader", () => {
         request: new Request("http://app.com"),
         params: { name: testFestivalName },
         context: {},
-        unstable_pattern: "",
+        url: new URL("http://app.com"),
+        pattern: "",
       });
     } catch (error) {
       errorData = error as { data: string };
@@ -63,7 +65,6 @@ test("shows RatingCards for unrated artists", async () => {
   const RemixStub = createRoutesStub([
     {
       path: "/festivals/:name",
-      // @ts-expect-error Type error by react-router (https://github.com/remix-run/react-router/issues/13579)
       Component: FestivalRoute,
       loader: async () => {
         return data({
@@ -98,7 +99,6 @@ test("rate unrated artist", async () => {
   const RemixStub = createRoutesStub([
     {
       path: "/festivals/:name",
-      // @ts-expect-error Type error by react-router (https://github.com/remix-run/react-router/issues/13579)
       Component: FestivalRoute,
       loader: async () => {
         return data({

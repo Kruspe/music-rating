@@ -10,7 +10,6 @@ test("should have correct routes in header", async () => {
   const RemixStub = createRoutesStub([
     {
       path: "/",
-      // @ts-expect-error Type error by react-router (https://github.com/remix-run/react-router/issues/13579)
       Component: App,
       children: [
         {

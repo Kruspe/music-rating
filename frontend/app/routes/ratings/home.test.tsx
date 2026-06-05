@@ -21,7 +21,8 @@ describe("loader", () => {
       request: new Request("http://app.com"),
       params: {},
       context: {},
-      unstable_pattern: "",
+      url: new URL("http://app.com"),
+      pattern: "",
     });
 
     expect(getRatingsSpy).toHaveBeenCalledTimes(1);
@@ -45,7 +46,8 @@ describe("loader", () => {
         request: new Request("http://app.com"),
         params: {},
         context: {},
-        unstable_pattern: "",
+        url: new URL("http://app.com"),
+        pattern: "",
       });
     } catch (error) {
       errorData = error;
@@ -79,7 +81,8 @@ describe("action", () => {
       }),
       params: {},
       context: {},
-      unstable_pattern: "",
+      url: new URL("http://app.com"),
+      pattern: "",
     });
 
     expect(saveRatingSpy).toHaveBeenCalledTimes(1);
@@ -117,7 +120,8 @@ describe("action", () => {
       }),
       params: {},
       context: {},
-      unstable_pattern: "",
+      url: new URL("http://app.com"),
+      pattern: "",
     });
 
     expect(saveRatingSpy).toHaveBeenCalledTimes(1);
@@ -137,7 +141,6 @@ test("shows all rated bands", async () => {
   const RemixStub = createRoutesStub([
     {
       path: "/ratings",
-      // @ts-expect-error Type error by react-router (https://github.com/remix-run/react-router/issues/13579)
       Component: RatingsRoute,
       loader: async () => {
         return data({
@@ -161,7 +164,6 @@ test("can update rating", async () => {
   const RemixStub = createRoutesStub([
     {
       path: "/ratings",
-      // @ts-expect-error Type error by react-router (https://github.com/remix-run/react-router/issues/13579)
       Component: RatingsRoute,
       loader: async () => {
         return data({
