@@ -5,7 +5,7 @@ updates:
     schedule:
       interval: "daily"
     groups:
-      remix:
+      react-router:
         patterns:
         - "react-router"
         - "@react-router*"
