@@ -7,7 +7,7 @@ import {
 import { toArtistRating } from "~/utils/types.server";
 import mockServer, { testApi } from "../../../test/mocks";
 import { http, HttpResponse } from "msw";
-import { createRoutesStub, data } from "react-router";
+import { createRoutesStub, data, RouterContextProvider } from "react-router";
 import { render, screen } from "@testing-library/react";
 
 describe("loader", () => {
@@ -19,7 +19,7 @@ describe("loader", () => {
     const response = await loader({
       request: new Request("http://app.com"),
       params: { festivalName: testFestivalName },
-      context: {},
+      context: new RouterContextProvider(),
       url: new URL("http://app.com"),
       pattern: "",
     });
@@ -47,7 +47,7 @@ describe("loader", () => {
       await loader({
         request: new Request("http://app.com"),
         params: { festivalName: testFestivalName },
-        context: {},
+        context: new RouterContextProvider(),
         url: new URL("http://app.com"),
         pattern: "",
       });
