@@ -6,23 +6,17 @@ import type {
   APIGatewayProxyHandlerV2,
   APIGatewayProxyResultV2,
 } from "aws-lambda";
-import type { AppLoadContext, ServerBuild } from "react-router";
+import type { ServerBuild } from "react-router";
 import { createRequestHandler as createRemixRequestHandler } from "react-router";
 import { readableStreamToString } from "@react-router/node";
 
 export const handler = createRequestHandler({ build });
 
-export type GetLoadContextFunction = (
-  event: APIGatewayProxyEventV2,
-) => Promise<AppLoadContext> | AppLoadContext;
-
 function createRequestHandler({
   build,
-  getLoadContext,
   mode = process.env.NODE_ENV,
 }: {
   build: ServerBuild;
-  getLoadContext?: GetLoadContextFunction;
   mode?: string;
 }): APIGatewayProxyHandlerV2 {
   const handleRequest = createRemixRequestHandler(
@@ -37,9 +31,8 @@ function createRequestHandler({
 
   return async (event) => {
     const request = createRemixRequest(event);
-    const loadContext = await getLoadContext?.(event);
 
-    const response = await handleRequest(request, loadContext);
+    const response = await handleRequest(request);
 
     return sendRemixResponse(response);
   };

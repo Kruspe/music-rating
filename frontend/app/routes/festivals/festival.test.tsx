@@ -2,7 +2,7 @@ import * as festivalRequests from "~/utils/.server/requests/festival";
 import FestivalRoute, { loader } from "~/routes/festivals/festival";
 import { testFestivalArtistsData } from "../../../test/mock-data/festival";
 import { toFestivalArtist } from "~/utils/types.server";
-import { createRoutesStub, data } from "react-router";
+import { createRoutesStub, data, RouterContextProvider } from "react-router";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { type RatingRequest } from "~/utils/.server/requests/rating";
 import {
@@ -22,7 +22,7 @@ describe("loader", () => {
     const response = await loader({
       request: new Request("http://app.com"),
       params: { name: testFestivalName },
-      context: {},
+      context: new RouterContextProvider(),
       url: new URL("http://app.com"),
       pattern: "",
     });
@@ -50,7 +50,7 @@ describe("loader", () => {
       await loader({
         request: new Request("http://app.com"),
         params: { name: testFestivalName },
-        context: {},
+        context: new RouterContextProvider(),
         url: new URL("http://app.com"),
         pattern: "",
       });
