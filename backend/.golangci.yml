@@ -170,6 +170,9 @@ linters:
     gocognit:
       min-complexity: 20
 
+    goconst:
+      ignore-tests: true
+
     gocritic:
       settings:
         captLocal:

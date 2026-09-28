@@ -51,7 +51,7 @@ func NewPersistenceHelper() *PersistenceHelper {
 func (h *PersistenceHelper) MockFestivals(festivals map[string][]model.Artist) persistence.S3Client {
 	return MockS3Client{
 		GetObjectMock: func(ctx context.Context, params *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
-			festivalName := strings.Split(*params.Key, ".json")[0]
+			festivalName, _, _ := strings.Cut(*params.Key, ".json")
 			artists, ok := festivals[festivalName]
 			if !ok {
 				return nil, &s3Types.NoSuchKey{}

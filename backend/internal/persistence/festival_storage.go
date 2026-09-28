@@ -38,8 +38,7 @@ func (s *FestivalStorage) GetArtists(ctx context.Context, festivalName string) (
 		Key:    aws.String(fmt.Sprintf("%s.json", festivalName)),
 	})
 	if err != nil {
-		var keyError *types.NoSuchKey
-		if errors.As(err, &keyError) {
+		if _, ok := errors.AsType[*types.NoSuchKey](err); ok {
 			return nil, &model.FestivalNotSupportedError{FestivalName: festivalName}
 		}
 		return nil, err
