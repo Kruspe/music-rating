@@ -1,5 +1,5 @@
-# github.com/codeclysm/extract/v4 v4.0.0
-## explicit; go 1.22
+# github.com/codeclysm/extract/v4 v4.0.2
+## explicit; go 1.26.0
 github.com/codeclysm/extract/v4
 # github.com/ebitengine/purego v0.11.1
 ## explicit; go 1.25.0
@@ -17,29 +17,28 @@ github.com/h2non/filetype
 github.com/h2non/filetype/matchers
 github.com/h2non/filetype/matchers/isobmff
 github.com/h2non/filetype/types
-# github.com/juju/errors v0.0.0-20181118221551-089d3ea4e4d5
-## explicit
+# github.com/juju/errors v1.0.0
+## explicit; go 1.18
 github.com/juju/errors
-# github.com/juju/loggo v1.0.0
-## explicit; go 1.14
-# github.com/klauspost/compress v1.18.7
-## explicit; go 1.24
+# github.com/klauspost/compress v1.20.3
+## explicit; go 1.25
 github.com/klauspost/compress
 github.com/klauspost/compress/fse
 github.com/klauspost/compress/huff0
 github.com/klauspost/compress/internal/cpuinfo
 github.com/klauspost/compress/internal/le
+github.com/klauspost/compress/internal/regmask
 github.com/klauspost/compress/internal/snapref
 github.com/klauspost/compress/zstd
 github.com/klauspost/compress/zstd/internal/xxhash
-# github.com/kr/text v0.2.0
-## explicit
 # github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0
 ## explicit; go 1.16
 github.com/lufia/plan9stats
 # github.com/power-devops/perfstat v0.0.0-20260805114148-88456608a4f6
 ## explicit; go 1.14
 github.com/power-devops/perfstat
+# github.com/rogpeppe/go-internal v1.16.0
+## explicit; go 1.25
 # github.com/shirou/gopsutil/v4 v4.26.9
 ## explicit; go 1.26.0
 github.com/shirou/gopsutil/v4/common
@@ -54,8 +53,8 @@ github.com/tklauser/go-sysconf
 # github.com/tklauser/numcpus v0.12.0
 ## explicit; go 1.25.0
 github.com/tklauser/numcpus
-# github.com/ulikunitz/xz v0.5.14
-## explicit; go 1.12
+# github.com/ulikunitz/xz v0.5.17
+## explicit; go 1.20
 github.com/ulikunitz/xz
 github.com/ulikunitz/xz/internal/hash
 github.com/ulikunitz/xz/internal/xlog
@@ -63,12 +62,8 @@ github.com/ulikunitz/xz/lzma
 # github.com/yusufpapurcu/wmi v1.2.4
 ## explicit; go 1.16
 github.com/yusufpapurcu/wmi
-# golang.org/x/sys v0.48.0
+# golang.org/x/sys v0.49.0
 ## explicit; go 1.26.0
 golang.org/x/sys/unix
 golang.org/x/sys/windows
 golang.org/x/sys/windows/registry
-# gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
-## explicit
-# gopkg.in/yaml.v2 v2.4.0
-## explicit; go 1.15
