@@ -4,11 +4,11 @@ go 1.26.0
 
 require (
 	github.com/codeclysm/extract/v4 v4.0.2
-	github.com/shirou/gopsutil/v4 v4.26.9
+	github.com/shirou/gopsutil/v4 v4.26.10
 )
 
 require (
-	github.com/ebitengine/purego v0.11.1 // indirect
+	github.com/ebitengine/purego v0.11.2 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/h2non/filetype v1.1.3 // indirect
 	github.com/juju/errors v1.0.0 // indirect
